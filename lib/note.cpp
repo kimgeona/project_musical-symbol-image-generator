@@ -1,8 +1,22 @@
-#include <iostream>
-#include "hello.hpp"
+#include <vector>
+#include <opencv2/opencv.hpp>
+#include "note.hpp"
 
-namespace hello {
-void print_hello(){
-    std::cout << "Hello Word ! - from hello.cpp" << std::endl;
+namespace note {
+// buffer에 음표 종류 추가
+void add_type(bool){
+    
+}
+// buffer에 음정 추가
+void add_pitch(std::string){
+    
+}
+// buffer에 박자 추가
+void add_beat(std::string){
+    
+}
+// note 데이터 그리기 함수들
+cv::Mat draw(){
+    
 }
 }
