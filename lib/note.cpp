@@ -1,6 +1,6 @@
 #include <vector>
 #include <opencv2/opencv.hpp>
-#include "note.hpp"
+#include <note.hpp>
 
 namespace note {
 // buffer에 음표 종류 추가
