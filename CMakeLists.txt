@@ -44,6 +44,8 @@ elseif(WIN32)
         my_program PROPERTIES
         VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src_io/
     )
+    target_compile_options(my_library PRIVATE "/utf-8")
+    target_compile_options(my_program PRIVATE "/utf-8")
 endif()
 
 # ==== 프로젝트 설치 ====
