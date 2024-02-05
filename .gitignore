@@ -1,3 +1,6 @@
+# folder
+build/
+
 # MacOS ignore
 .DS_Store
 # Windows ignore
