@@ -1,13 +1,15 @@
 #include <note.hpp>
 
-namespace note
+namespace msig
 {
 
 
-Mat Page::draw(){}
-void Page::save_img(string file_name){}
-void Page::show_img(){}
-Mat Page::cv_img(){}
+void Note::save_as_img(string file_name){}
+void Note::show(){}
+
+Mat Note::cv_Mat(){
+    return draw();
+}
 
 
 }
