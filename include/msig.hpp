@@ -98,7 +98,6 @@ public:
     
     // note 데이터 설정
     void set(string key, string value);
-
     
     // 악보 이미지 생성 함수
     void save_as_img(string file_name);     // 그린 내용을 file_name 이름으로 저장
