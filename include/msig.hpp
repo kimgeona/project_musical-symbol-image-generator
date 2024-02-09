@@ -1,6 +1,9 @@
 #include <map>
 #include <opencv2/opencv.hpp>
 
+#pragma once
+#ifndef MSIG_H
+#define MSIG_H
 namespace msig
 {
 
@@ -19,6 +22,9 @@ private:
     
     // 악보 그리기
     Mat draw();
+    
+    // 에러 구문 출력
+    void print_error(string function_name, string title, string explanation);
     
 public:
     // 생성자
@@ -54,7 +60,7 @@ public:
         
         // 셈여림 표시
         data["dynamic"] = "false";         // 셈여림 : false, ppp, pp, p, mp, mf, f, ff, fff
-        data["cresceondo"] = "false";      // 셈여림 변화 : false, <cresendo|cresendo|diminuendo>_<start|mid|0~100|end>
+        data["cresceondo"] = "false";      // 셈여림 변화 : false, <crescendo|decrescendo|diminuendo>_<start|mid|0~100|end>
         data["dynamic_change"] = "false";  // 셈여림 변화 : false, fp, pf, fi, fo
         
         // 빠르기 표시
@@ -107,3 +113,4 @@ public:
 
 
 }
+#endif
