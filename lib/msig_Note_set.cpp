@@ -11,18 +11,32 @@ void Note::set(string key, string value){
     
     // key bad.
     if (data.find(key) == data.end()){
-        print_error(__FUNCTION__, "Bad access.", "[key:"+key+"] is not exist.");
+        // 에러 출력
+        cout << "msig: ";
+        cout << __FUNCTION__ << "(), ";
+        cout << "Bad access. ";
+        cout << "[key:"+key+"] is not exist.";
+        cout << endl;
         return;
     }
-    // key good, value good.
-    else if (regex_match(value, re)){
-        data["key"] = value;
-        return;
-    }
-    // key good, value bad.
+    // key good.
     else {
-        print_error(__FUNCTION__, "Invalid argument input.", "Please check the input format according to the [key:"+key+"].");
-        return;
+        // value good.
+        if (regex_match("crescendo_start", re)){
+            // 값 저장
+            data["key"] = value;
+            return;
+        }
+        // value bad.
+        else {
+            // 에러 출력
+            cout << "msig: ";
+            cout << __FUNCTION__ << "(), ";
+            cout << "Invalid argument input. ";
+            cout << "Please check the input format according to the [key:"+key+"].";
+            cout << endl;
+            return;
+        }
     }
 }
 

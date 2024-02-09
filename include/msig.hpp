@@ -23,9 +23,6 @@ private:
     // 악보 그리기
     Mat draw();
     
-    // 에러 구문 출력
-    void print_error(string function_name, string title, string explanation);
-    
 public:
     // 생성자
     Note(){
@@ -33,7 +30,7 @@ public:
         
         // 음표 정보
         data["type"] = "note";      // 종류 : <note|beat>
-        data["place"] = "a4";       // 위치 : <음정>[_<bb|b|natural|#|##>]
+        data["pitch"] = "a4";       // 위치 : <음정>[_<bb|b|natural|#|##>]
         data["head"] = "1";         // 머리 : <박자>
         data["stem"] = "false";     // 기둥 : false, <길이>
         data["tail"] = "false";     // 꼬리 : false, <박자>
@@ -70,36 +67,36 @@ public:
         // ========= 데이터 확인 정규표현식 =========
         
         // 음표 정보
-        data["type"] = "^(note|beat)$";
-        data["place"] = "";
-        data["head"] = "";
-        data["stem"] = "";
-        data["tail"] = "";
-        data["beam"] = "";
-        data["dot"] = "";
+        data_reg_exp["type"] = "^(note|beat)$";
+        data_reg_exp["place"] = "";
+        data_reg_exp["head"] = "";
+        data_reg_exp["stem"] = "";
+        data_reg_exp["tail"] = "";
+        data_reg_exp["beam"] = "";
+        data_reg_exp["dot"] = "";
         
         // 연주 방법 표시
-        data["slur"] = "";
-        data["tie"] = "";
-        data["staccato"] = "";
-        data["tenuto"] = "";
-        data["accent"] = "";
-        data["fermata"] = "";
-        data["octave"] = "";
+        data_reg_exp["slur"] = "";
+        data_reg_exp["tie"] = "";
+        data_reg_exp["staccato"] = "";
+        data_reg_exp["tenuto"] = "";
+        data_reg_exp["accent"] = "";
+        data_reg_exp["fermata"] = "";
+        data_reg_exp["octave"] = "";
         
         // 꾸밈음 표시
-        data["acciaccatura"] = "";
-        data["appoggiatura"] = "";
-        data["mordent"] = "";
-        data["trill"] = "";
-        data["turn"] = "";
-        data["glissando"] = "";
-        data["slid"] = "";
+        data_reg_exp["acciaccatura"] = "";
+        data_reg_exp["appoggiatura"] = "";
+        data_reg_exp["mordent"] = "";
+        data_reg_exp["trill"] = "";
+        data_reg_exp["turn"] = "";
+        data_reg_exp["glissando"] = "";
+        data_reg_exp["slid"] = "";
         
         // 셈여림 표시
-        data["dynamic"] = "";
-        data["cresceondo"] = "^(false)|(crescendo|decrescendo|diminuendo)_(start|mid|(?:100|\\d{1,2})|end)$";
-        data["dynamic_change"] = "";
+        data_reg_exp["dynamic"] = "";
+        data_reg_exp["cresceondo"] = "^(false)|(crescendo|decrescendo|diminuendo)_(start|mid|(?:100|\\d{1,2})|end)$";
+        data_reg_exp["dynamic_change"] = "";
     }
     
     // note 데이터 설정
