@@ -13,9 +13,8 @@ void Note::set(string key, string value){
     if (data.find(key) == data.end()){
         // 에러 출력
         cout << "msig: ";
-        cout << __FUNCTION__ << "(), ";
-        cout << "Bad access. ";
-        cout << "[key:"+key+"] is not exist.";
+        cout << __FUNCTION__ << "("+key+", "+value +") : ";
+        cout << "("+key+") is not exist.";
         cout << endl;
         return;
     }
@@ -31,9 +30,8 @@ void Note::set(string key, string value){
         else {
             // 에러 출력
             cout << "msig: ";
-            cout << __FUNCTION__ << "(), ";
-            cout << "Invalid argument input. ";
-            cout << "Please check the input format according to the [key:"+key+"].";
+            cout << __FUNCTION__ << "("+key+", "+value +") : ";
+            cout << "("+value+") is not in the expected format.";
             cout << endl;
             return;
         }
