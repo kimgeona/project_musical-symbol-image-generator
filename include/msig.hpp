@@ -31,10 +31,12 @@ public:
         // 음표 정보
         data["type"] = "note";      // 종류 : <note|beat>
         data["pitch"] = "a4";       // 위치 : <음정>[_<bb|b|natural|#|##>]
+        
+        // 음표 형태
         data["head"] = "1";         // 머리 : <박자>
         data["stem"] = "false";     // 기둥 : false, <길이>
         data["tail"] = "false";     // 꼬리 : false, <박자>
-        data["beam"] = "false";     // 지름대 : false, <각도>
+        data["beam"] = "false";     // 지름대 : false, [-|+]<각도>_<start|mid|end>[_<front|back>]
         data["dot"] = "false";      // 점 : false, dot
         
         // 연주 방법 표시
@@ -52,8 +54,8 @@ public:
         data["mordent"] = "false";          // 잔결꾸밈음 : false, upper, lower
         data["trill"] = "false";            // 트릴 : false, trill
         data["turn"] = "false";             // 턴 : false, turn
-        data["glissando"] = "false";        // 글리산도 : false, <start|mid|0~100|end>_<각도>
-        data["slid"] = "false";             // 슬라이드 : false, <start|mid|0~100|end>_<각도>
+        data["glissando"] = "false";        // 글리산도 : false, <start|mid|end>_[-|+]<각도>
+        data["slid"] = "false";             // 슬라이드 : false, <start|mid|end>_[-|+]<각도>
         
         // 셈여림 표시
         data["dynamic"] = "false";         // 셈여림 : false, ppp, pp, p, mp, mf, f, ff, fff
@@ -68,35 +70,40 @@ public:
         
         // 음표 정보
         data_reg_exp["type"] = "^(note|beat)$";
-        data_reg_exp["place"] = "";
-        data_reg_exp["head"] = "";
-        data_reg_exp["stem"] = "";
-        data_reg_exp["tail"] = "";
-        data_reg_exp["beam"] = "";
-        data_reg_exp["dot"] = "";
+        data_reg_exp["pitch"] = "^([a-c][0-8]|[d-g][0-7])(_(bb|b|natural|#|##))?$";
+        
+        // 음표 형태
+        data_reg_exp["head"] = "^(1|2|4)$";
+        data_reg_exp["stem"] = "^(false|[0-9]{1,2}|[0-9]{0,2}.[0-9]{1,3}|[0-9]{1,2}.[0-9]{0,3})$";
+        data_reg_exp["tail"] = "^(false|8|16|32|64|128)$";
+        data_reg_exp["beam"] = "^(false|[-+]?[0-8]?[0-9]_(start|mid|end)(_(front|back))?)$";
+        data_reg_exp["dot"] = "^(false|dot|.)$";
         
         // 연주 방법 표시
-        data_reg_exp["slur"] = "";
-        data_reg_exp["tie"] = "";
-        data_reg_exp["staccato"] = "";
-        data_reg_exp["tenuto"] = "";
-        data_reg_exp["accent"] = "";
-        data_reg_exp["fermata"] = "";
-        data_reg_exp["octave"] = "";
+        data_reg_exp["slur"] = "^(false|start|mid|([0-9]?[0-9]|100)|end|legato_t)$";
+        data_reg_exp["tie"] = "^(false|start|mid|([0-9]?[0-9]|100)|end)$";
+        data_reg_exp["staccato"] = "^(false|staccato|staccatissimo|mezzo_staccato)$";
+        data_reg_exp["tenuto"] = "^(false|tenuto|tenuto_t)$";
+        data_reg_exp["accent"] = "^(false|accent|marcato|marcato_t|rf|rfz|sf|sfz|fz)$";
+        data_reg_exp["fermata"] = "^(false|fermata)$";
+        data_reg_exp["octave"] = "^(false|[85]_(upper|lower)_(start|mid|end))$";
         
         // 꾸밈음 표시
-        data_reg_exp["acciaccatura"] = "";
-        data_reg_exp["appoggiatura"] = "";
-        data_reg_exp["mordent"] = "";
-        data_reg_exp["trill"] = "";
-        data_reg_exp["turn"] = "";
-        data_reg_exp["glissando"] = "";
-        data_reg_exp["slid"] = "";
+        data_reg_exp["acciaccatura"] = "^(false|([a-c][0-8]|[d-g][0-7])(_(b|natural|#))?)$";
+        data_reg_exp["appoggiatura"] = "^(false|([a-c][0-8]|[d-g][0-7])(_(b|natural|#))?)$";
+        data_reg_exp["mordent"] = "^(false|upper|lower)$";
+        data_reg_exp["trill"] = "^(false|trill)$";
+        data_reg_exp["turn"] = "^(false|turn)$";
+        data_reg_exp["glissando"] = "^(false|(start|mid|end)_[-+]?[0-8]?[0-9])$";
+        data_reg_exp["slid"] = "^(false|(start|mid|end)_[-+]?[0-8]?[0-9])$";
         
         // 셈여림 표시
-        data_reg_exp["dynamic"] = "";
-        data_reg_exp["cresceondo"] = "^(false)|(crescendo|decrescendo|diminuendo)_(start|mid|(?:100|\\d{1,2})|end)$";
-        data_reg_exp["dynamic_change"] = "";
+        data_reg_exp["dynamic"] = "^(false|ppp|pp|p|mp|mf|f|ff|fff)$";
+        data_reg_exp["cresceondo"] = "^(false)|(crescendo|decrescendo|diminuendo)_(start|mid|([0-9]?[0-9]|100)|end)$";
+        data_reg_exp["dynamic_change"] = "^(false|fp|pf|fi|fo)$";
+        
+        // 빠르기 표시
+        // ...(추후 작성)
     }
     
     // note 데이터 설정
