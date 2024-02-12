@@ -3,10 +3,14 @@
 #include <msig.hpp>
 
 int main(){
-    std::cout << "Making Muscial-Symbols Dataset" << std::endl;
+    using namespace std;
+    using namespace cv;
+    using namespace msig;
+    
+    cout << "Making Muscial-Symbols Dataset" << endl;
     
     // create Note
-    msig::Note n = msig::Note();
+    Note n = Note();
     
     // set
     n.set("pitch", "a4_#");     // 음정 = 라#
@@ -22,5 +26,6 @@ int main(){
     n.show();
     
     // return none error
+    destroyAllWindows();
     return 0;
 }

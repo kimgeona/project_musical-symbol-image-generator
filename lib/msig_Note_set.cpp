@@ -1,5 +1,7 @@
+#include <iostream>
 #include <regex>    // 정규 표현식 라이브러리
 #include <cctype>   // 소문자 변환
+#include <opencv2/opencv.hpp>
 #include <msig.hpp>
 
 namespace msig
