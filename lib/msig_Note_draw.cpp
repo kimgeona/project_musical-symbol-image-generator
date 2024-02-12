@@ -4,7 +4,10 @@ namespace msig
 {
 
 
-Mat Note::draw(){
+cv::Mat Note::draw(){
+    using namespace std;
+    using namespace cv;
+    
     // 3채널 하얀 이미지(Mat) 생성
     Mat img(512, 512, CV_8UC3, Scalar(255, 255, 255));
     // Point 생성

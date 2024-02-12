@@ -6,7 +6,10 @@ namespace msig
 {
 
 
-void Note::set(string key, string value){
+void Note::set(std::string key, std::string value){
+    using namespace std;
+    using namespace cv;
+    
     // 정규 표현식 저장
     regex re(data_reg_exp[key]);
     
