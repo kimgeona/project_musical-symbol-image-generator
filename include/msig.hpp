@@ -10,20 +10,17 @@ namespace msig
 
 class Note{
 private:
-    // 참고 : https://geumse.tistory.com/14
-    // 참고 : https://www.masterclass.com/articles/music-ornaments-guide
-    
     // 초기화 함수
-    void init_data();               // 악상기호 정보 초기화
-    void init_data_reg_exp();       // 악상기호 정규표현식 초기화
-    void init_data_img();           // 악상기호 이미지 불러오기
-    void init_data_img_center();    // 악상기호 중심좌표 설정
+    void init_drawing_set();
+    void init_drawing_regexp();
+    void init_note_imgs();
+    void init_note_imgs_config();
     
     // note 데이터
-    std::map<std::string, std::string>  data;
-    std::map<std::string, std::string>  data_reg_exp;
-    std::map<std::string, cv::Mat>      data_img;
-    std::map<std::string, std::string>  data_img_center;
+    std::map<std::string, std::string>  drawing_set;        // 악상 기호 세팅 값
+    std::map<std::string, std::string>  drawing_regexp;     // 악상 기호 세팅 정규표현식
+    std::map<std::string, cv::Mat>      note_imgs;          // 불러온 이미지들
+    std::map<std::string, std::string>  note_imgs_config;   // 불러온 이미지 조정 값
     
     // 악보 그리기
     cv::Mat draw();
@@ -31,10 +28,10 @@ private:
 public:
     // 생성자
     Note(){
-        init_data();
-        init_data_reg_exp();
-        init_data_img();
-        init_data_img_center();
+        init_drawing_set();
+        init_drawing_regexp();
+        init_note_imgs();
+        init_note_imgs_config();
     }
     
     // note 데이터 설정

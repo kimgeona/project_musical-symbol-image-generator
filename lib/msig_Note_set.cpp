@@ -13,14 +13,14 @@ void Note::set(std::string key, std::string value){
     using namespace cv;
     
     // 정규 표현식 저장
-    regex re(data_reg_exp[key]);
+    regex re(drawing_regexp[key]);
     
     // value 소문자로 변환
     for (int i=0; i<value.length(); i++)
         value[i] = tolower(value[i]);
     
     // key bad.
-    if (data.find(key) == data.end()){
+    if (drawing_set.find(key) == drawing_set.end()){
         // 에러 출력
         cout << "msig: ";
         cout << __FUNCTION__ << "("+key+", "+value +") : ";
@@ -33,7 +33,7 @@ void Note::set(std::string key, std::string value){
         // value good.
         if (regex_match(value, re)){
             // 값 저장
-            data["key"] = value;
+            drawing_set["key"] = value;
             return;
         }
         // value bad.
