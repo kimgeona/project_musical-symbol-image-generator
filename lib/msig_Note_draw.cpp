@@ -10,12 +10,12 @@ cv::Mat Note::draw(){
     using namespace std;
     using namespace cv;
     
-    // 3채널 하얀 이미지(Mat) 생성
-    Mat img(512, 512, CV_8UC3, Scalar(255, 255, 255));
-    // Point 생성
-    Point2i pt1(50, 50), pt2(462, 462);
-    // Mat에 rectangle 그리기
-    rectangle(img, pt1, pt2, Scalar(0, 255, 0));
+    // 1채널 이미지 생성
+    Mat img(512, 256, CV_8UC1, Scalar(255));
+    
+    // 그리고 싶은 지점과 이미지의 중심점이 겹치도록 그리기
+    
+    
     // 생성된 이미지 리턴
     return img;
 }
