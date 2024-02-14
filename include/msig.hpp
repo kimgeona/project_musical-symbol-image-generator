@@ -1,3 +1,4 @@
+#include <vector>
 #include <map>
 #include <opencv2/opencv.hpp>
 
@@ -10,32 +11,179 @@ namespace msig
 
 class Note{
 private:
-    // 초기화 함수
-    void init_drawing_set();
-    void init_drawing_regexp();
-    void init_note_imgs();
-    void init_note_imgs_config();
+    // 프로그램 저장 위치
+    std::string dataset_dir;
+    
+    // 저장 정보 : "폴더명", "이미지 이름"
+    std::vector<std::string> dirs = {
+        // line
+        "ln", "staff",            // 오선
+        "ln", "ledger",           // 오선 위 아래 추가적 선
+        "ln", "bar",              // 단일 바
+        "ln", "bar_double",       // 이중 바
+        "ln", "bar_double_bold",  // 이중 바(볼드)
+        "ln", "bar_dotted",       // 점선 바
+        
+        // note
+        "nt", "1",          // 온음표
+        "nt", "2",          // 2분음표
+        "nt", "4",          // 4분음표
+        "nt", "8",          // ...
+        "nt", "16",         //
+        "nt", "32",         //
+        "nt", "64",         //
+        "nt", "beam",       // 연속적인 꼬리
+        "nt", "ghost",      // 비트 음표(?)
+        
+        "nt", "head_1",     // 온음표 머리
+        "nt", "head_2",     // 2분음표 머리
+        "nt", "head_4",     // 4분음표 머리
+        "nt", "tail_1",
+        "nt", "tail_2",
+        "nt", "tail_4",
+        "nt", "tail_8",
+        "nt", "tail_16",
+        "nt", "tail_32",
+        "nt", "tail_64",
+        "nt", "dot",
+
+        // rest
+        "rt", "1",
+        "rt", "2",
+        "rt", "4",
+        "rt", "8",
+        "rt", "16",
+        "rt", "32",
+        "rt", "64",
+        "rt", "measure_rest",
+        
+        // breaks
+        "br", "brath_mark",
+        "br", "caesura",
+        
+        // accidental-signatures
+        "as", "flat",
+        "as", "flat_double",
+        "as", "natural",
+        "as", "sharp",
+        "as", "sharp_double",
+        
+        // key-signatures
+        "ks", "flat_1",
+        "ks", "flat_2",
+        "ks", "flat_3",
+        "ks", "flat_4",
+        "ks", "flat_5",
+        "ks", "flat_6",
+        "ks", "flat_7",
+        "ks", "sharp_1",
+        "ks", "sharp_2",
+        "ks", "sharp_3",
+        "ks", "sharp_4",
+        "ks", "sharp_5",
+        "ks", "sharp_6",
+        "ks", "sharp_7",
+        
+        // time-signatures
+        "ts", "2",
+        "ts", "3",
+        "ts", "4",
+        "ts", "5",
+        "ts", "6",
+        "ts", "7",
+        "ts", "8",
+        "ts", "9",
+        "ts", "11",
+        "ts", "12",
+        "ts", "16",
+        "ts", "32",
+        "ts", "common",
+        "ts", "cut",
+        
+        // note-relationships
+        "nr", "tie",
+        "nr", "slur",
+        "nr", "glissando",
+        "nr", "tuplet",
+        "nr", "arpeggio",
+        
+        // dynamics
+        "dy", "pianississimo",
+        "dy", "pianissimo",
+        "dy", "piano",
+        "dy", "mezzo_piano",
+        "dy", "mezzo_forte",
+        "dy", "forte",
+        "dy", "fortissimo",
+        "dy", "fortississimo",
+        "dy", "sforzando",
+        "dy", "fortepiano",
+        "dy", "crescendo",
+        "dy", "decrescendo",
+        
+        // articulation-marks
+        "am", "staccato",
+        "am", "staccatissimo",
+        "am", "tenuto",
+        "am", "fermata",
+        "am", "accent",
+        "am", "marcato",
+        
+        // ornaments
+        "or", "tremolo",
+        "or", "tril",
+        "or", "tril_plus",
+        "or", "mordent_uppter",
+        "or", "mordent_lower",
+        "or", "turn",
+        "or", "turn_inverted",
+        "or", "turn_slash",
+        "or", "appoggiatura",
+        "or", "acciaccatura",
+        
+        // octave-signs
+        "os", "8_up",
+        "os", "8_down",
+        "os", "15_up",
+        "os", "15_down",
+        
+        // repetitions
+        "rp", "repeat_start",
+        "rp", "repeat_end",
+        "rp", "simile_start",
+        "rp", "simile_end",
+        "rp", "volta_1",
+        "rp", "volta_2",
+        "rp", "da-capo",
+        "rp", "dal-segno",
+        "rp", "segno",
+        "rp", "coda",
+    };
     
     // note 데이터
-    std::map<std::string, std::string>  drawing_set;        // 악상 기호 세팅 값
-    std::map<std::string, std::string>  drawing_regexp;     // 악상 기호 세팅 정규표현식
-    std::map<std::string, cv::Mat>      note_imgs;          // 불러온 이미지들
-    std::map<std::string, std::string>  note_imgs_config;   // 불러온 이미지 조정 값
+    std::map<std::string, cv::Mat>      imgs;           // 불러온 이미지들
+    std::map<std::string, std::string>  imgs_config;    // 불러온 이미지 조정 값
+    std::map<std::string, std::string>  draw_list;      // 그릴 내용들
+    
+    // 초기화 함수
+    void load_imgs();
+    void load_imgs_config();
     
     // 악보 그리기
     cv::Mat draw();
     
 public:
     // 생성자
-    Note(){
-        init_drawing_set();
-        init_drawing_regexp();
-        init_note_imgs();
-        init_note_imgs_config();
+    Note(std::string dataset_dir="symbol_dataset"){
+        // symbol dataset 디렉토리 설정
+        this->dataset_dir = dataset_dir;
+        // 초기화
+        load_imgs();
+        load_imgs_config();
     }
     
-    // note 데이터 설정
-    void set(std::string key, std::string value);
+    // 그리기 내용 추가
+    void add(std::string key, std::string value);
     
     // 악보 이미지 생성 함수
     void save_as_img(std::string file_name);    // 그린 내용을 file_name 이름으로 저장
