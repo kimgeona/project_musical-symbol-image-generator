@@ -9,7 +9,7 @@ cv::Mat Note::draw(){
     using namespace cv;
     
     // 1. 1채널 이미지 생성
-    Mat img(512, 256, CV_8UC1, Scalar(255));
+    Mat img(width, height, CV_8UC1, Scalar(255));
     
     // 2. draw_list에 있는 내용들을 화면에 그리기.
     //     2-1. draw_list에 있는 내용들 상호관계 파악하여 "x_y_각도_확대축소_대칭_전체길이_현재" 수정

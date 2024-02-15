@@ -19,6 +19,9 @@ private:
     // 프로그램 저장 위치
     std::string dataset_dir;
     
+    // 생성할 이미지 크기
+    int width=256, height=512;
+    
     // 저장 정보 : "폴더명", "이미지 이름"
     std::vector<std::string> dirs = {
         // 참고 : https://en.wikipedia.org/wiki/List_of_musical_symbols#Lines
@@ -182,7 +185,10 @@ private:
     // 초기화
     void load_imgs();
     void load_imgs_config();
-    std::string make_config(std::string key);
+    
+    // 기타
+    std::string make_config(std::string symbol_name);
+    cv::Mat combine_mat(const cv::Mat& img, int x, int y, const cv::Mat& img_sub);
     
     // 악보 그리기
     cv::Mat draw();

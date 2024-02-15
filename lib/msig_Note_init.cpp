@@ -100,18 +100,102 @@ void Note::load_imgs_config(){
     fout.close();
 }
 
-std::string Note::make_config(std::string key){
+std::string Note::make_config(std::string symbol_name){
     using namespace std;
     using namespace cv;
     
-    // 1. 하얀 배경에 가운데 + 가 박혀져 있는 이미지 생성
-    // 2. 해당 이미지 창에 띄움. 창 이름은 key로 설정
-    // 3. config 정보를 생성하고자 하는 악상기호 이미지 띄우기.
-    //     3-1. 방향키로 이미지 위치 조정
-    //     3-2. 마우스 스크롤로 이미지 확대 및 축소
-    //     3-3. 엔터시 저장 및 나가기, esc 입력시 나가기
+    // 이미지
+    Mat img(512, 256, CV_8UC1, Scalar(255));    // 흰 배경
+    Mat img_key = imgs[symbol_name].clone();    // 악상 기호 이미지
     
-    return "0_0_0.0_0.0";
+    // config 정보
+    int x=128;
+    int y=256;
+    double degree=0.0;
+    double scale=1.0;
+    
+    // 창 생성
+    namedWindow(symbol_name, WINDOW_AUTOSIZE);
+    
+    // 키보드 이벤트
+    while (true) {
+        // 이미지 합치기
+        Mat img_result = combine_mat(img, x, y, img_key);
+        
+        // 십자선 그리기
+        line(img_result, Point(128-10,256), Point(128+10,256), Scalar(100), 1, LINE_AA);
+        line(img_result, Point(128,256-10), Point(128,256+10), Scalar(100), 1, LINE_AA);
+        
+        // 합성 결과 확인
+        imshow(symbol_name, img_result);
+        
+        // 키보드 이벤트
+        int key = waitKey(1000/60);
+        if (key==27) break; // 종료
+        switch (key) {
+            case 'a': x-=1;         break;  // 좌로 이동
+            case 'd': x+=1;         break;  // 우로 이동
+            case 'w': y-=1;         break;  // 상으로 이동
+            case 's': y+=1;         break;  // 하로 이동
+            case 'q': degree+=1.0;  break;  // 반시계 회전
+            case 'e': degree-=1.0;  break;  // 시계 회전
+            case 'z': scale-=0.1;   break;  // 축소
+            case 'c': scale+=0.1;   break;  // 확대
+        }
+        if (degree<0.0) degree += 360.0;
+        if (scale<0.0) scale = 0.0;
+    }
+    destroyWindow(symbol_name);
+    
+    // symbol_name에 대한 config 정보 반환
+    return to_string(x-128)+"_"+to_string(y-256)+"_"+to_string(degree)+"_"+to_string(scale);
+}
+
+cv::Mat Note::combine_mat(const cv::Mat& img, int x, int y, const cv::Mat& img_sub){
+    using namespace std;
+    using namespace cv;
+    
+    // img_result 생성
+    Mat img_result = img.clone();
+    
+    // img, img_sub 시작 좌표
+    int img_x = 0;
+    int img_y = 0;
+    int img_sub_x = img_x + x;
+    int img_sub_y = img_y + y;
+    
+    // 겹치는 영역의 좌상단 점 계산
+    int x1 = max(img_x, img_sub_x);
+    int y1 = max(img_y, img_sub_y);
+    
+    // 겹치는 영역의 우하단 점 계산
+    int x2 = min(img_x+img.cols, img_sub_x+img_sub.cols);
+    int y2 = min(img_y+img.rows, img_sub_y+img_sub.rows);
+    
+    // 겹치는 영역 있는지 확인
+    if (x1 < x2 and y1 < y2){
+        // ROI 범위 생성
+        Range r1(y1-img_y, y2-img_y);           // img의 y(row) 범위
+        Range r2(x1-img_x, x2-img_x);           // img의 x(col) 범위
+        Range r3(y1-img_sub_y, y2-img_sub_y);   // img_sub의 y(row) 범위
+        Range r4(x1-img_sub_x, x2-img_sub_x);   // img_sub의 x(col) 범위
+        
+        // ROI 생성
+        Mat roi1 = img(r1, r2);
+        Mat roi2 = img_sub(r3, r4);
+        Mat roi_result = img_result(r1, r2);
+        
+        // 흑백 이미지 합치기(min)
+        // 알파 채널 분리 고려 하기...!
+        min(roi1, roi2, roi_result);
+        
+        // 겹치는 영역 찾기 성공, img_result 반환
+        return img_result;
+    }
+    else {
+        // 겹치는 영역 찾기 실패, img 반환
+        return img.clone();
+    }
 }
 
 
