@@ -109,8 +109,8 @@ std::string Note::make_config(std::string symbol_name){
     Mat img_key = imgs[symbol_name].clone();    // 악상 기호 이미지
     
     // config 정보
-    int x=128;
-    int y=256;
+    int x=128-(img_key.cols/2);
+    int y=256-(img_key.rows/2);
     double degree=0.0;
     double scale=1.0;
     
