@@ -1,5 +1,3 @@
-#include <iostream>
-#include <opencv2/opencv.hpp>
 #include <msig.hpp>
 
 namespace msig

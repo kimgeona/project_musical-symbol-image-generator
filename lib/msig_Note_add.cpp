@@ -1,49 +1,37 @@
-#include <iostream>
-#include <algorithm>
-#include <regex>    // 정규 표현식 라이브러리
-#include <cctype>   // 소문자 변환
-#include <opencv2/opencv.hpp>
 #include <msig.hpp>
 
 namespace msig
 {
 
 
-void Note::add(std::string key, std::string value){
+void Note::add(std::string key, std::string config_symmetry, std::string config_progress){
     using namespace std;
     using namespace cv;
+    
+    // 추가적인 config
+    string additional_config = "";
     
     // key 존재 확인
     if (imgs.find(key)==imgs.end()){
         cout << "msig: ";
-        cout << __FUNCTION__ << "("+key+", "+value +") : ";
+        cout << __FUNCTION__ << "("+key+") : ";
         cout << "("+key+") is not exist.";
         cout << endl;
         return;
     }
     
-    // 정규표현식 생성
-    string uint_reg = "([+]?[0-9]+)";
-    string double_reg = "([-+]?([0-9]+.[0-9]*|[0-9]*.[0-9]+))";
-    string my_reg = "^(false|"+uint_reg+"_"+uint_reg+"_"+double_reg+"_"+double_reg+")$";
-    regex re(my_reg);
+    // config_symmetry(대칭(x축 또는 y축)) 정규표현식 확인 후 추가
+    if (regex_match(config_symmetry, regex("^(false)|[xXyY]$")))
+        additional_config.append("_"+config_symmetry);
+    else additional_config.append("_false");
     
-    // value 소문자로 변환
-    for (int i=0; i<value.length(); i++)
-        value[i] = tolower(value[i]);
+    // config_progress(전체길이_현재지점) 정규표현식 확인 후 추가
+    if (regex_match(config_progress, regex("^(false_false)|([0-9]+_([0-9]?[0-9]|100))$")))
+        additional_config.append("_"+config_progress);
+    else additional_config.append("_false_false");
     
-    // value 작성문 확인 후 저장
-    if (regex_match(value, re)){
-        draw_list["key"] = value;
-        return;
-    }
-    else {
-        cout << "msig: ";
-        cout << __FUNCTION__ << "("+key+", "+value +") : ";
-        cout << "("+value+") is not in the expected format.";
-        cout << endl;
-        return;
-    }
+    // key-value 저장
+    draw_list[key] = imgs_config[key] + additional_config;
 }
 
 

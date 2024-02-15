@@ -1,5 +1,9 @@
+#include <iostream>
 #include <vector>
 #include <map>
+#include <filesystem>           // 디렉토리 주소 생성
+#include <regex>                // 정규 표현식 라이브러리
+#include <cctype>               // 소문자 변환
 #include <opencv2/opencv.hpp>
 
 #pragma once
@@ -16,6 +20,8 @@ private:
     
     // 저장 정보 : "폴더명", "이미지 이름"
     std::vector<std::string> dirs = {
+        // 참고 : https://en.wikipedia.org/wiki/List_of_musical_symbols#Lines
+        
         // line
         "ln", "staff",            // 오선
         "ln", "ledger",           // 오선 위 아래 추가적 선
@@ -23,6 +29,17 @@ private:
         "ln", "bar_double",       // 이중 바
         "ln", "bar_double_bold",  // 이중 바(볼드)
         "ln", "bar_dotted",       // 점선 바
+        
+        // clef
+        "cf", "g",              // 높은음자리표
+        "cf", "g_plus_8",       // 높은음자리표 +8 옥타브
+        "cf", "g_plus_15",      // 높은음자리표 +15 옥타브
+        "cf", "g_minus_8",      // 높은음자리표 -8 옥타브
+        "cf", "g_minus_15",     // 높은음자리표 -15 옥타브
+        "cf", "g_double",
+        "cf", "c_alto",
+        "cf", "c_tenor",
+        "cf", "f"
         
         // note
         "nt", "1",          // 온음표
@@ -35,12 +52,8 @@ private:
         "nt", "beam",       // 연속적인 꼬리
         "nt", "ghost",      // 비트 음표(?)
         
-        "nt", "head_1",     // 온음표 머리
         "nt", "head_2",     // 2분음표 머리
         "nt", "head_4",     // 4분음표 머리
-        "nt", "tail_1",
-        "nt", "tail_2",
-        "nt", "tail_4",
         "nt", "tail_8",
         "nt", "tail_16",
         "nt", "tail_32",
@@ -93,10 +106,7 @@ private:
         "ts", "7",
         "ts", "8",
         "ts", "9",
-        "ts", "11",
         "ts", "12",
-        "ts", "16",
-        "ts", "32",
         "ts", "common",
         "ts", "cut",
         
@@ -130,10 +140,13 @@ private:
         "am", "marcato",
         
         // ornaments
-        "or", "tremolo",
+        "or", "tremolo_8",
+        "or", "tremolo_16",
+        "or", "tremolo_32",
+        "or", "tremolo_64",
         "or", "tril",
         "or", "tril_plus",
-        "or", "mordent_uppter",
+        "or", "mordent_upper",
         "or", "mordent_lower",
         "or", "turn",
         "or", "turn_inverted",
@@ -165,9 +178,10 @@ private:
     std::map<std::string, std::string>  imgs_config;    // 불러온 이미지 조정 값
     std::map<std::string, std::string>  draw_list;      // 그릴 내용들
     
-    // 초기화 함수
+    // 초기화
     void load_imgs();
     void load_imgs_config();
+    std::string make_config(string key);
     
     // 악보 그리기
     cv::Mat draw();
@@ -183,7 +197,7 @@ public:
     }
     
     // 그리기 내용 추가
-    void add(std::string key, std::string value);
+    void add(std::string key, std::string config_symmetry="", std::string config_progress="");
     
     // 악보 이미지 생성 함수
     void save_as_img(std::string file_name);    // 그린 내용을 file_name 이름으로 저장

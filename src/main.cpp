@@ -13,9 +13,9 @@ int main(){
     Note n = Note();
     
     // add
-    n.add("ln_staff", "0_0_0.0_0.0");   // 5선지
-    n.add("nt_4", "0_0_0.0_0.0");       // 4분음표
-    n.add("nt_dot", "0_0_0.0_0.0");     // 점 표시
+    n.add("ln_staff");   // 오선지
+    n.add("nt_4");       // 4분음표
+    n.add("nt_dot");     // 점 표시
     
     // save as image
     n.save_as_img("test.png");
