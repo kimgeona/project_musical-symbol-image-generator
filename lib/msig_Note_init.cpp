@@ -32,20 +32,75 @@ void Note::load_imgs(){
 void Note::load_imgs_config(){
     using namespace std;
     using namespace cv;
+    using namespace std::__fs::filesystem;
     
-    // 1. symbol_dataset_config.txt 열기(없으면 생성)
-    // 2. line마다 작성되어있는 "이름=x_y_각도_배율" 불러오기
-    // 3. Note::imgs_config에 key=string1, value=string2 형식으로 저장
-    // 4. Note::imgs.key 값을 확인하여 없는 내용들에 대해선 "string1=string2" 생성 및 추가
-    //     4-1. Note::imgs.key 값 불러오기
-    //     4-2. string2 생성을 위한 Note::make_config()함수 실행
-    //     4-3. 해당 함수 반환값으로 이름=x_y_각도_배율 생성하기
-    //     4-1. 생성한 내용 symbol_dataset_config.txt 뒤에 추가, Note::imgs_config에 추가
+    // 변수들
+    path config_dir = path(dataset_dir) / path("symbol_dataset_config.txt");
+    string line, line_key, line_value;
+    int n = -1;
     
+    // imgs_config 불러오기
+    fstream fin(config_dir, ios::in|ios::out|ios::app);
+    if (!fin){
+        // 에러 메시지 출력
+        cout << "msig: ";
+        cout << "can't open " << config_dir << " for reading.";
+        cout << endl;
+        return;
+    }
+    while (getline(fin, line)) {
+        // 소문자로 변환
+        for (int i=0; i<line.length(); i++)
+            line[i] = tolower(line[i]);
+
+        // 정규표현식 생성
+        string reg_dir = "([a-zA-Z0-9_.]+)";
+        string reg_u = "([+]?[0-9]+)";
+        string reg_d = "([-+]?([0-9]+.[0-9]*|[0-9]*.[0-9]+))";
+        regex reg("^"+reg_dir+"="+reg_u+"_"+reg_u+"_"+reg_d+"_"+reg_d+"$");
+        
+        // 정규표현식 검사
+        if (!regex_match(line, reg)) continue;
+        
+        // "="를 기준으로 단어 나누기
+        line_key = line.substr(0, line.find("="));
+        line_value = line.substr(line.find("=")+1);
+        
+        // imgs_key에 존재하는 key인지 검사
+        if (imgs.find(line_key)==imgs.end()) continue;
+        
+        // imgs_config에 저장
+        imgs_config[line_key] = line_value;
+    }
+    fin.close();
     
+    // 존재하지 않는 imgs_config 조사
+    vector<string> not_in_imgs_config;
+    for (auto key : imgs){
+        if (imgs_config.find(key.first)==imgs_config.end())
+            not_in_imgs_config.push_back(key.first);
+    }
+    
+    // imgs_config 내용 추가하기
+    fstream fout(config_dir, ios::out|ios::app);
+    if (!fout){
+        cout << "msig: ";
+        cout << "can't open " << config_dir << " for writing.";
+        cout << endl;
+        return;
+    }
+    for (auto key : not_in_imgs_config){
+        // key에 해당하는 config 값 생성
+        line_value = make_config(key);
+        // imgs_config에 저장
+        imgs_config[key] = line_value;
+        // imgs_config에 내용 추가
+        fout << key + "=" + line_value << endl;
+    }
+    fout.close();
 }
 
-std::string Note::make_config(string key){
+std::string Note::make_config(std::string key){
     using namespace std;
     using namespace cv;
     
@@ -55,6 +110,8 @@ std::string Note::make_config(string key){
     //     3-1. 방향키로 이미지 위치 조정
     //     3-2. 마우스 스크롤로 이미지 확대 및 축소
     //     3-3. 엔터시 저장 및 나가기, esc 입력시 나가기
+    
+    return "0_0_0.0_0.0";
 }
 
 

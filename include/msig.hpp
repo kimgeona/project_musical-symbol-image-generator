@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <map>
 #include <filesystem>           // 디렉토리 주소 생성
@@ -39,7 +40,7 @@ private:
         "cf", "g_double",
         "cf", "c_alto",
         "cf", "c_tenor",
-        "cf", "f"
+        "cf", "f",
         
         // note
         "nt", "1",          // 온음표
@@ -181,7 +182,7 @@ private:
     // 초기화
     void load_imgs();
     void load_imgs_config();
-    std::string make_config(string key);
+    std::string make_config(std::string key);
     
     // 악보 그리기
     cv::Mat draw();
