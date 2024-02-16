@@ -39,10 +39,13 @@ void Note::load_imgs_config(){
     string line, line_key, line_value;
     int n = -1;
     
+    // imgs_config 없으면 파일 생성
+    fstream make_file(config_dir, ios::out|ios::app);
+    make_file.close();
+    
     // imgs_config 불러오기
-    fstream fin(config_dir, ios::in|ios::out|ios::app);
+    fstream fin(config_dir, ios::in);
     if (!fin){
-        // 에러 메시지 출력
         cout << "msig: ";
         cout << "can't open " << config_dir << " for reading.";
         cout << endl;
@@ -54,8 +57,8 @@ void Note::load_imgs_config(){
             line[i] = tolower(line[i]);
 
         // 정규표현식 생성
-        string reg_dir = "([a-zA-Z0-9_.]+)";
-        string reg_u = "([+]?[0-9]+)";
+        string reg_dir = "([a-zA-Z0-9_-]+)";
+        string reg_u = "([-+]?[0-9]+)";
         string reg_d = "([-+]?([0-9]+.[0-9]*|[0-9]*.[0-9]+))";
         regex reg("^"+reg_dir+"="+reg_u+"_"+reg_u+"_"+reg_d+"_"+reg_d+"$");
         
@@ -153,6 +156,7 @@ std::string Note::make_config(std::string symbol_name){
             case 'c': scale+=0.1;   break;  // 확대
         }
         if (degree<0.0) degree += 360.0;
+        if (degree>360.0) degree -= 360.0;
         if (scale<0.1) scale = 0.1;
     }
     destroyWindow(symbol_name);
@@ -210,7 +214,84 @@ cv::Mat Note::combine_mat(const cv::Mat& img, int x, int y, const cv::Mat& img_s
 cv::Mat Note::rotate_mat(const cv::Mat& img, double degree){
     using namespace std;
     using namespace cv;
-    return img.clone();
+    
+    // radian, sin, cos 값 계산
+    double radian = degree / 180 * CV_PI;
+    double sin_value = sin(radian);
+    double cos_value = cos(radian);
+    
+    // ==================== img_result의 크기 구하기
+    // Point 저장 벡터
+    vector<Point> pts = {
+        Point(0,0),                 // lt
+        Point(img.cols,0),          // rt
+        Point(0,img.rows),          // lb
+        Point(img.cols,img.rows)    // rb
+    };
+    vector<Point> pts_out;
+    
+    // 좌표 계산
+    for (auto p: pts){
+        // 좌표 계산
+        double x_old = p.x;
+        double y_old = p.y;
+        double cx = img.cols/2.0;
+        double cy = img.rows/2.0;
+        double x_new = (x_old-cx)*cos_value - (y_old-cy)*sin_value + cx;
+        double y_new = (x_old-cx)*sin_value + (y_old-cy)*cos_value + cy;
+        
+        // 올림, 내림 처리
+        x_new>=0 ? x_new=ceil(x_new) : x_new=floor(x_new);
+        y_new>=0 ? y_new=ceil(y_new) : y_new=floor(y_new);
+        
+        // 저장
+        pts_out.push_back(Point(x_new, y_new));
+    }
+    
+    // 좌표 찾기
+    int minX, maxX, minY, maxY;
+    minX = maxX = pts_out[0].x;
+    minY = maxY = pts_out[0].y;
+    for (auto p : pts_out) {
+       minX = min(minX, p.x);
+       maxX = max(maxX, p.x);
+       minY = min(minY, p.y);
+       maxY = max(maxY, p.y);
+    }
+    int w = maxX - minX;
+    int h = maxY - minY;
+    
+    // 좌표로 Size 생성
+    Size img_result_size(w, h);
+    
+    // ==================== img_result 생성
+    // img_result 생성
+    Mat img_result(img_result_size, img.type(), Scalar(255));
+    
+    // 역방향사상 범위 제한
+    Rect rect(Point(0, 0), img.size());
+    
+    // img_ori(x',y') -> img_result(x,y) 역방향 사상
+    for (int y_old=0; y_old<img_result.rows; y_old++){
+        for (int x_old=0; x_old<img_result.cols; x_old++){
+            // 좌표 계산
+            double cx = img.cols/2.0;
+            double cy = img.rows/2.0;
+            double x_new = (x_old-cx)*cos_value + (y_old-cy)*sin_value + cx;
+            double y_new = -(x_old-cx)*sin_value + (y_old-cy)*cos_value + cy;
+            
+            // 올림, 내림 처리
+            //x_new>=0 ? x_new=ceil(x_new) : x_new=floor(x_new);
+            //y_new>=0 ? y_new=ceil(y_new) : y_new=floor(y_new);
+            
+            // 범위 제한 확인
+            if (rect.contains(Point2d(x_new, y_new))){
+                img_result.at<uchar>((int)y_old, (int)x_old) = img.at<uchar>(y_new, x_old);
+            }
+        }
+    }
+    
+    return img_result;
 }
 cv::Mat Note::scale_mat(const cv::Mat& img, double scale){
     using namespace std;
