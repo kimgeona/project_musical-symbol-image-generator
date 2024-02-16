@@ -189,6 +189,8 @@ private:
     // 기타
     std::string make_config(std::string symbol_name);
     cv::Mat combine_mat(const cv::Mat& img, int x, int y, const cv::Mat& img_sub);
+    cv::Mat rotate_mat(const cv::Mat& img, double degree);
+    cv::Mat scale_mat(const cv::Mat& img, double scale);
     
     // 악보 그리기
     cv::Mat draw();

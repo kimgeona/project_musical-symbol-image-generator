@@ -108,9 +108,9 @@ std::string Note::make_config(std::string symbol_name){
     Mat img(512, 256, CV_8UC1, Scalar(255));    // 흰 배경
     Mat img_key = imgs[symbol_name].clone();    // 악상 기호 이미지
     
-    // config 정보
-    int x=128-(img_key.cols/2);
-    int y=256-(img_key.rows/2);
+    // 기본 config 정보
+    int x=128;
+    int y=256;
     double degree=0.0;
     double scale=1.0;
     
@@ -119,18 +119,28 @@ std::string Note::make_config(std::string symbol_name){
     
     // 키보드 이벤트
     while (true) {
-        // 이미지 합치기
-        Mat img_result = combine_mat(img, x, y, img_key);
+        // 중앙 표시 변수
+        int cx = (int)(img_key.cols/2.0)*scale;
+        int cy = (int)(img_key.rows/2.0)*scale;
+        
+        // 폅집할 이미지들
+        Mat img1 = img.clone();
+        Mat img2 = img_key.clone();
+        
+        // 이미지 편집
+        img2 = rotate_mat(img2, degree);            // 이미지 회전
+        img2 = scale_mat(img2, scale);              // 이미지 확대 및 축소
+        img1 = combine_mat(img1, x-cx, y-cy, img2); // 이미지 합치기
         
         // 십자선 그리기
-        line(img_result, Point(128-10,256), Point(128+10,256), Scalar(100), 1, LINE_AA);
-        line(img_result, Point(128,256-10), Point(128,256+10), Scalar(100), 1, LINE_AA);
+        line(img1, Point(128-10,256), Point(128+10,256), Scalar(100), 1, LINE_AA);
+        line(img1, Point(128,256-10), Point(128,256+10), Scalar(100), 1, LINE_AA);
         
-        // 합성 결과 확인
-        imshow(symbol_name, img_result);
+        // 이미지 화면에 그리기
+        imshow(symbol_name, img1);
         
         // 키보드 이벤트
-        int key = waitKey(1000/60);
+        int key = waitKey(1000/30);
         if (key==27) break; // 종료
         switch (key) {
             case 'a': x-=1;         break;  // 좌로 이동
@@ -143,7 +153,7 @@ std::string Note::make_config(std::string symbol_name){
             case 'c': scale+=0.1;   break;  // 확대
         }
         if (degree<0.0) degree += 360.0;
-        if (scale<0.0) scale = 0.0;
+        if (scale<0.1) scale = 0.1;
     }
     destroyWindow(symbol_name);
     
@@ -197,6 +207,32 @@ cv::Mat Note::combine_mat(const cv::Mat& img, int x, int y, const cv::Mat& img_s
         return img.clone();
     }
 }
-
+cv::Mat Note::rotate_mat(const cv::Mat& img, double degree){
+    using namespace std;
+    using namespace cv;
+    return img.clone();
+}
+cv::Mat Note::scale_mat(const cv::Mat& img, double scale){
+    using namespace std;
+    using namespace cv;
+    
+    // img_result 생성
+    Mat img_result;
+    
+    // 변경되고자 하는 크기
+    Size_<int> size = (Size_<double>)img.size()*scale;
+    
+    // 이미지 확대 및 축소
+    if (scale > 1.0) {
+        resize(img, img_result, size, 0, 0, INTER_LINEAR);
+    }
+    else if (scale < 1.0) {
+        resize(img, img_result, size, 0, 0, INTER_AREA);
+    }
+    else return img.clone();
+    
+    // scale 처리된 이미지 반환
+    return img_result;
+}
 
 }
