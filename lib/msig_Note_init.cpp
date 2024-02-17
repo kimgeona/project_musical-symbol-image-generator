@@ -211,6 +211,7 @@ cv::Mat Note::combine_mat(const cv::Mat& img, int x, int y, const cv::Mat& img_s
         return img.clone();
     }
 }
+
 cv::Mat Note::rotate_mat(const cv::Mat& img, double degree){
     using namespace std;
     using namespace cv;
@@ -290,9 +291,9 @@ cv::Mat Note::rotate_mat(const cv::Mat& img, double degree){
             }
         }
     }
-    
     return img_result;
 }
+
 cv::Mat Note::scale_mat(const cv::Mat& img, double scale){
     using namespace std;
     using namespace cv;

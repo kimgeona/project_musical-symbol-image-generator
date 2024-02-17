@@ -3,7 +3,6 @@
 #include <vector>
 #include <map>
 #include <cmath>
-#include <algorithm>
 #include <filesystem>           // 디렉토리 주소 생성
 #include <regex>                // 정규 표현식 라이브러리
 #include <cctype>               // 소문자 변환
