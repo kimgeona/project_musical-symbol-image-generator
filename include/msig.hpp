@@ -176,6 +176,10 @@ private:
         "rp", "dal-segno",
         "rp", "segno",
         "rp", "coda",
+        
+        // test
+        "test", "black",
+        "test", "black_2",
     };
     
     // note 데이터

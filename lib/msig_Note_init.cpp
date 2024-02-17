@@ -117,15 +117,14 @@ std::string Note::make_config(std::string symbol_name){
     double degree=0.0;
     double scale=1.0;
     
+    // 이미지 버퍼
+    // ..기존의 config 정보와 달라진게 있을 경우에 이미지를 그리기 위한 mat저장 버퍼
+    
     // 창 생성
     namedWindow(symbol_name, WINDOW_AUTOSIZE);
     
     // 키보드 이벤트
     while (true) {
-        // 중앙 표시 변수
-        int cx = (int)(img_key.cols/2.0)*scale;
-        int cy = (int)(img_key.rows/2.0)*scale;
-        
         // 폅집할 이미지들
         Mat img1 = img.clone();
         Mat img2 = img_key.clone();
@@ -133,6 +132,12 @@ std::string Note::make_config(std::string symbol_name){
         // 이미지 편집
         img2 = rotate_mat(img2, degree);            // 이미지 회전
         img2 = scale_mat(img2, scale);              // 이미지 확대 및 축소
+        
+        // 이미지 크기 변동에 의한 중심점 수정
+        int cx = (int)(img2.cols/2.0);
+        int cy = (int)(img2.rows/2.0);
+        
+        // 이미지 편집 2
         img1 = combine_mat(img1, x-cx, y-cy, img2); // 이미지 합치기
         
         // 십자선 그리기
@@ -146,6 +151,7 @@ std::string Note::make_config(std::string symbol_name){
         int key = waitKey(1000/30);
         if (key==27) break; // 종료
         switch (key) {
+            // 기본 속도
             case 'a': x-=1;         break;  // 좌로 이동
             case 'd': x+=1;         break;  // 우로 이동
             case 'w': y-=1;         break;  // 상으로 이동
@@ -154,6 +160,25 @@ std::string Note::make_config(std::string symbol_name){
             case 'e': degree-=1.0;  break;  // 시계 회전
             case 'z': scale-=0.1;   break;  // 축소
             case 'c': scale+=0.1;   break;  // 확대
+            case 'x':                       // 초기화
+                x=128; y=256;
+                degree=0.0;
+                scale=1.0;
+                break;
+            // 빠르게
+            case 'A': x-=3;         break;  // 좌로 이동
+            case 'D': x+=3;         break;  // 우로 이동
+            case 'W': y-=3;         break;  // 상으로 이동
+            case 'S': y+=3;         break;  // 하로 이동
+            case 'Q': degree+=3.0;  break;  // 반시계 회전
+            case 'E': degree-=3.0;  break;  // 시계 회전
+            case 'Z': scale-=0.2;   break;  // 축소
+            case 'C': scale+=0.2;   break;  // 확대
+            case 'X':                       // 초기화
+                x=128; y=256;
+                degree=0.0;
+                scale=1.0;
+                break;
         }
         if (degree<0.0) degree += 360.0;
         if (degree>360.0) degree -= 360.0;
@@ -217,7 +242,7 @@ cv::Mat Note::rotate_mat(const cv::Mat& img, double degree){
     using namespace cv;
     
     // radian, sin, cos 값 계산
-    double radian = degree / 180 * CV_PI;
+    double radian = degree * CV_PI / 180.0 ;
     double sin_value = sin(radian);
     double cos_value = cos(radian);
     
@@ -268,26 +293,32 @@ cv::Mat Note::rotate_mat(const cv::Mat& img, double degree){
     // ==================== img_result 생성
     // img_result 생성
     Mat img_result(img_result_size, img.type(), Scalar(255));
+    Mat img_result_copy = img_result.clone();
+    
+    //
+    int combine_x = (img_result.cols - img.cols)/2.0;
+    int combine_y = (img_result.rows - img.rows)/2.0;
+    img_result_copy = combine_mat(img_result, combine_x, combine_y, img);
     
     // 역방향사상 범위 제한
-    Rect rect(Point(0, 0), img.size());
+    Rect rect(Point(0, 0), img_result_copy.size());
     
     // img_ori(x',y') -> img_result(x,y) 역방향 사상
     for (int y_old=0; y_old<img_result.rows; y_old++){
         for (int x_old=0; x_old<img_result.cols; x_old++){
             // 좌표 계산
-            double cx = img.cols/2.0;
-            double cy = img.rows/2.0;
+            double cx = img_result.cols/2.0;
+            double cy = img_result.rows/2.0;
             double x_new = (x_old-cx)*cos_value + (y_old-cy)*sin_value + cx;
             double y_new = -(x_old-cx)*sin_value + (y_old-cy)*cos_value + cy;
             
             // 올림, 내림 처리
-            //x_new>=0 ? x_new=ceil(x_new) : x_new=floor(x_new);
-            //y_new>=0 ? y_new=ceil(y_new) : y_new=floor(y_new);
+            x_new>=0 ? x_new=ceil(x_new) : x_new=floor(x_new);
+            y_new>=0 ? y_new=ceil(y_new) : y_new=floor(y_new);
             
             // 범위 제한 확인
             if (rect.contains(Point2d(x_new, y_new))){
-                img_result.at<uchar>((int)y_old, (int)x_old) = img.at<uchar>(y_new, x_old);
+                img_result.at<uchar>((int)y_new, (int)x_new) = img_result_copy.at<uchar>(y_old, x_old);
             }
         }
     }
