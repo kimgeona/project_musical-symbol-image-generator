@@ -95,9 +95,13 @@ void Note::load_imgs_config(){
     for (auto key : not_in_imgs_config){
         // key에 해당하는 config 값 생성
         line_value = make_config(key);
-        // imgs_config에 저장
+        
+        // line_value 내용 확인 후 저장
+        if (line_value=="") break;
+        else imgs_config[key] = line_value;
+        
+        // imgs_config, symbol_dataset_config.txt에 내용 추가
         imgs_config[key] = line_value;
-        // imgs_config에 내용 추가
         fout << key + "=" + line_value << endl;
     }
     fout.close();
@@ -108,12 +112,12 @@ std::string Note::make_config(std::string symbol_name){
     using namespace cv;
     
     // 이미지
-    Mat img(512, 256, CV_8UC1, Scalar(255));    // 흰 배경
-    Mat img_key = imgs[symbol_name].clone();    // 악상 기호 이미지
+    Mat img(height, width, CV_8UC1, Scalar(255));   // 흰 배경
+    Mat img_key = imgs[symbol_name].clone();        // 악상 기호 이미지
     
     // 기본 config 정보
-    int x=128;
-    int y=256;
+    int x=width/2.0;
+    int y=height/2.0;
     double degree=0.0;
     double scale=1.0;
     
@@ -129,27 +133,38 @@ std::string Note::make_config(std::string symbol_name){
         Mat img1 = img.clone();
         Mat img2 = img_key.clone();
         
+        // 이미지 중심 점
+        int cx = img2.cols/2.0;
+        int cy = img2.rows/2.0;
+        
         // 이미지 편집
-        img2 = rotate_mat(img2, degree);            // 이미지 회전
+        img2 = rotate_mat(img2, degree, cx, cy);    // 이미지 회전
         img2 = scale_mat(img2, scale);              // 이미지 확대 및 축소
         
-        // 이미지 크기 변동에 의한 중심점 수정
-        int cx = (int)(img2.cols/2.0);
-        int cy = (int)(img2.rows/2.0);
+        // 이미지 크기 변동에 의한 중심점 업데이트
+        cx = img2.cols/2.0;
+        cy = img2.rows/2.0;
         
         // 이미지 편집 2
         img1 = combine_mat(img1, x-cx, y-cy, img2); // 이미지 합치기
         
         // 십자선 그리기
-        line(img1, Point(128-10,256), Point(128+10,256), Scalar(100), 1, LINE_AA);
-        line(img1, Point(128,256-10), Point(128,256+10), Scalar(100), 1, LINE_AA);
+        Point cross(width/2.0, height/2.0);
+        line(img1, cross+Point(-10,0), cross+Point(10,0), Scalar(100), 1, LINE_AA);
+        line(img1, cross+Point(0,-10), cross+Point(0,10), Scalar(100), 1, LINE_AA);
         
         // 이미지 화면에 그리기
         imshow(symbol_name, img1);
         
         // 키보드 이벤트
         int key = waitKey(1000/30);
-        if (key==27) break; // 종료
+        
+        if (key=='\n'|key=='\r') break;     // 완료에 의한 종료
+        if (key==27){                       // 중단에 의한 종료
+            destroyWindow(symbol_name);
+            return "";
+        }
+        
         switch (key) {
             // 기본 속도
             case 'a': x-=1;         break;  // 좌로 이동
@@ -161,7 +176,7 @@ std::string Note::make_config(std::string symbol_name){
             case 'z': scale-=0.1;   break;  // 축소
             case 'c': scale+=0.1;   break;  // 확대
             case 'x':                       // 초기화
-                x=128; y=256;
+                x=width/2.0; y=height/2.0;
                 degree=0.0;
                 scale=1.0;
                 break;
@@ -175,7 +190,7 @@ std::string Note::make_config(std::string symbol_name){
             case 'Z': scale-=0.2;   break;  // 축소
             case 'C': scale+=0.2;   break;  // 확대
             case 'X':                       // 초기화
-                x=128; y=256;
+                x=width/2.0; y=height/2.0;
                 degree=0.0;
                 scale=1.0;
                 break;
@@ -187,7 +202,7 @@ std::string Note::make_config(std::string symbol_name){
     destroyWindow(symbol_name);
     
     // symbol_name에 대한 config 정보 반환
-    return to_string(x-128)+"_"+to_string(y-256)+"_"+to_string(degree)+"_"+to_string(scale);
+    return to_string(x-width/2)+"_"+to_string(y-height/2)+"_"+to_string(degree)+"_"+to_string(scale);
 }
 
 cv::Mat Note::combine_mat(const cv::Mat& img, int x, int y, const cv::Mat& img_sub){
@@ -237,7 +252,7 @@ cv::Mat Note::combine_mat(const cv::Mat& img, int x, int y, const cv::Mat& img_s
     }
 }
 
-cv::Mat Note::rotate_mat(const cv::Mat& img, double degree){
+cv::Mat Note::rotate_mat(const cv::Mat& img, double degree, int center_x, int center_y){
     using namespace std;
     using namespace cv;
     
@@ -261,8 +276,8 @@ cv::Mat Note::rotate_mat(const cv::Mat& img, double degree){
         // 좌표 계산
         double x_old = p.x;
         double y_old = p.y;
-        double cx = img.cols/2.0;
-        double cy = img.rows/2.0;
+        double cx = center_x;
+        double cy = center_y;
         double x_new = (x_old-cx)*cos_value - (y_old-cy)*sin_value + cx;
         double y_new = (x_old-cx)*sin_value + (y_old-cy)*cos_value + cy;
         
@@ -307,8 +322,8 @@ cv::Mat Note::rotate_mat(const cv::Mat& img, double degree){
     for (int y_old=0; y_old<img_result.rows; y_old++){
         for (int x_old=0; x_old<img_result.cols; x_old++){
             // 좌표 계산
-            double cx = img_result.cols/2.0;
-            double cy = img_result.rows/2.0;
+            double cx = center_x + combine_x;
+            double cy = center_y + combine_y;
             double x_new = (x_old-cx)*cos_value + (y_old-cy)*sin_value + cx;
             double y_new = -(x_old-cx)*sin_value + (y_old-cy)*cos_value + cy;
             

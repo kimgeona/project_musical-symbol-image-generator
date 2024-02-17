@@ -176,10 +176,6 @@ private:
         "rp", "dal-segno",
         "rp", "segno",
         "rp", "coda",
-        
-        // test
-        "test", "black",
-        "test", "black_2",
     };
     
     // note 데이터
@@ -194,7 +190,7 @@ private:
     // 기타
     std::string make_config(std::string symbol_name);
     cv::Mat combine_mat(const cv::Mat& img, int x, int y, const cv::Mat& img_sub);
-    cv::Mat rotate_mat(const cv::Mat& img, double degree);
+    cv::Mat rotate_mat(const cv::Mat& img, double degree, int center_x, int center_y);
     cv::Mat scale_mat(const cv::Mat& img, double scale);
     
     // 악보 그리기
