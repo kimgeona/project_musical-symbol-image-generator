@@ -12,6 +12,11 @@ find_package(OpenCV)
 # OpenCV include_dir : ${OpenCV_INCLUDE_DIRS}
 # OpenCV Library : ${OpenCV_LIBS}
 
+# ==== C++ 표준 설정 ====
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 # ==== include 디렉토리 설정 ====
 include_directories(
     ./include
