@@ -145,6 +145,14 @@ std::string Note::make_config(std::string symbol_name){
         cx = img2.cols/2.0;
         cy = img2.rows/2.0;
         
+        // config 생성 보조 그림 : 오선지
+        for (auto h : vector<int>({-50, -25, 0, 25, 50})){
+            int n = img.rows/2.0;
+            line(img1, Point(0,n+h), Point(img.cols,n+h), Scalar(200), 2.2, LINE_AA);
+        }
+        // config 생성 보조 그림 : 2분음표
+        // ...
+        
         // 이미지 편집 2
         img1 = combine_mat(img1, x-cx, y-cy, img2); // 이미지 합치기
         
