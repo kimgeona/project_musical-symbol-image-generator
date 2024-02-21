@@ -105,6 +105,12 @@ void Note::load_imgs_config(){
         fout << key + "=" + line_value << endl;
     }
     fout.close();
+    
+    // 존재하지 않는 imgs_config 조사 후 img에서 제거
+    for (auto key : imgs){
+        if (imgs_config.find(key.first)==imgs_config.end())
+            imgs.erase(key.first);
+    }
 }
 
 std::string Note::make_config(std::string symbol_name){
