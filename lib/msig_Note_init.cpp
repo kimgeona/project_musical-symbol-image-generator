@@ -7,7 +7,7 @@ namespace msig
 void Note::load_imgs(){
     using namespace std;
     using namespace cv;
-    using namespace std::__fs::filesystem;
+    using namespace std::filesystem;
     
     path d1(".");
     path d2(dataset_dir);
@@ -15,7 +15,8 @@ void Note::load_imgs(){
     for (int i=0; i<dirs.size(); i+=2){
         // 이미지 경로 생성
         path d3(dirs[i]), d4(dirs[i+1] + ".png");
-        path img_dir = d1 / d2 / d3 / d4;
+        path d = d1 / d2 / d3 / d4;
+        string img_dir = d.string();
         
         // key 이름 생성
         string key_name = dirs[i] + "_" + dirs[i+1];
@@ -32,10 +33,11 @@ void Note::load_imgs(){
 void Note::load_imgs_config(){
     using namespace std;
     using namespace cv;
-    using namespace std::__fs::filesystem;
+    using namespace std::filesystem;
     
     // 변수들
-    path config_dir = path(dataset_dir) / path("symbol_dataset_config.txt");
+    path d = path(dataset_dir) / path("symbol_dataset_config.txt");
+    string config_dir = d.string();
     string line, line_key, line_value;
     int n = -1;
     
@@ -173,7 +175,7 @@ std::string Note::make_config(std::string symbol_name){
         // 키보드 이벤트
         int key = waitKey(1000/30);
         
-        if (key=='\n'|key=='\r') break;     // 완료에 의한 종료
+        if (key=='\n'|| key=='\r') break;     // 완료에 의한 종료
         if (key==27){                       // 중단에 의한 종료
             destroyWindow(symbol_name);
             return "";

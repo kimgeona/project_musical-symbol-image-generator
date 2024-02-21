@@ -26,7 +26,7 @@ cv::Mat Note::combine_mat(const cv::Mat& img, int x, int y, const cv::Mat& img_s
     int y2 = min(img_y+img.rows, img_sub_y+img_sub.rows);
     
     // 겹치는 영역 있는지 확인
-    if (x1 < x2 and y1 < y2){
+    if (x1 < x2 && y1 < y2){
         // ROI 범위 생성
         Range r1(y1-img_y, y2-img_y);           // img의 y(row) 범위
         Range r2(x1-img_x, x2-img_x);           // img의 x(col) 범위
