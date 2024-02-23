@@ -6,6 +6,7 @@
 #include <filesystem>           // 디렉토리 주소 생성
 #include <regex>                // 정규 표현식 라이브러리
 #include <cctype>               // 소문자 변환
+#include <string>               // 스트링 변환
 #include <opencv2/opencv.hpp>
 
 #pragma once
