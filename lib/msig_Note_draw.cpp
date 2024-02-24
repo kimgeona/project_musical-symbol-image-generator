@@ -45,11 +45,13 @@ cv::Mat Note::draw_symbols(const cv::Mat& img, const cv::Mat& img_symbol, std::s
     
     // 편집 진행(4개, 7개)
     if (configs.size() > 4){
-        // ...나중에 작성
+        // 이미지 편집(회전, 확대 및 축소)
+        img2 = rotate_mat(img2, stod(configs[2]), img2.cols/2.0, img2.rows/2.0);
+        img2 = scale_mat(img2, stod(configs[3]));
     }
     else{
         // 이미지 편집(회전, 확대 및 축소)
-        img2 = rotate_mat(img2, stod(configs[2]), img2.cols/2.0, img2.rows/2.0); // 중심을 기준으로 degree 만큼 회전
+        img2 = rotate_mat(img2, stod(configs[2]), img2.cols/2.0, img2.rows/2.0);
         img2 = scale_mat(img2, stod(configs[3]));
     }
     
