@@ -186,8 +186,8 @@ private:
     std::map<std::string, std::string>  draw_list;      // 그릴 내용들
     
     // 초기화
-    void load_img_symbols();    // 악상 기호 이미지들 불러오기(존재하는것만)
-    void load_img_configs();    // 악상 기호 이미지설정값들 불러오기(없는건 생성)
+    void load_img_symbols();    // 악상 기호 이미지들 불러오기
+    void load_img_configs();    // 악상 기호 이미지설정값들 불러오기
     
     // 그리기
     cv::Mat draw();                                     // draw_list에 있는 내용들 그리기
@@ -201,6 +201,7 @@ private:
     void integrity_symbols();               // symbols 무결성 유지 함수
     void integrity_configs();               // configs 무결성 유지 함수
     void save_symbol_dataset_config();      // symbol_dataset_config 저장
+    void string_trim(std::string& str);     // 문자열 앞,뒤 공백 제거
     void string_to_lower(std::string& str); // 문자열 소문자로 변환
     void make_config(std::string symbol_name, std::string& symbol_config);  // config 값 생성
     std::vector<std::string> split(std::string s, std::string c);  // 문자열 분리

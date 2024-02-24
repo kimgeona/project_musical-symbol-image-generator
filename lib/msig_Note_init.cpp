@@ -4,7 +4,7 @@ namespace msig
 {
 
 
-// 악상 기호 이미지들을 불러오기(존재하는것만)
+// 악상 기호 이미지들을 불러오기
 void Note::load_img_symbols(){
     using namespace std;
     using namespace cv;
@@ -35,7 +35,7 @@ void Note::load_img_symbols(){
     }
 }
 
-// 악상 기호 이미지설정값들을 불러오기(없으면 생성)
+// 악상 기호 이미지설정값들을 불러오기
 void Note::load_img_configs(){
     using namespace std;
     using namespace cv;
@@ -65,12 +65,9 @@ void Note::load_img_configs(){
         string line;
         if (!getline(fin, line)) break;
         
-        // 케이지 리턴 문자 제거
-        if (line[line.length()-1]=='\r')
-            line = line.substr(0, line.length()-1);
-        
-        // 소문자로 변환
-        string_to_lower(line);
+        // 읽은 문자열 전처리
+        string_trim(line);      // 좌우 공백 제거
+        string_to_lower(line);  // 소문자로 변환
 
         // 정규표현식 생성
         string re_dir = "([a-zA-Z0-9_-]+)";

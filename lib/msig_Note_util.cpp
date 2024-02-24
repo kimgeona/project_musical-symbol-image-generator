@@ -114,6 +114,23 @@ void Note::save_symbol_dataset_config(){
     fout.close();
 }
 
+// 문자열 앞,뒤 공백 제거
+void Note::string_trim(std::string& str){
+    // 문자열이 비어있을경우 그냥 종료
+    if (str.empty()) return;
+    
+    // 왼쪽 공백 조사
+    int left = 0;
+    while (left < str.length() && std::isspace(str[left])) left++;
+    
+    // 오른쪽 공백 조사
+    int right = (int)str.length();
+    while (left < right && std::isspace(str[right-1])) right--;
+    
+    // 공백이 제거된 문자열 범위 추출
+    str = str.substr(left, right - left);
+}
+
 // 문자열 소문자로 변환
 void Note::string_to_lower(std::string& str){
     using namespace std;
