@@ -3,8 +3,8 @@
 #include <vector>
 #include <map>
 #include <cmath>
-#include <filesystem>           // 디렉토리 주소 생성
-#include <regex>                // 정규 표현식 라이브러리
+#include <filesystem>           // 디렉토리 주소 생성 관련
+#include <regex>                // 정규 표현식 관련
 #include <cctype>               // 소문자 변환
 #include <string>               // 스트링 변환
 #include <opencv2/opencv.hpp>
@@ -18,199 +18,213 @@ namespace msig
 
 class Note{
 private:
-    // 프로그램 저장 위치
-    std::string dataset_dir;
+    // dataset 저장 위치
+    std::string                 ds_dir;
     
-    // 생성할 이미지 크기
-    int width=256, height=512;
-    
-    // 저장 정보 : "폴더명", "이미지 이름"
-    std::vector<std::string> dirs = {
+    // dataset 저장 정보
+    std::vector<std::string>    ds_cons = {
         // 참고 : https://en.wikipedia.org/wiki/List_of_musical_symbols#Lines
         
         // line
-        "ln", "staff",            // 오선
-        "ln", "ledger",           // 오선 위 아래 추가적 선
-        "ln", "bar",              // 단일 바
-        "ln", "bar_double",       // 이중 바
-        "ln", "bar_double_bold",  // 이중 바(볼드)
-        "ln", "bar_dotted",       // 점선 바
+        "ln_staff",            // 오선
+        "ln_ledger",           // 오선 위 아래 추가적 선
+        "ln_bar",              // 단일 바
+        "ln_bar-double",       // 이중 바
+        "ln_bar-double-bold",  // 이중 바(볼드)
+        "ln_bar-dotted",       // 점선 바
         
         // clef
-        "cf", "g",              // 높은음자리표
-        "cf", "g_plus_8",       // 높은음자리표 +8 옥타브
-        "cf", "g_plus_15",      // 높은음자리표 +15 옥타브
-        "cf", "g_minus_8",      // 높은음자리표 -8 옥타브
-        "cf", "g_minus_15",     // 높은음자리표 -15 옥타브
-        "cf", "g_double",
-        "cf", "c_alto",
-        "cf", "c_tenor",
-        "cf", "f",
+        "cf_g",              // 높은음자리표
+        "cf_g-plus-8",       // 높은음자리표 +8 옥타브
+        "cf_g-plus-15",      // 높은음자리표 +15 옥타브
+        "cf_g-minus-8",      // 높은음자리표 -8 옥타브
+        "cf_g-minus-15",     // 높은음자리표 -15 옥타브
+        "cf_g-double",
+        "cf_c-alto",
+        "cf_c-tenor",
+        "cf_f",
         
         // note
-        "nt", "1",          // 온음표
-        "nt", "2",          // 2분음표
-        "nt", "4",          // 4분음표
-        "nt", "8",          // ...
-        "nt", "16",         //
-        "nt", "32",         //
-        "nt", "64",         //
-        "nt", "beam",       // 연속적인 꼬리
-        "nt", "ghost",      // 비트 음표(?)
+        "nt_1",          // 온음표
+        "nt_2",          // 2분음표
+        "nt_4",          // 4분음표
+        "nt_8",          // ...
+        "nt_16",         //
+        "nt_32",         //
+        "nt_64",         //
+        "nt_beam",       // 연속적인 꼬리
+        "nt_ghost",      // 비트 음표(?)
         
-        "nt", "head_2",     // 2분음표 머리
-        "nt", "head_4",     // 4분음표 머리
-        "nt", "tail_8",
-        "nt", "tail_16",
-        "nt", "tail_32",
-        "nt", "tail_64",
-        "nt", "dot",
+        "nt_head-2",     // 2분음표 머리
+        "nt_head-4",     // 4분음표 머리
+        "nt_tail-8",
+        "nt_tail-16",
+        "nt_tail-32",
+        "nt_tail-64",
+        "nt_dot",
 
         // rest
-        "rt", "1",
-        "rt", "2",
-        "rt", "4",
-        "rt", "8",
-        "rt", "16",
-        "rt", "32",
-        "rt", "64",
-        "rt", "measure_rest",
+        "rt_1",
+        "rt_2",
+        "rt_4",
+        "rt_8",
+        "rt_16",
+        "rt_32",
+        "rt_64",
+        "rt_measure-rest",
         
         // breaks
-        "br", "brath_mark",
-        "br", "caesura",
+        "br_brath-mark",
+        "br_caesura",
         
         // accidental-signatures
-        "as", "flat",
-        "as", "flat_double",
-        "as", "natural",
-        "as", "sharp",
-        "as", "sharp_double",
+        "as_flat",
+        "as_flat-double",
+        "as_natural",
+        "as_sharp",
+        "as_sharp-double",
         
         // key-signatures
-        "ks", "flat_1",
-        "ks", "flat_2",
-        "ks", "flat_3",
-        "ks", "flat_4",
-        "ks", "flat_5",
-        "ks", "flat_6",
-        "ks", "flat_7",
-        "ks", "sharp_1",
-        "ks", "sharp_2",
-        "ks", "sharp_3",
-        "ks", "sharp_4",
-        "ks", "sharp_5",
-        "ks", "sharp_6",
-        "ks", "sharp_7",
+        "ks_flat-1",
+        "ks_flat-2",
+        "ks_flat-3",
+        "ks_flat-4",
+        "ks_flat-5",
+        "ks_flat-6",
+        "ks_flat-7",
+        "ks_sharp-1",
+        "ks_sharp-2",
+        "ks_sharp-3",
+        "ks_sharp-4",
+        "ks_sharp-5",
+        "ks_sharp-6",
+        "ks_sharp-7",
         
         // time-signatures
-        "ts", "2",
-        "ts", "3",
-        "ts", "4",
-        "ts", "5",
-        "ts", "6",
-        "ts", "7",
-        "ts", "8",
-        "ts", "9",
-        "ts", "12",
-        "ts", "common",
-        "ts", "cut",
+        "ts_2",
+        "ts_3",
+        "ts_4",
+        "ts_5",
+        "ts_6",
+        "ts_7",
+        "ts_8",
+        "ts_9",
+        "ts_12",
+        "ts_common",
+        "ts_cut",
         
         // note-relationships
-        "nr", "tie",
-        "nr", "slur",
-        "nr", "glissando",
-        "nr", "tuplet",
-        "nr", "arpeggio",
+        "nr_tie",
+        "nr_slur",
+        "nr_glissando",
+        "nr_tuplet",
+        "nr_arpeggio",
         
         // dynamics
-        "dy", "pianississimo",
-        "dy", "pianissimo",
-        "dy", "piano",
-        "dy", "mezzo_piano",
-        "dy", "mezzo_forte",
-        "dy", "forte",
-        "dy", "fortissimo",
-        "dy", "fortississimo",
-        "dy", "sforzando",
-        "dy", "fortepiano",
-        "dy", "crescendo",
-        "dy", "decrescendo",
+        "dy_pianississimo",
+        "dy_pianissimo",
+        "dy_piano",
+        "dy_mezzo-piano",
+        "dy_mezzo-forte",
+        "dy_forte",
+        "dy_fortissimo",
+        "dy_fortississimo",
+        "dy_sforzando",
+        "dy_fortepiano",
+        "dy_crescendo",
+        "dy_decrescendo",
         
         // articulation-marks
-        "am", "staccato",
-        "am", "staccatissimo",
-        "am", "tenuto",
-        "am", "fermata",
-        "am", "accent",
-        "am", "marcato",
+        "am_staccato",
+        "am_staccatissimo",
+        "am_tenuto",
+        "am_fermata",
+        "am_accent",
+        "am_marcato",
         
         // ornaments
-        "or", "tremolo_8",
-        "or", "tremolo_16",
-        "or", "tremolo_32",
-        "or", "tremolo_64",
-        "or", "tril",
-        "or", "tril_plus",
-        "or", "mordent_upper",
-        "or", "mordent_lower",
-        "or", "turn",
-        "or", "turn_inverted",
-        "or", "turn_slash",
-        "or", "appoggiatura",
-        "or", "acciaccatura",
+        "or_tremolo-8",
+        "or_tremolo-16",
+        "or_tremolo-32",
+        "or_tremolo-64",
+        "or_tril",
+        "or_tril-plus",
+        "or_mordent-upper",
+        "or_mordent-lower",
+        "or_turn",
+        "or_turn-inverted",
+        "or_turn-slash",
+        "or_appoggiatura",
+        "or_acciaccatura",
         
         // octave-signs
-        "os", "8_up",
-        "os", "8_down",
-        "os", "15_up",
-        "os", "15_down",
+        "os_8-up",
+        "os_8-down",
+        "os_15-up",
+        "os_15-down",
         
         // repetitions
-        "rp", "repeat_start",
-        "rp", "repeat_end",
-        "rp", "simile_start",
-        "rp", "simile_end",
-        "rp", "volta_1",
-        "rp", "volta_2",
-        "rp", "da-capo",
-        "rp", "dal-segno",
-        "rp", "segno",
-        "rp", "coda",
+        "rp_repeat-start",
+        "rp_repeat-end",
+        "rp_simile-start",
+        "rp_simile-end",
+        "rp_volta-1",
+        "rp_volta-2",
+        "rp_da-capo",
+        "rp_dal-segno",
+        "rp_segno",
+        "rp_coda",
     };
     
-    // note 데이터
-    std::map<std::string, cv::Mat>      imgs;           // 불러온 이미지들
-    std::map<std::string, std::string>  imgs_config;    // 불러온 이미지 조정 값
+    // 이미지 크기
+    int img_w=256;
+    int img_h=512;
+    
+    // 이미지 데이터
+    std::map<std::string, cv::Mat>      img_symbols;    // 악상기호 이미지들
+    std::map<std::string, std::string>  img_configs;    // 악상기호 이미지 조정 값
     std::map<std::string, std::string>  draw_list;      // 그릴 내용들
     
     // 초기화
-    void load_imgs();
-    void load_imgs_config();
+    void load_img_symbols();    // 악상 기호 이미지들 불러오기(존재하는것만)
+    void load_img_configs();    // 악상 기호 이미지설정값들 불러오기(없는건 생성)
     
-    // 기타
-    std::string make_config(std::string symbol_name);
-    cv::Mat combine_mat(const cv::Mat& img, int x, int y, const cv::Mat& img_sub);
-    cv::Mat rotate_mat(const cv::Mat& img, double degree, int center_x, int center_y);
-    cv::Mat scale_mat(const cv::Mat& img, double scale);
+    // 그리기
+    cv::Mat draw();                                     // draw_list에 있는 내용들 그리기
+    cv::Mat draw_symbols(const cv::Mat& img,
+                         const cv::Mat& img_symbol,
+                         std::string img_config,
+                         bool auxiliary_line=false);    // 악상 기호 그리기
     
-    // 악보 그리기
-    cv::Mat draw();
+    // 유틸리티
+    void restore_image(std::string dir);    // 이미지 재생성
+    void integrity_symbols();               // symbols 무결성 유지 함수
+    void integrity_configs();               // configs 무결성 유지 함수
+    void save_symbol_dataset_config();      // symbol_dataset_config 저장
+    void string_to_lower(std::string& str); // 문자열 소문자로 변환
+    void make_config(std::string symbol_name, std::string& symbol_config);  // config 값 생성
+    std::vector<std::string> split(std::string s, std::string c);  // 문자열 분리
+    
+    // 행렬 연산
+    cv::Mat attach_mat(const cv::Mat& img, const cv::Mat& img_sub, int x, int y);   // 행렬 합성
+    cv::Mat rotate_mat(const cv::Mat& img, double degree, int x, int y);            // 행렬 회전
+    cv::Mat scale_mat(const cv::Mat& img, double scale);                            // 행렬 확대
     
 public:
     // 생성자
     Note(std::string dataset_dir="symbol_dataset"){
         // symbol dataset 디렉토리 설정
-        this->dataset_dir = dataset_dir;
-        // 초기화
-        load_imgs();
-        load_imgs_config();
+        ds_dir = dataset_dir;
+        
+        // 초기화 단계
+        load_img_symbols();
+        load_img_configs();
     }
     
-    // 그리기 내용 추가
+    // 사용 : 그릴 음표 추가
     void add(std::string key, std::string config_symmetry="", std::string config_progress="");
     
-    // 악보 이미지 생성 함수
+    // 사용 : 그림 확인
     void save_as_img(std::string file_name);    // 그린 내용을 file_name 이름으로 저장
     void show();                                // 그린 내용을 화면에 보여주기
     cv::Mat cv_Mat();                           // 그린 내용을 cv::Mat() 형식으로 반환

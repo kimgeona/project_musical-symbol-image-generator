@@ -14,6 +14,7 @@ void Note::save_as_img(std::string file_name){
     // 이미지 저장
     imwrite(file_name, image);
 }
+
 void Note::show(){
     using namespace std;
     using namespace cv;
@@ -34,6 +35,7 @@ void Note::show(){
         // key에 대한 작업 필요시 switch문 활용
     }
 }
+
 cv::Mat Note::cv_Mat(){
     using namespace std;
     using namespace cv;

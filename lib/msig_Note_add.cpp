@@ -12,7 +12,7 @@ void Note::add(std::string key, std::string config_symmetry, std::string config_
     string additional_config = "";
     
     // key 존재 확인
-    if (imgs.find(key)==imgs.end()){
+    if (img_symbols.find(key)==img_symbols.end()){
         cout << "msig: ";
         cout << __FUNCTION__ << "("+key+") : ";
         cout << "("+key+") is not exist.";
@@ -31,7 +31,7 @@ void Note::add(std::string key, std::string config_symmetry, std::string config_
     else additional_config.append("_false_false");
     
     // key-value 저장
-    draw_list[key] = imgs_config[key] + additional_config;
+    draw_list[key] = img_configs[key] + additional_config;
 }
 
 
