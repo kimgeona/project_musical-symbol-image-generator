@@ -86,13 +86,6 @@ void Note::load_img_configs(){
         img_configs[symbol_name] = symbol_config;
     }
     fin.close();
-    
-    // 무결성 유지
-    integrity_symbols();
-    integrity_configs();
-    
-    // config 정보 저장
-    save_symbol_dataset_config();
 }
 
 

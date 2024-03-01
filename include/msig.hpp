@@ -220,6 +220,13 @@ public:
         // 초기화 단계
         load_img_symbols();
         load_img_configs();
+        
+        // 무결성 유지
+        integrity_symbols();
+        integrity_configs();
+        
+        // config 정보 저장
+        save_symbol_dataset_config();
     }
     
     // 사용 : 그릴 음표 추가
