@@ -21,6 +21,25 @@ void Note::restore_image(std::string dir){
     imwrite(dir, img);
 }
 
+// 이미지 패딩 제거
+void Note::remove_padding(std::string dir){
+    using namespace std;
+    using namespace cv;
+    
+    // 이미지 존재 여부 확인
+    if (!exists(path(dir))) return;
+    
+    // 이미지 읽기
+    Mat img = imread(dir, IMREAD_GRAYSCALE);
+    CV_Assert(img.data);
+    
+    // img의 여백을 제외한 부분을 참조하여 새로 이미지를 생성하고 이를 저장하면 됨.
+    // 행렬 헤더와 .clone() 개념을 이용할것.
+    
+    // 이미지 저장
+    //imwrite(dir, new_img);
+}
+
 // symbols 무결성 유지
 void Note::integrity_symbols(){
     using namespace std;

@@ -23,6 +23,9 @@ void Note::load_img_symbols(){
         // 이미지 재생성(이상한 형식의 이미지 제대로 저장)
         restore_image(img_dir);
         
+        // 이미지 여백 제거
+        remove_padding(img_dir);
+        
         // 이미지 존재 여부 확인
         if (!exists(path(img_dir))) continue;
         

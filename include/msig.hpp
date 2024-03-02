@@ -198,6 +198,7 @@ private:
     
     // 유틸리티
     void restore_image(std::string dir);    // 이미지 재생성
+    void remove_padding(std::string dir);   // 이미지 여백 제거
     void integrity_symbols();               // symbols 무결성 유지 함수
     void integrity_configs();               // configs 무결성 유지 함수
     void save_symbol_dataset_config();      // symbol_dataset_config 저장
