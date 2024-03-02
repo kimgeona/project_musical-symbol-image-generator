@@ -154,17 +154,21 @@ cv::Mat Note::symmetry_mat(const cv::Mat& img, std::string symmetry){
     using namespace std;
     using namespace cv;
     
-    // 이미지 준비
+    // 이미지 복사
     Mat img1 = img.clone();
     
     // 소문자로 변환
-    string_to_lower(symmetry);
+    transform(symmetry.begin(), symmetry.end(), symmetry.begin(), ::tolower);
     
     // 문자열 symmetry에 'x' 문자 존재 확인하고 있으면 x축 대칭 수행
+    if (symmetry.find('x') != string::npos) { flip(img1, img1, 0);}
+    
     // 문자열 symmetry에 'y' 문자 존재 확인하고 있으면 y축 대칭 수행
+    if (symmetry.find('y') != string::npos) {flip(img1, img1, 1);}
     
     // 완성된 이미지 리턴
     return img1;
 }
+
 
 }
