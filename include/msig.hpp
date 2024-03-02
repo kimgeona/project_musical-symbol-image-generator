@@ -143,6 +143,7 @@ private:
         "am_fermata",
         "am_accent",
         "am_marcato",
+        "am_portato",
         
         // ornaments
         "or_tremolo-8",
