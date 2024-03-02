@@ -25,6 +25,7 @@ void Note::restore_image(std::string dir){
 void Note::remove_padding(std::string dir){
     using namespace std;
     using namespace cv;
+    using namespace std::filesystem;
     
     // 이미지 존재 여부 확인
     if (!exists(path(dir))) return;

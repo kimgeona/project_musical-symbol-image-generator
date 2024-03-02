@@ -150,7 +150,7 @@ cv::Mat Note::scale_mat(const cv::Mat& img, double scale){
 }
 
 // 행렬 대칭
-cv::Mat Note::symmetry_mat(const cv::Mat& img, string symmetry){
+cv::Mat Note::symmetry_mat(const cv::Mat& img, std::string symmetry){
     using namespace std;
     using namespace cv;
     

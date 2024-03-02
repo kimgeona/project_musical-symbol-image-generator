@@ -214,7 +214,7 @@ private:
     cv::Mat attach_mat(const cv::Mat& img, const cv::Mat& img_sub, int x, int y);   // 행렬 합성
     cv::Mat rotate_mat(const cv::Mat& img, double degree, int x, int y);            // 행렬 회전
     cv::Mat scale_mat(const cv::Mat& img, double scale);                            // 행렬 확대
-    cv::Mat symmetry_mat(const cv::Mat& img, string symmetry);                      // 행렬 대칭
+    cv::Mat symmetry_mat(const cv::Mat& img, std::string symmetry);                 // 행렬 대칭
     
 public:
     // 생성자
@@ -234,8 +234,14 @@ public:
         save_symbol_dataset_config();
     }
     
-    // 사용 : 그릴 음표 추가
-    void add(std::string key, std::string config_symmetry="", std::string config_progress="");
+    // 사용 : 그릴 음표 설정
+    void set(std::string note,
+             std::string relationship="",
+             std::string dynamic="",
+             std::string articulations_mark="",
+             std::string ornament="",
+             std::string octavesign="",
+             std::string kegetition_and_codas="");
     
     // 사용 : 그림 확인
     void save_as_img(std::string file_name);    // 그린 내용을 file_name 이름으로 저장

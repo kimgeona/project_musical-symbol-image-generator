@@ -12,10 +12,8 @@ int main(){
     // create Note
     Note n = Note();
     
-    // add
-    n.add("ln_staff");   // 오선지
-    n.add("nt_4");       // 4분음표
-    n.add("nt_dot");     // 점 표시
+    // set
+    n.set("a4_#_8");
     
     // save as image
     n.save_as_img("test.png");
