@@ -115,7 +115,9 @@ private:
         
         // note-relationships
         "nr_tie",
-        "nr_slur",
+        "nr_slur-end",
+        "nr_slur-middle",
+        "nr_slur-start",
         "nr_glissando",
         "nr_tuplet",
         "nr_arpeggio",
