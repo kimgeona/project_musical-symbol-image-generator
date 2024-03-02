@@ -48,6 +48,7 @@ void Note::set(std::string note,
                                                         // 선(ledger)
     
     
+    
     // 상호관계 파악하여 전체적으로 "x_y_각도_확대축소_대칭" 수정 후 draw_list에 추가
     draw_list["nt_8"] = img_configs["nt_8"]; // 확인을 위한 임시 코드
 }
