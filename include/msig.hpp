@@ -211,6 +211,7 @@ private:
     cv::Mat attach_mat(const cv::Mat& img, const cv::Mat& img_sub, int x, int y);   // 행렬 합성
     cv::Mat rotate_mat(const cv::Mat& img, double degree, int x, int y);            // 행렬 회전
     cv::Mat scale_mat(const cv::Mat& img, double scale);                            // 행렬 확대
+    cv::Mat symmetry_mat(const cv::Mat& img, string symmetry);                      // 행렬 대칭
     
 public:
     // 생성자

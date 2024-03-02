@@ -149,5 +149,22 @@ cv::Mat Note::scale_mat(const cv::Mat& img, double scale){
     return img1;
 }
 
+// 행렬 대칭
+cv::Mat Note::symmetry_mat(const cv::Mat& img, string symmetry){
+    using namespace std;
+    using namespace cv;
+    
+    // 이미지 준비
+    Mat img1 = img.clone();
+    
+    // 소문자로 변환
+    string_to_lower(symmetry);
+    
+    // 문자열 symmetry에 'x' 문자 존재 확인하고 있으면 x축 대칭 수행
+    // 문자열 symmetry에 'y' 문자 존재 확인하고 있으면 y축 대칭 수행
+    
+    // 완성된 이미지 리턴
+    return img1;
+}
 
 }
