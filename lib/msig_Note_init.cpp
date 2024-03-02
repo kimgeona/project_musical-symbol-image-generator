@@ -24,7 +24,7 @@ void Note::load_img_symbols(){
         restore_image(img_dir);
         
         // 이미지 여백 제거
-        remove_padding(img_dir);
+        //remove_padding(img_dir);
         
         // 이미지 존재 여부 확인
         if (!exists(path(img_dir))) continue;
