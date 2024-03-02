@@ -20,8 +20,7 @@ void Note::restore_image(std::string dir){
     // 이미지 저장
     imwrite(dir, img);
 }
-
-// 이미지 패딩 제거
+//이미지 패딩 제거
 void Note::remove_padding(std::string dir){
     using namespace std;
     using namespace cv;
@@ -33,13 +32,43 @@ void Note::remove_padding(std::string dir){
     // 이미지 읽기
     Mat img = imread(dir, IMREAD_GRAYSCALE);
     CV_Assert(img.data);
-    
-    // img의 여백을 제외한 부분을 참조하여 새로 이미지를 생성하고 이를 저장하면 됨.
-    // 행렬 헤더와 .clone() 개념을 이용할것.
-    
+
+    // 흰색 픽셀을 0으로, 다른 색상의 픽셀을 1로 설정
+    Mat non_white_img = img < 255;
+
+    // 행과 열의 범위를 찾기 위한 변수
+    int row_start = -1, row_end = -1, col_start = -1, col_end = -1;
+
+    // 행의 범위를 찾기
+    for (int i = 0; i < non_white_img.rows; i++) {
+        if (row_start < 0 && countNonZero(non_white_img.row(i)) > 0) {
+            row_start = i;
+        }
+        if (row_start >= 0 && countNonZero(non_white_img.row(i)) > 0) {
+            row_end = i;
+        }
+    }
+
+    // 열의 범위를 찾기
+    for (int i = 0; i < non_white_img.cols; i++) {
+        if (col_start < 0 && countNonZero(non_white_img.col(i)) > 0) {
+            col_start = i;
+        }
+        if (col_start >= 0 && countNonZero(non_white_img.col(i)) > 0) {
+            col_end = i;
+        }
+    }
+
+
+    // 범위를 제한하여 이미지를 잘라냄
+    Rect roi(col_start, row_start, col_end - col_start, row_end - row_start);
+    Mat new_img = img(roi).clone();
+
     // 이미지 저장
-    //imwrite(dir, new_img);
+    imwrite(dir, new_img);
 }
+
+
 
 // symbols 무결성 유지
 void Note::integrity_symbols(){
