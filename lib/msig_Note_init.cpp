@@ -72,11 +72,12 @@ void Note::load_img_configs(){
         string_trim(line);      // 좌우 공백 제거
         string_to_lower(line);  // 소문자로 변환
 
-        // 정규표현식 생성
+        // 정규표현식 생성 : "x_y_각도_확대축소_대칭"
         string re_dir = "([a-zA-Z0-9_-]+)";
         string re_i = "([-+]?[0-9]+)";
         string re_d = "([-+]?([0-9]+.[0-9]*|[0-9]*.[0-9]+))";
-        regex reg("^"+re_dir+"="+re_i+"_"+re_i+"_"+re_d+"_"+re_d+"$");
+        string re_xy = "(false|[xXyY]+)";
+        regex reg("^"+re_dir+"="+re_i+"_"+re_i+"_"+re_d+"_"+re_d+"_"+re_xy+"$");
         
         // 정규표현식 검사
         if (!regex_match(line, reg)) continue;

@@ -199,7 +199,7 @@ void Note::make_config(std::string symbol_name, std::string& symbol_config){
         // 폅집할 이미지들
         Mat img(img_h, img_w, CV_8UC1, Scalar(255));
         Mat img_symbol = img_symbols[symbol_name].clone();
-        string img_config = to_string(x-img_w/2)+"_"+to_string(y-img_h/2)+"_"+to_string(degree)+"_"+to_string(scale);
+        string img_config = to_string(x-img_w/2)+"_"+to_string(y-img_h/2)+"_"+to_string(degree)+"_"+to_string(scale)+"_false";
         
         // 이미지 편집
         img = draw_symbols(img, img_symbol, img_config, true);
@@ -252,7 +252,7 @@ void Note::make_config(std::string symbol_name, std::string& symbol_config){
     destroyWindow(symbol_name);
     
     // config 값 저장
-    symbol_config = to_string(x-img_w/2)+"_"+to_string(y-img_h/2)+"_"+to_string(degree)+"_"+to_string(scale);
+    symbol_config = to_string(x-img_w/2)+"_"+to_string(y-img_h/2)+"_"+to_string(degree)+"_"+to_string(scale)+"_false";
 }
 
 

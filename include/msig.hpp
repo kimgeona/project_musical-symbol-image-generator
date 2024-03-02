@@ -180,6 +180,9 @@ private:
     int img_w=256;
     int img_h=512;
     
+    // 오선지 간격
+    int pad = 25;
+    
     // 이미지 데이터
     std::map<std::string, cv::Mat>      img_symbols;    // 악상기호 이미지들
     std::map<std::string, std::string>  img_configs;    // 악상기호 이미지 조정 값
