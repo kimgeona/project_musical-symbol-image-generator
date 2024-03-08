@@ -1,95 +1,93 @@
 #include <msig.hpp>
-//으어어어어 복잡해
+
 namespace msig
 {
 
 
-// 악상 기호 이미지들을 불러오기
-void Note::load_img_symbols(){
+// 데이터셋 불러오기
+void Note::load_ds(){
     using namespace std;
     using namespace cv;
     using namespace std::filesystem;
     
-    // 
-    path d1(ds_dir);
+    // 1. dir_ds/complete에 있는 모든 .png 파일 경로 조사
+    path p_complete = path(dir_ds) / path("complete");
+    for (const auto& p : recursive_directory_iterator(p_complete)){
+        if (is_regular_file(p.path()) && p.path().extension() == ".png")
+            ds_list.push_back(p.path().string());
+    }
     
-    for (auto symbol_name : ds_cons){
-        // 이미지 경로 생성
-        path d2(symbol_name.substr(0, symbol_name.find("_")));
-        path d3(symbol_name.substr(symbol_name.find("_")+1, symbol_name.length()) + ".png");
-        path d = d1 / d2 / d3;
-        string img_dir = d.string();
+    // 2. 절대경로를 기반으로 완성형(독립형, 종속성), 조합형 확인하여 MusicalSymbol 생성, ds에 저장
+    for (const auto& dir : ds_list){
+        restore_image(dir);     // 이미지 재생성(이상한 형식의 이미지 제대로 저장)
+        //remove_padding(dir);    // 이미지 여백 제거
         
-        // 이미지 재생성(이상한 형식의 이미지 제대로 저장)
-        restore_image(img_dir);
+        Mat img = imread(dir);                      // 이미지 불러오기
+        CV_Assert(img.data);
+        vector<string> configs = get_config(dir);   // config 불러오기
         
-        // 이미지 여백 제거
-        //remove_padding(img_dir);
+        MusicalSymbol ms;
+        ms.dir              = dir;                      // 저장 위치
+        ms.list_add         = vector<string>();         // 의존성 추가 위치
+        ms.list_delete      = vector<string>();         // 의존성 제거 위치
+        ms.name             = get_name(dir);            // 악상 기호 이름
+        ms.img              = img.clone();              // 악상 기호 이미지
         
-        // 이미지 존재 여부 확인
-        if (!exists(path(img_dir))) continue;
-        
-        // 이미지 불러오기
-        Mat img = imread(img_dir, IMREAD_GRAYSCALE);
-        if (img.data){
-            img_symbols[symbol_name] = img.clone();
-            img.release();
+        if (configs.empty()){
+            string new_config = make_config(ms.dir);
+            if (new_config=="") continue;
+            configs = my_split(new_config, "_");
         }
+        ms.x                = stoi(configs[0]);
+        ms.y                = stoi(configs[1]);
+        ms.scale            = stoi(configs[2]);
+        ms.rotate           = stoi(configs[3]);
+        
+        ds.push_back(ms);   // ds에 저장
+        save_config();      // config 업데이트
     }
 }
-
-// 악상 기호 이미지설정값들을 불러오기
-void Note::load_img_configs(){
+void Note::load_ds_piece(){
     using namespace std;
     using namespace cv;
     using namespace std::filesystem;
     
-    // symbol_dataset_config.txt 주소 생성
-    path d = path(ds_dir) / path("symbol_dataset_config.txt");
-    string config_dir = d.string();
-    
-    // symbol_dataset_config.txt 파일 생성
-    if (!exists(d)){
-        fstream(config_dir, ios::out|ios::app).close();
+    // 1. dir_ds/complete에 있는 모든 .png 파일 경로 조사
+    path p_piece = path(dir_ds) / path("piece");
+    for (const auto& p : recursive_directory_iterator(p_piece)){
+        if (is_regular_file(p.path()) && p.path().extension() == ".png")
+            ds_piece_list.push_back(p.path().string());
     }
     
-    // symbol_dataset_config.txt 파일 열기
-    fstream fin(config_dir, ios::in);
-    if (!fin){
-        cout << "msig: ";
-        cout << "can't open " << config_dir << " for reading.";
-        cout << endl;
-        exit(1);
+    // 2. MusicalSymbol 생성, ds_piece에 저장
+    for (const auto& dir : ds_piece_list){
+        restore_image(dir);     // 이미지 재생성(이상한 형식의 이미지 제대로 저장)
+        //remove_padding(dir);    // 이미지 여백 제거
+        
+        Mat img = imread(dir);                      // 이미지 불러오기
+        CV_Assert(img.data);
+        vector<string> configs = get_config(dir);   // config 불러오기
+        
+        MusicalSymbol ms;
+        ms.dir              = dir;                      // 저장 위치
+        ms.list_add         = vector<string>();         // 의존성 추가 위치
+        ms.list_delete      = vector<string>();         // 의존성 제거 위치
+        ms.name             = get_name(dir);            // 악상 기호 이름
+        ms.img              = img.clone();              // 악상 기호 이미지
+        
+        if (configs.empty()){
+            string new_config = make_config(ms.dir);
+            if (new_config=="") continue;
+            configs = my_split(new_config, "_");
+        }
+        ms.x                = stoi(configs[0]);
+        ms.y                = stoi(configs[1]);
+        ms.scale            = stoi(configs[2]);
+        ms.rotate           = stoi(configs[3]);
+        
+        ds_piece.push_back(ms);     // ds_piece에 저장
+        save_config();              // config 업데이트
     }
-    
-    // config 정보 읽기
-    while (true) {
-        // 파일 읽기
-        string line;
-        if (!getline(fin, line)) break;
-        
-        // 읽은 문자열 전처리
-        string_trim(line);      // 좌우 공백 제거
-        string_to_lower(line);  // 소문자로 변환
-
-        // 정규표현식 생성 : "x_y_각도_확대축소_대칭"
-        string re_dir = "([a-zA-Z0-9_-]+)";
-        string re_i = "([-+]?[0-9]+)";
-        string re_d = "([-+]?([0-9]+.[0-9]*|[0-9]*.[0-9]+))";
-        string re_xy = "(false|[xXyY]+)";
-        regex reg("^"+re_dir+"="+re_i+"_"+re_i+"_"+re_d+"_"+re_d+"_"+re_xy+"$");
-        
-        // 정규표현식 검사
-        if (!regex_match(line, reg)) continue;
-        
-        // symbol_name 과 symbol_config 구하기
-        string symbol_name = line.substr(0, line.find("="));
-        string symbol_config = line.substr(line.find("=")+1, line.length());
-        
-        // img_configs에 저장
-        img_configs[symbol_name] = symbol_config;
-    }
-    fin.close();
 }
 
 
