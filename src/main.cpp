@@ -10,16 +10,16 @@ int main(){
     cout << "Making Muscial-Symbols Dataset" << endl;
     
     // create Note
-    Note n = Note();
+    Note n = Note("new-symbol-dataset");
     
     // set
-    n.set("a4_#_8");
+    n.set("line", "staff-0-0");
     
     // save as image
-    n.save_as_img("test.png");
+    //n.save_as_img("test.png");
     
     // show Note
-    n.show();
+    //n.show();
     
     // return none error
     destroyAllWindows();
