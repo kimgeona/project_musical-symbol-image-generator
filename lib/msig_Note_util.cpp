@@ -4,13 +4,36 @@ namespace msig
 {
 
 
-// 의존성 추가 위치 알아내기
-std::vector<std::string>    Note::get_list_add(std::string dir){
-    return std::vector<std::string>();
-}
-// 의존성 제거 위치 알아내기
-std::vector<std::string>    Note::get_list_delete(std::string dir){
-    return std::vector<std::string>();
+// 의존성 위치 알아내기
+std::vector<std::string>    Note::get_dependent(std::string dir){
+    using namespace std;
+    using namespace cv;
+    using namespace std::filesystem;
+    
+    vector<string>  list_folder;
+    path            p(dir);
+    
+    // dir 이 파일이 아니면 비어있는 벡터 반환
+    if (!is_regular_file(p)) return list_folder;
+    
+    p = p.parent_path();
+    
+    // @ 디렉토리인 경우 : 자신을 제외한 나머지
+    if (p.filename().string().find("@")!=-1){
+        path pp = p.parent_path();
+        
+        for (auto& d : directory_iterator(pp)){
+            if (d.path().string() == p.string()) continue;                         // 자신은 제외
+            if (is_directory(d.path())) list_folder.push_back(d.path().string());   // 나머지들은 추가
+        }
+    }
+    
+    // # 디렉토리인 경우 : 자기자신만
+    else if (p.filename().string().find("#")!=-1){
+        list_folder.push_back(p.string());
+    }
+    
+    return list_folder;
 }
 // 악상 기호 이름 알아내기
 std::string                 Note::get_name(std::string dir){
@@ -46,6 +69,19 @@ std::vector<std::string>    Note::get_config(std::string line){
     return configs;
 }
 
+
+
+// 주소 트리 가지치기
+void Note::tree_pruning(std::vector<std::string>& ls1, std::string dir) {
+    using namespace std;
+    using namespace cv;
+
+    // 벡터를 순회하면서 해당 문자열을 포함하는 요소를 제거
+    ls1.erase(remove_if(ls1.begin(),
+                        ls1.end(),
+                        [&](const std::string& d) { return d.find(dir) != std::string::npos; }),
+              ls1.end());
+}
 
 
 // 이미지 재생성
@@ -113,6 +149,7 @@ void Note::remove_padding(std::string dir){
 }
 
 
+
 // 문자열 분리
 std::vector<std::string>    Note::my_split(std::string s1, std::string s2){
     using namespace std;
@@ -167,6 +204,7 @@ std::string                 Note::my_lower(std::string s1){
             s1_copy[i] += 32;
     return s1_copy;
 }
+
 
 
 // grep 명령어 구현

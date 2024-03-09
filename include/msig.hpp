@@ -43,8 +43,7 @@ class MusicalSymbol {
 public:
     // 악상 기호 정보
     std::string                 dir;            // 저장 위치
-    std::vector<std::string>    list_add;       // 의존성 추가 위치
-    std::vector<std::string>    list_delete;    // 의존성 제거 위치
+    std::vector<std::string>    dir_dependent;  // 의존성 위치
     std::string                 name;           // 악상 기호 이름
     cv::Mat                     img;            // 악상 기호 이미지
     
@@ -62,29 +61,27 @@ public:
     
     // 복사 생성자 (깊은 복사)
     MusicalSymbol(const MusicalSymbol& other) {
-        dir         = other.dir;
-        list_add    = other.list_add;
-        list_delete = other.list_delete;
-        name        = other.name;
-        img         = other.img.clone();
-        x           = other.x;
-        y           = other.y;
-        scale       = other.scale;
-        rotate      = other.rotate;
+        dir             = other.dir;
+        dir_dependent   = other.dir_dependent;
+        name            = other.name;
+        img             = other.img.clone();
+        x               = other.x;
+        y               = other.y;
+        scale           = other.scale;
+        rotate          = other.rotate;
     }
     
     // 복사 대입 연산자 (깊은 복사)
     MusicalSymbol& operator=(const MusicalSymbol& other) {
         if (this != &other) {
-            dir         = other.dir;
-            list_add    = other.list_add;
-            list_delete = other.list_delete;
-            name        = other.name;
-            img         = other.img.clone();
-            x           = other.x;
-            y           = other.y;
-            scale       = other.scale;
-            rotate      = other.rotate;
+            dir             = other.dir;
+            dir_dependent   = other.dir_dependent;
+            name            = other.name;
+            img             = other.img.clone();
+            x               = other.x;
+            y               = other.y;
+            scale           = other.scale;
+            rotate          = other.rotate;
         }
         return *this;
     }
@@ -120,10 +117,12 @@ class Note
     void load_ds_piece();
     
     // 유틸리티 : 계산
-    std::vector<std::string>    get_list_add(std::string dir);      // 의존성 추가 위치 알아내기
-    std::vector<std::string>    get_list_delete(std::string dir);   // 의존성 제거 위치 알아내기
+    std::vector<std::string>    get_dependent(std::string dir);     // 의존성 위치 알아내기
     std::string                 get_name(std::string dir);          // 악상 기호 이름 알아내기
     std::vector<std::string>    get_config(std::string line);       // config 정보 가져오기
+    
+    // 유틸리티 : 계산
+    void tree_pruning(std::vector<std::string>& ls1, std::string dir);       // 주소 트리 가지치기
     
     // 유틸리티 : 이미지
     void restore_image(std::string dir);    // 이미지 재생성
@@ -146,7 +145,7 @@ class Note
     std::string make_config(std::string dir);                   // config 값 생성
     
     // 유틸리티 : 백업
-    void save_config();                                  // config 값 저장(업데이트)
+    void save_config();                                         // config 값 저장(업데이트)
     
     // 행렬 연산
     cv::Mat attach_mat(const cv::Mat& img, const cv::Mat& img_sub, int x, int y);   // 행렬 합성

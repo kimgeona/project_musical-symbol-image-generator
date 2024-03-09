@@ -28,8 +28,7 @@ void Note::load_ds(){
         
         MusicalSymbol ms;
         ms.dir              = dir;                      // 저장 위치
-        ms.list_add         = vector<string>();         // 의존성 추가 위치
-        ms.list_delete      = vector<string>();         // 의존성 제거 위치
+        ms.dir_dependent    = get_dependent(dir);       // 의존성 위치
         ms.name             = get_name(dir);            // 악상 기호 이름
         ms.img              = img.clone();              // 악상 기호 이미지
         
@@ -70,8 +69,7 @@ void Note::load_ds_piece(){
         
         MusicalSymbol ms;
         ms.dir              = dir;                      // 저장 위치
-        ms.list_add         = vector<string>();         // 의존성 추가 위치
-        ms.list_delete      = vector<string>();         // 의존성 제거 위치
+        ms.dir_dependent    = vector<string>();         // 의존성 위치
         ms.name             = get_name(dir);            // 악상 기호 이름
         ms.img              = img.clone();              // 악상 기호 이미지
         
