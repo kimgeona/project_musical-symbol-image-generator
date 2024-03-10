@@ -11,25 +11,25 @@ std::vector<std::string>    Note::get_dependent(std::string dir){
     using namespace std::filesystem;
     
     vector<string>  list_folder;
-    path            p(dir);
+    path            p = path(dir).parent_path();
     
-    // dir 이 파일이 아니면 비어있는 벡터 반환
-    if (!is_regular_file(p)) return list_folder;
-    
-    p = p.parent_path();
-    
-    // @ 디렉토리인 경우 : 자신을 제외한 나머지
+    // @ 디렉토리인 경우 : 전부
     if (p.filename().string().find("@")!=-1){
-        path pp = p.parent_path();
-        
-        for (auto& d : directory_iterator(pp)){
-            if (d.path().string() == p.string()) continue;                         // 자신은 제외
-            if (is_directory(d.path())) list_folder.push_back(d.path().string());   // 나머지들은 추가
+        // dir 내에 있는 파일들
+        for (auto& f : directory_iterator(p)){
+            if (is_regular_file(f.path()) && f.path().extension()==".png")
+                list_folder.push_back(f.path().string());
+        }
+        // 같은 레벨에 있는 파일들
+        for (auto& d : directory_iterator(p.parent_path())){
+            if (d.path().string() == p.string()) continue;
+            if (is_directory(d.path())) list_folder.push_back(d.path().string());
         }
     }
     
     // # 디렉토리인 경우 : 자기자신만
     else if (p.filename().string().find("#")!=-1){
+        // dir 내에 있는 파일들 + 하위 디렉토리들도
         list_folder.push_back(p.string());
     }
     
@@ -68,20 +68,31 @@ std::vector<std::string>    Note::get_config(std::string line){
     
     return configs;
 }
+// 선택 가능한 악상기호 구하기
+std::vector<MusicalSymbol>  Note::get_selectable(const std::vector<MusicalSymbol>& ls_ms_1,
+                                                 const std::vector<MusicalSymbol>& ls_ms_2) {
+    using namespace std;
+    using namespace cv;
+    using namespace std::filesystem;
+    
+    return std::vector<MusicalSymbol>();
+}
 
 
 
-// 주소 트리 가지치기
-void Note::tree_pruning(std::vector<std::string>& ls1, std::string dir) {
+// 가지치기
+void Note::do_pruning(std::vector<MusicalSymbol>& ls_ms_1, MusicalSymbol& ms) {
+    
+}
+// 가지치기
+void Note::do_pruning(std::vector<std::string>& ls1, std::string dir) {
     using namespace std;
     using namespace cv;
 
     // 벡터를 순회하면서 해당 문자열을 포함하는 요소를 제거
-    ls1.erase(remove_if(ls1.begin(),
-                        ls1.end(),
-                        [&](const std::string& d) { return d.find(dir) != std::string::npos; }),
-              ls1.end());
+    ls1.erase(remove_if(ls1.begin(), ls1.end(), [&](const std::string& d) { return d.find(dir) != std::string::npos; }), ls1.end());
 }
+
 
 
 // 이미지 재생성

@@ -43,6 +43,7 @@ class MusicalSymbol {
 public:
     // 악상 기호 정보
     std::string                 dir;            // 저장 위치
+    std::string                 dir_simple;     // 저장 위치(간결)
     std::vector<std::string>    dir_dependent;  // 의존성 위치
     std::string                 name;           // 악상 기호 이름
     cv::Mat                     img;            // 악상 기호 이미지
@@ -55,13 +56,21 @@ public:
     
     // 생성자
     MusicalSymbol() {
-        using namespace std;
-        using namespace cv;
+        dir             = "";
+        dir_simple      = "";
+        dir_dependent   = std::vector<std::string>();
+        name            = "";
+        img             = cv::Mat();
+        x               = 0;
+        y               = 0;
+        scale           = 0.0;
+        rotate          = 0.0;
     }
     
     // 복사 생성자 (깊은 복사)
     MusicalSymbol(const MusicalSymbol& other) {
         dir             = other.dir;
+        dir_simple      = other.dir_simple;
         dir_dependent   = other.dir_dependent;
         name            = other.name;
         img             = other.img.clone();
@@ -75,6 +84,7 @@ public:
     MusicalSymbol& operator=(const MusicalSymbol& other) {
         if (this != &other) {
             dir             = other.dir;
+            dir_simple      = other.dir_simple;
             dir_dependent   = other.dir_dependent;
             name            = other.name;
             img             = other.img.clone();
@@ -84,6 +94,12 @@ public:
             rotate          = other.rotate;
         }
         return *this;
+    }
+    
+    // == 연산자 함수
+    bool operator==(const MusicalSymbol& other) {
+        if (dir!="" && other.dir!="")   return dir == other.dir;
+        else                            return dir_simple == other.dir_simple;
     }
 };
 
@@ -106,7 +122,7 @@ class Note
     
     // 데이터셋 : 조합형
     std::vector<MusicalSymbol>  ds_piece;       // 불러온 데이터
-    std::vector<std::string>    ds_piece_list;  // 불러온 데이터
+    std::vector<std::string>    ds_piece_list;  // 불러온 데이터 목록(주소)
     
     // 그리기 목록
     std::vector<MusicalSymbol>  draw_list;      // 그릴 목록
@@ -120,9 +136,12 @@ class Note
     std::vector<std::string>    get_dependent(std::string dir);     // 의존성 위치 알아내기
     std::string                 get_name(std::string dir);          // 악상 기호 이름 알아내기
     std::vector<std::string>    get_config(std::string line);       // config 정보 가져오기
+    std::vector<MusicalSymbol>  get_selectable(const std::vector<MusicalSymbol>& ls_ms_1,
+                                               const std::vector<MusicalSymbol>& ls_ms_2); // 선택 가능한 악상기호 구하기
     
     // 유틸리티 : 계산
-    void tree_pruning(std::vector<std::string>& ls1, std::string dir);       // 주소 트리 가지치기
+    void do_pruning(std::vector<MusicalSymbol>& ls_ms_1, MusicalSymbol& ms);    // 가지치기
+    void do_pruning(std::vector<std::string>& ls1, std::string dir);            // 가지치기
     
     // 유틸리티 : 이미지
     void restore_image(std::string dir);    // 이미지 재생성
@@ -172,7 +191,6 @@ public:
         
         // config 파일, 주소 생성
         dir_ds_config = (path(dir_ds)/path("symbol_dataset_config.txt")).string();
-
         if (!exists(dir_ds_config)){
             fstream(dir_ds_config, ios::out|ios::app).close();
         }
