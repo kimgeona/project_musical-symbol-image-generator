@@ -40,7 +40,7 @@ cv::Mat mat_attach      (const cv::Mat& img, const cv::Mat& img_sub, int x, int 
         Mat roi2 = img2(r3, r4);
         
         // 흑백 이미지 합치기(min)
-        min(roi1, roi2, roi1);
+        cv::min(roi1, roi2, roi1);
     }
     
     return img1;
@@ -50,6 +50,8 @@ cv::Mat mat_attach      (const cv::Mat& img, const cv::Mat& img_sub, int x, int 
 cv::Mat mat_rotate      (const cv::Mat& img, double degree, int x, int y){
     using namespace std;
     using namespace cv;
+    
+    if (degree==0.0) return img.clone();
     
     // 이미지 준비
     Mat img1 = img.clone();

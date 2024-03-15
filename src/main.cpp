@@ -13,7 +13,7 @@ int main(){
     Note n = Note("new-symbol-dataset");
     
     // set
-    n.set("line", "staff-0-0");
+    //n.set("line", "staff-0-0");
     
     // save as image
     //n.save_as_img("test.png");

@@ -9,18 +9,18 @@ DSTree::DSTree() {
     using namespace std::filesystem;
     
     // 초기화
-    this->root_dir          = "";                   // 폴더 경로
+    this->root_dir          = path("");             // 폴더 경로
     this->target_extension  = vector<string>();     // 조사 대상 확장자 목록
-    this->pre               = "";                   // 현재 위치
+    this->pre               = path("");             // 현재 위치
 }
 DSTree::DSTree(std::string root_dir, std::vector<std::string> target_extension) {
     using namespace std;
     using namespace std::filesystem;
     
     // 초기화
-    this->root_dir          = root_dir;         // 폴더 경로
-    this->target_extension  = target_extension; // 조사 대상 확장자 목록
-    this->pre               = root_dir;         // 현재 위치
+    this->root_dir          = path(root_dir);       // 폴더 경로
+    this->target_extension  = target_extension;     // 조사 대상 확장자 목록
+    this->pre               = path(root_dir);       // 현재 위치
     
     // 폴더 조사, tree에 DSTree_Node 추가
     for (auto& d : recursive_directory_iterator(path(this->root_dir))){

@@ -14,6 +14,9 @@
 namespace msig {
 class MusicalSymbol {
 public:
+    // 상태 체크
+    int                     bad;
+    
     // 변수
     std::filesystem::path   dir;        // 악상 기호 저장 주소
     std::filesystem::path   dir_config; // 악상 기호 config 파일 주소

@@ -24,11 +24,15 @@ int Note::init_dir(std::filesystem::path dir){
         }
         else {
             fstream(p_config.string(), ios::out|ios::app).close();
+            if (exists(p_config) && is_regular_file(p_config)){
+                this->dir_ds_config = p_config;
+            }
+            else return 1;
         }
         
         // complete 존재 확인
         if (exists(p_complete) && is_directory(p_complete)){
-            this->dir_ds_config = p_config;
+            this->dir_ds_complete = p_complete;
         }
         else {
             cout << "Note: " << p_complete.string() << "은(는) 존재하는 디렉토리가 아닙니다." << endl;
@@ -40,7 +44,7 @@ int Note::init_dir(std::filesystem::path dir){
             this->dir_ds_piece = p_piece;
         }
         else {
-            cout << "Note: " << p_complete.string() << "은(는) 존재하는 디렉토리가 아닙니다." << endl;
+            cout << "Note: " << p_piece.string() << "은(는) 존재하는 디렉토리가 아닙니다." << endl;
             return 1;
         }
         
@@ -57,7 +61,9 @@ int Note::init_symbol_selector(){
     using namespace std::filesystem;
     
     // 의존적 선택 트리 생성
-    this->symbol_selector = dst::DSTree(this->dir_ds_complete, {".png"});
+    this->symbol_selector = dst::DSTree(this->dir_ds_complete.string(), {".png"});
+    
+    return 0;
 }
 int Note::init_ds_complete(){
     using namespace std;
@@ -69,7 +75,12 @@ int Note::init_ds_complete(){
     
     // 악상기호 불러오기
     for (auto& p : list_png){
-        this->ds_complete.push_back(MusicalSymbol(p, this->dir_ds_config));
+        // 악상 기호 생성
+        MusicalSymbol ms(p, this->dir_ds_config);
+        // 악상 기호 상태 체크
+        if (ms.bad) continue;
+        // 악상 기호 추가
+        this->ds_complete.push_back(ms);
         save_config();
     }
 }

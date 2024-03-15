@@ -11,7 +11,7 @@ int MusicalSymbol::init_dir         (std::filesystem::path dir){
     using namespace std::filesystem;
     
     // .png 파일인지 확인 후 저장
-    if (is_regular_file(dir) && dir.extension()==".png"){
+    if (exists(dir) && is_regular_file(dir)){
         this->dir = dir;
         return 0;
     }
@@ -23,8 +23,8 @@ int MusicalSymbol::init_dir_config  (std::filesystem::path dir){
     using namespace std::filesystem;
     
     // .txt 파일인지 확인 후 저장
-    if (is_regular_file(dir) && dir.extension()==".txt"){
-        this->dir = dir;
+    if (exists(dir) && is_regular_file(dir)){
+        this->dir_config = dir;
         return 0;
     }
     else{
@@ -42,7 +42,7 @@ int MusicalSymbol::init_img         (){
     //remove_padding(this->dir);
     
     // 이미지 불러오기
-    this->img = imread(this->dir.string());
+    this->img = imread(this->dir.string(), IMREAD_GRAYSCALE);
     
     // 불러온 이미지 확인
     if (this->img.data){

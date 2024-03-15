@@ -29,7 +29,7 @@ Note::Note(std::string dataset_dir){
         init_ds_complete()      ||
         init_ds_piece())
     {
-        cout << "Note:" << d.string() << " 을(를) 통하여 초기화하는 과정에서 문제가 있습니다." << endl;
+        cout << "Note: " << d.string() << " 을(를) 통하여 초기화하는 과정에서 문제가 있습니다." << endl;
         dir_ds          = std::filesystem::path();
         dir_ds_config   = std::filesystem::path();
         dir_ds_complete = std::filesystem::path();
