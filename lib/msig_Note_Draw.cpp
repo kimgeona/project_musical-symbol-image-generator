@@ -1,12 +1,17 @@
-#include <msig.hpp>
+#include <msig_Note.hpp>
 
 namespace msig
 {
 
 
+// msig_Note_Draw.cpp
 cv::Mat Note::draw(){
     using namespace std;
     using namespace cv;
+    
+    // 변수들
+    int     img_w=256;  // 생성할 이미지 너비
+    int     img_h=512;  // 생성할 이미지 높이
     
     // 흰 이미지 생성
     Mat img(img_h, img_w, CV_8UC1, Scalar(255));
@@ -23,12 +28,14 @@ cv::Mat Note::draw(){
     // 생성된 이미지 리턴
     return img;
 }
-
-
-// 악상 기호 그리기
 cv::Mat Note::draw_symbols(const cv::Mat& img, const cv::Mat& img_symbol, std::string img_config, bool auxiliary_line){
     using namespace std;
     using namespace cv;
+    
+    // 변수들
+    int     img_w=256;  // 생성할 이미지 너비
+    int     img_h=512;  // 생성할 이미지 높이
+    int     pad = 25;   // 오선지 간격
     
     // 편집할 이미지들
     Mat img1 = img.clone();         // 행렬 복사
@@ -38,8 +45,8 @@ cv::Mat Note::draw_symbols(const cv::Mat& img, const cv::Mat& img_symbol, std::s
     vector<string> configs = my_split(img_config, "_"); // "x_y_각도_확대축소_대칭"
     
     // 이미지 편집(회전, 확대 및 축소, 대칭)
-    img2 = rotate_mat(img2, stod(configs[2]), img2.cols/2.0, img2.rows/2.0);
-    img2 = scale_mat(img2, stod(configs[3]));
+    img2 = mat_rotate(img2, stod(configs[2]), img2.cols/2.0, img2.rows/2.0);
+    img2 = mat_scale(img2, stod(configs[3]));
     //img2 = symmetry_mat(img2, configs[4]);
     
     // 이미지 합성 좌표 계산
@@ -55,7 +62,7 @@ cv::Mat Note::draw_symbols(const cv::Mat& img, const cv::Mat& img_symbol, std::s
     }
     
     // 이미지 합성
-    img1 = attach_mat(img1, img2, x, y);
+    img1 = mat_attach(img1, img2, x, y);
     
     // 보조선 그리기 (십자선)
     if (auxiliary_line==true){

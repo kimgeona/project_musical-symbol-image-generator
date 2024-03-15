@@ -1,10 +1,19 @@
-#include <msig.hpp>
+#include <msig_Note.hpp>
 
 namespace msig
 {
 
 
-void Note::save_as_img(std::string file_name){
+// msig_Note_API.cpp
+void    Note::set(std::string type, std::string name){
+    using namespace std;
+    using namespace cv;
+    using namespace std::filesystem;
+    
+    // 선택 가능한 악상 기호 구하기
+
+}
+void    Note::save_as_img(std::string file_name){
     using namespace std;
     using namespace cv;
     
@@ -14,8 +23,7 @@ void Note::save_as_img(std::string file_name){
     // 이미지 저장
     imwrite(file_name, image);
 }
-
-void Note::show(){
+void    Note::show(){
     using namespace std;
     using namespace cv;
     
@@ -35,7 +43,6 @@ void Note::show(){
         // key에 대한 작업 필요시 switch문 활용
     }
 }
-
 cv::Mat Note::cv_Mat(){
     using namespace std;
     using namespace cv;

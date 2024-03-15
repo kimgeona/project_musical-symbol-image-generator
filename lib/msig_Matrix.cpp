@@ -1,11 +1,11 @@
-#include <msig.hpp>
+#include <msig_Matrix.hpp>
 
 namespace msig
 {
 
 
 // 행렬 합성
-cv::Mat Note::attach_mat(const cv::Mat& img, const cv::Mat& img_sub, int x, int y){
+cv::Mat mat_attach      (const cv::Mat& img, const cv::Mat& img_sub, int x, int y){
     using namespace std;
     using namespace cv;
     
@@ -47,7 +47,7 @@ cv::Mat Note::attach_mat(const cv::Mat& img, const cv::Mat& img_sub, int x, int 
 }
 
 // 행렬 회전
-cv::Mat Note::rotate_mat(const cv::Mat& img, double degree, int x, int y){
+cv::Mat mat_rotate      (const cv::Mat& img, double degree, int x, int y){
     using namespace std;
     using namespace cv;
     
@@ -103,7 +103,7 @@ cv::Mat Note::rotate_mat(const cv::Mat& img, double degree, int x, int y){
     // 이미지 합성 위치 계산
     int combine_x = (img2.cols - img.cols)/2.0;
     int combine_y = (img2.rows - img.rows)/2.0;
-    img3 = attach_mat(img3, img1, combine_x, combine_y);
+    img3 = mat_attach(img3, img1, combine_x, combine_y);
     
     // 역방향사상 범위 제한
     Rect rect(Point(0, 0), img3.size());
@@ -131,7 +131,7 @@ cv::Mat Note::rotate_mat(const cv::Mat& img, double degree, int x, int y){
 }
 
 // 행렬 확대
-cv::Mat Note::scale_mat(const cv::Mat& img, double scale){
+cv::Mat mat_scale       (const cv::Mat& img, double scale){
     using namespace std;
     using namespace cv;
     
@@ -150,7 +150,7 @@ cv::Mat Note::scale_mat(const cv::Mat& img, double scale){
 }
 
 // 행렬 대칭
-cv::Mat Note::symmetry_mat(const cv::Mat& img, std::string symmetry){
+cv::Mat mat_symmetry    (const cv::Mat& img, std::string symmetry){
     using namespace std;
     using namespace cv;
     
