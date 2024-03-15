@@ -73,7 +73,7 @@ int                                 DSTree::select_file(std::string name){
             // 나머지 제거
             for (auto& dir : recursive_directory_iterator(pre.parent_path())){
                 if (!is_directory(dir.path())) continue;
-                if (dir.path().string().find(pre)!=string::npos) continue;
+                if (dir.path().string().find(pre.string())!=string::npos) continue;
                 pruning(dir.path());
             }
             
