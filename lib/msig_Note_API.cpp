@@ -16,7 +16,7 @@ void    Note::set(std::string type, std::string name){
     // 찾기
     int found = 0;
     for (auto& p : selectable){
-        if (p.parent_path().string()==type && (p.filename().string()==name)){
+        if ((p.parent_path().string()==type) && (p.filename().string()==name)){
             found = 1;
             break;
         }
