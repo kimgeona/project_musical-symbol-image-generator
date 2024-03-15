@@ -11,7 +11,24 @@ void    Note::set(std::string type, std::string name){
     using namespace std::filesystem;
     
     // 선택 가능한 악상 기호 구하기
-
+    vector<path> selectable = symbol_selector.get_selectable();
+    
+    // 찾기
+    int found = 0;
+    for (auto& p : selectable){
+        if (p.parent_path().string()==type) && (p.filename().string()==name){
+            found = 1;
+            break;
+        }
+    }
+    
+    // 등록 수행
+    if (found){
+        cout << "찾음" << endl;
+    }
+    else {
+        cout << "못찾음" << endl;
+    }
 }
 void    Note::save_as_img(std::string file_name){
     using namespace std;

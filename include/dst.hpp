@@ -44,10 +44,10 @@ public:
     std::filesystem::path                           pre;
     
     // 알고리즘
-    int                                 select_folder(std::string name);    // 폴더 선택
-    int                                 select_file(std::string name);      // 파일 선택
-    void                                pre_refresh();                      // pre 위치 계산
-    void                                pruning(std::filesystem::path dir); // 가지치기
+    int                                 select_folder(std::filesystem::path name);  // 폴더 선택
+    int                                 select_file(std::filesystem::path name);    // 파일 선택
+    void                                pre_refresh();                              // pre 위치 계산
+    void                                pruning(std::filesystem::path dir);         // 가지치기
     std::vector<std::filesystem::path>  get_available_folder(std::filesystem::path p, bool full_path=false);    // 디렉토리에서 선택 가능 디렉토리 가져오기
     std::vector<std::filesystem::path>  get_available_file(std::filesystem::path p, bool full_path=false);      // 디렉토리에서 선택 가능 파일 가져오기
     
@@ -57,9 +57,13 @@ public:
     DSTree(std::string root_dir, std::vector<std::string> target_extension);
     
     // 유틸리티 : API
-    std::vector<std::filesystem::path>  get_all_files();    // 현재 트리상에 존재하는 모든 파일 가져오기
-    int select(std::string folder, std::string file);       // 선택
-    void print_selectable();                                // 선택 가능 목록 출력
+    std::vector<std::filesystem::path>  get_all_files();                    // 현재 트리상에 존재하는 모든 파일 가져오기
+    std::vector<std::filesystem::path>  get_selectable();                   // 현재 선택 가능한 모든 파일 가져오기
+    int select(std::filesystem::path folder, std::filesystem::path file);   // 선택
+    int select(std::filesystem::path dir);                                  // 선택
+    int select(std::string folder, std::string file);                       // 선택
+    int select(std::string dir);                                            // 선택
+    void print_selectable();                                                // 선택 가능 목록 출력
     
     
 };

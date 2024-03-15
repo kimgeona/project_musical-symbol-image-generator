@@ -34,40 +34,36 @@ DSTree::DSTree(std::string root_dir, std::vector<std::string> target_extension) 
 }
 
 // 알고리즘
-int                                 DSTree::select_folder(std::string name){
+int                                 DSTree::select_folder(std::filesystem::path name){
     using namespace std;
     using namespace std::filesystem;
-    
-    path p(name);
     
     auto list_dir = get_available_folder(pre);
     
     // 폴더를 찾을 수 없는 경우
-    if (find(list_dir.begin(), list_dir.end(), p)==list_dir.end()){
+    if (find(list_dir.begin(), list_dir.end(), name)==list_dir.end()){
         return -1;
     }
     // 폴더를 찾은 경우
     else {
-        pre = pre / p;
+        pre = pre / name;
         return 0;
     }
 }
-int                                 DSTree::select_file(std::string name){
+int                                 DSTree::select_file(std::filesystem::path name){
     using namespace std;
     using namespace std::filesystem;
-    
-    path p(name);
     
     auto list_file = get_available_file(pre);
     
     // 파일을 찾을 수 없는 경우
-    if (find(list_file.begin(), list_file.end(), p)==list_file.end()){
+    if (find(list_file.begin(), list_file.end(), name)==list_file.end()){
         return -1;
     }
     // 파일을 찾은 경우
     else {
         // @ "의존성 가지치기 실행"
-        if (tree[pre/p].dir.parent_path().filename().string().find("@")!=string::npos){
+        if (tree[pre/name].dir.parent_path().filename().string().find("@")!=string::npos){
             // 자신 제거
             pruning(pre);
             // 나머지 제거
@@ -79,7 +75,7 @@ int                                 DSTree::select_file(std::string name){
             
         }
         // # "의존성 가지치기 실행"
-        if (tree[pre/p].dir.parent_path().string().find("#")!=string::npos){
+        if (tree[pre/name].dir.parent_path().string().find("#")!=string::npos){
             // 자신 제거
             pruning(pre);
         }
@@ -170,6 +166,43 @@ std::vector<std::filesystem::path>  DSTree::get_all_files(){
         list_file.push_back(e.first);
     return list_file;
 }
+std::vector<std::filesystem::path>  DSTree::get_selectable(){
+    using namespace std;
+    using namespace std::filesystem;
+    
+    return get_available_file(this->pre, true);
+}
+int                                 DSTree::select(std::filesystem::path folder, std::filesystem::path file){
+    using namespace std;
+    using namespace std::filesystem;
+    
+    // 중간 종료
+    // 현재 pre에서 @ 이름의 폴더가 없으면 건너뛰기 하도록(현재 pre 아래 있는 모든 파일 available==false 로 하면 됨. ==> .pruning())
+    
+    // 폴더 선택
+    if(select_folder(path(folder))){
+        return 1;
+    }
+    // 파일 선택
+    if(select_file(path(file))){
+        pre = pre.parent_path();
+        return 2;
+    }
+    
+    // 더이상 선택가능한 것이 없을 경우
+    if (get_available_folder(pre).empty())  return -1;
+    
+    return 0;
+}
+int                                 DSTree::select(std::filesystem::path dir){
+    using namespace std;
+    using namespace std::filesystem;
+    
+    path p_folder = dir.parent_path();
+    path p_file = dir.filename();
+    
+    return select(p_folder, p_file);
+}
 int                                 DSTree::select(std::string folder, std::string file){
     using namespace std;
     using namespace std::filesystem;
@@ -191,6 +224,16 @@ int                                 DSTree::select(std::string folder, std::stri
     if (get_available_folder(pre).empty())  return -1;
     
     return 0;
+}
+int                                 DSTree::select(std::string dir){
+    using namespace std;
+    using namespace std::filesystem;
+    
+    path p(dir);
+    path p_folder = p.parent_path();
+    path p_file = p.filename();
+    
+    return select(p_folder, p_file);
 }
 void                                DSTree::print_selectable(){
     using namespace std;
