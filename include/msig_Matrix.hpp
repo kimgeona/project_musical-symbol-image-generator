@@ -14,6 +14,9 @@ cv::Mat mat_rotate      (const cv::Mat& img, double degree, int x, int y);      
 cv::Mat mat_scale       (const cv::Mat& img, double scale);                         // 확대
 cv::Mat mat_symmetry    (const cv::Mat& img, std::string symmetry);                 // 대칭
 
+// 영상 처리
+cv::Mat remove_padding  (const cv::Mat& img);   // 흑백 영상 패딩 제거
+
 
 }
 

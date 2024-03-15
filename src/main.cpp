@@ -9,19 +9,21 @@ int main(){
     
     cout << "Making Muscial-Symbols Dataset" << endl;
     
-    // create Note
-    Note n = Note("new-symbol-dataset");
+    // 준혁 테스트
+    Mat img = imread("이미지주소입력", IMREAD_GRAYSCALE);
+    Mat img_out = remove_padding(img);
+    imshow("img", img);
+    imshow("img_out", img_out);
+    waitKey();
     
-    // set
-    //n.set("line", "staff-0-0");
+    // 건아 테스트
+    /*
+     Note n = Note("new-symbol-dataset");
+     n.set("line", "staff-0-0");
+     n.save_as_img("test.png");
+     n.show();
+     destroyAllWindows();
+     */
     
-    // save as image
-    //n.save_as_img("test.png");
-    
-    // show Note
-    //n.show();
-    
-    // return none error
-    destroyAllWindows();
     return 0;
 }

@@ -172,5 +172,18 @@ cv::Mat mat_symmetry    (const cv::Mat& img, std::string symmetry){
     return img1;
 }
 
+// 흑백 영상 패딩 제거
+cv::Mat remove_padding  (const cv::Mat& img){
+    using namespace std;
+    using namespace cv;
+    
+    // 이미지 복사
+    Mat img1 = img.clone();
+    
+    // img1 픽셀값 흑백으로 처리
+    // img1 부드럽게 만들어주는(?) 알고리즘 처리
+    
+    return img1;
+}
 
 }
