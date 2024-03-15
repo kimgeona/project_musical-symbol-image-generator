@@ -81,8 +81,10 @@ int Note::init_ds_complete(){
         if (ms.bad) continue;
         // 악상 기호 추가
         this->ds_complete.push_back(ms);
-        save_config();
     }
+    
+    // config 파일 저장
+    save_config();
 }
 int Note::init_ds_piece(){
     using namespace std;
