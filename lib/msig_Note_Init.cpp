@@ -85,6 +85,7 @@ int Note::init_ds_complete(){
     
     // config 파일 저장
     save_config();
+    return 0;
 }
 int Note::init_ds_piece(){
     using namespace std;
@@ -103,6 +104,7 @@ int Note::init_ds_piece(){
         this->ds_piece.push_back(MusicalSymbol(p, this->dir_ds_config));
         save_config();
     }
+    return 0;
 }
 
 

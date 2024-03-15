@@ -10,14 +10,14 @@ void                        MusicalSymbol::restore_img(std::filesystem::path dir
     using namespace std::filesystem;
     
     // 이미지 존재 여부 확인
-    if (!exists(path(dir))) return;
+    if (!exists(dir)) return;
     
     // 이미지 읽기
-    Mat img = imread(dir, IMREAD_GRAYSCALE);
+    Mat img = imread(dir.string(), IMREAD_GRAYSCALE);
     CV_Assert(img.data);
     
     // 이미지 저장
-    imwrite(dir, img);
+    imwrite(dir.string(), img);
 }
 void                        MusicalSymbol::remove_padding(std::filesystem::path dir){
     using namespace std;

@@ -16,7 +16,7 @@ int MusicalSymbol::make_config      (){
     int     pad = 25;   // 오선지 간격
     Mat     img_out(img_h, img_w, CV_8UC1, Scalar(255));    // 흰 배경
     Mat     img_symbol  = this->img.clone();                // 악상 기호 이미지
-    string  img_name    = this->dir.filename();             // 악상 기호 이름
+    string  img_name    = this->dir.filename().string();    // 악상 기호 이름
     
     // config 정보 초기화
     this->x         = 0;

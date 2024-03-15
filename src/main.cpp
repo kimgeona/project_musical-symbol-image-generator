@@ -12,6 +12,7 @@ int main(){
     // 준혁 테스트
     /*
      Mat img = imread("이미지주소입력", IMREAD_GRAYSCALE);
+     CV_Assert(img.data);
      Mat img_out = remove_padding(img);
      imshow("img", img);
      imshow("img_out", img_out);
