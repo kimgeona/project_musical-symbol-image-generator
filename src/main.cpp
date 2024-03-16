@@ -23,10 +23,13 @@ int main(){
     /*
      Note n = Note("new-symbol-dataset");
      n.set("line-@", "staff-0-0.png");
+     n.set("rest-@", "rest-4-dot.png");
      //n.save_as_img("test.png");
      //n.show();
-     destroyAllWindows();
      */
+    
+    
+    destroyAllWindows();
     
     return 0;
 }

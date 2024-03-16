@@ -5,30 +5,29 @@ namespace msig
 
 
 // msig_Note_API.cpp
-void    Note::set(std::string type, std::string name){
+int     Note::set(std::string type, std::string name){
     using namespace std;
     using namespace cv;
     using namespace std::filesystem;
     
-    // 선택 가능한 악상 기호 구하기
-    vector<path> selectable = symbol_selector.get_selectable();
+    int error = symbol_selector.select(type, name);
     
-    // 찾기
-    int found = 0;
-    for (auto& p : selectable){
-        if ((p.parent_path().string()==type) && (p.filename().string()==name)){
-            found = 1;
+    switch (error) {
+        case 1:
+            cout << "Note : 폴더명을 잘못 입력하셨습니다." << endl;
             break;
-        }
+        case 2:
+            cout << "Note : 파일명을 잘못 입력하셨습니다." << endl;
+            break;
+        case -1:
+            cout << "Note : good. 이제 더이상 선택할 수 있는 악상기호가 없습니다." << endl;
+            break;
+        case 0:
+            cout << "Note : good." << endl;
+            break;
     }
     
-    // 등록 수행
-    if (found){
-        cout << "찾음" << endl;
-    }
-    else {
-        cout << "못찾음" << endl;
-    }
+    return error;
 }
 void    Note::save_as_img(std::string file_name){
     using namespace std;

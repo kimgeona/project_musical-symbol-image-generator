@@ -170,7 +170,16 @@ std::vector<std::filesystem::path>  DSTree::get_selectable(){
     using namespace std;
     using namespace std::filesystem;
     
-    return get_available_file(this->pre, true);
+    vector<path> list_file;
+    for (auto& d : directory_iterator(pre)){
+        // 조건 확인(디렉토리인지, @# 문자 포함, 하위 파일 사용가능여부)
+        if (!is_directory(d.path())) continue;
+        if (d.path().string().find("@")==string::npos && d.path().string().find("#")==string::npos) continue;
+        // 선택 가능한 파일 구하기
+        for (auto& f : get_available_file(d.path(), true))
+            list_file.push_back(f);
+    }
+    return list_file;
 }
 int                                 DSTree::select(std::filesystem::path folder, std::filesystem::path file){
     using namespace std;
