@@ -35,6 +35,7 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path dir, std::filesystem::path di
         y               = 0;
         scale           = 1.0;
         rotate          = 0.0;
+        
     }
     else bad = 0;
 }

@@ -34,6 +34,7 @@ class Note
     // msig_Note_Init.cpp
     int init_dir(std::filesystem::path dir);    // 데이터셋 주소 초기화 함수
     int init_symbol_selector();                 // 의존적 선택 트리 알고리즘 초기화 함수
+    int init_ds();                              // 데이터셋 불러오기
     int init_ds_complete();                     // 완성형 데이터셋 불러오기
     int init_ds_piece();                        // 조합형 데이터셋 불러오기
     
@@ -42,7 +43,8 @@ class Note
     cv::Mat draw_symbols(const cv::Mat& img, const cv::Mat& img_symbol, std::string img_config, bool auxiliary_line=false);
     
     // msig_Note_Backup.cpp
-    void save_config(); // config 값 저장(업데이트)
+    void save_config();         // config 값 새로 저장(리프레쉬)
+    void add_config();          // config 값 추가(업데이트)
     
     // msig_Note_Utility.cpp
     std::vector<std::string>    my_split(std::string s1, std::string s2);   // 문자열 분리

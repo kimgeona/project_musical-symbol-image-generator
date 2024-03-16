@@ -26,8 +26,7 @@ Note::Note(std::string dataset_dir){
     // 아래 과정에서 이상이 있을 경우
     if (init_dir(path(d))       ||
         init_symbol_selector()  ||
-        init_ds_complete()      ||
-        init_ds_piece())
+        init_ds())
     {
         cout << "Note: " << d.string() << " 을(를) 통하여 초기화하는 과정에서 문제가 있습니다." << endl;
         dir_ds          = std::filesystem::path();

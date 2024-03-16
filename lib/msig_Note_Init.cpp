@@ -65,6 +65,20 @@ int Note::init_symbol_selector(){
     
     return 0;
 }
+int Note::init_ds(){
+    using namespace std;
+    using namespace cv;
+    using namespace std::filesystem;
+    
+    if (init_ds_complete() || init_ds_piece()) {
+        save_config(); // config 파일 저장
+        return 1;
+    }
+    else {
+        save_config(); // config 파일 저장
+        return 0;
+    }
+}
 int Note::init_ds_complete(){
     using namespace std;
     using namespace cv;
@@ -81,10 +95,9 @@ int Note::init_ds_complete(){
         if (ms.bad) continue;
         // 악상 기호 추가
         this->ds_complete.push_back(ms);
+        // config 내용 추가
+        add_config();
     }
-    
-    // config 파일 저장
-    save_config();
     return 0;
 }
 int Note::init_ds_piece(){
@@ -101,8 +114,14 @@ int Note::init_ds_piece(){
     
     // 악상기호 불러오기
     for (auto& p : list_png){
-        this->ds_piece.push_back(MusicalSymbol(p, this->dir_ds_config));
-        save_config();
+        // 악상 기호 생성
+        MusicalSymbol ms(p, this->dir_ds_config);
+        // 악상 기호 상태 체크
+        if (ms.bad) continue;
+        // 악상 기호 추가
+        this->ds_piece.push_back(ms);
+        // config 내용 추가
+        add_config();
     }
     return 0;
 }
