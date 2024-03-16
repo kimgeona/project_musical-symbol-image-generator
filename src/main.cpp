@@ -20,11 +20,13 @@ int main(){
      */
     
     // 건아 테스트
-    Note n = Note("new-symbol-dataset");
-    n.set("line-@", "staff-0-0.png");
-    //n.save_as_img("test.png");
-    //n.show();
-    destroyAllWindows();
+    /*
+     Note n = Note("new-symbol-dataset");
+     n.set("line-@", "staff-0-0.png");
+     //n.save_as_img("test.png");
+     //n.show();
+     destroyAllWindows();
+     */
     
     return 0;
 }

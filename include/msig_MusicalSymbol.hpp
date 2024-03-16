@@ -17,6 +17,11 @@ public:
     // 상태 체크
     int                     bad;
     
+    // 생성할 이미지 정보
+    int                     img_w=256;  // 생성할 이미지 너비
+    int                     img_h=512;  // 생성할 이미지 높이
+    int                     pad = 25;   // 오선지 간격
+    
     // 변수
     std::filesystem::path   dir;        // 악상 기호 저장 주소
     std::filesystem::path   dir_config; // 악상 기호 config 파일 주소
@@ -34,6 +39,7 @@ public:
     
     // msig_MusicalSymbol_Data.cpp
     int make_config     ();                             // config 생성하기
+    int edit_config     ();                             // config 수정하기
     
     // msig_MusicalSymbol_Utility.cpp
     std::string                 my_dir(std::filesystem::path dir);                  // 나의 주소로 변환

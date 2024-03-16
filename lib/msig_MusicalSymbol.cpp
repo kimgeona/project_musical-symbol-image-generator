@@ -33,7 +33,7 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path dir, std::filesystem::path di
         img             = cv::Mat();
         x               = 0;
         y               = 0;
-        scale           = 0.0;
+        scale           = 1.0;
         rotate          = 0.0;
     }
     else bad = 0;
