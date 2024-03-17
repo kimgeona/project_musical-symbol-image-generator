@@ -39,7 +39,7 @@ std::vector<std::filesystem::path>  DSTree::get_available_folder(std::filesystem
     using namespace std::filesystem;
     
     // 존재하는 디렉토리인지 확인
-    if (!exists(dir) && is_directory(dir)) return vector<path>();
+    if (!exists(dir) || !is_directory(dir)) return vector<path>();
     
     vector<path> list_dir;
     for (auto& d : directory_iterator(dir)){
@@ -57,7 +57,7 @@ std::vector<std::filesystem::path>  DSTree::get_available_file(std::filesystem::
     using namespace std::filesystem;
     
     // 존재하는 디렉토리인지 확인
-    if (!exists(dir) && is_directory(dir)) return vector<path>();
+    if (!exists(dir) || !is_directory(dir)) return vector<path>();
     
     vector<path> list_file;
     for (auto& d : directory_iterator(dir)){
@@ -75,7 +75,7 @@ std::vector<std::filesystem::path>  DSTree::get_available(std::filesystem::path 
     using namespace std::filesystem;
     
     // 존재하는 디렉토리인지 확인
-    if (!exists(dir) && is_directory(dir)) return vector<path>();
+    if (!exists(dir) || !is_directory(dir)) return vector<path>();
     
     // 선택 가능한 폴더 안에, 선택 가능한 파일들 push_back()
     vector<path> list_file;
@@ -91,7 +91,7 @@ int                                 DSTree::select(std::filesystem::path dir){
     using namespace std::filesystem;
     
     // 존재하는 파일인지 확인
-    if (exists(dir) && is_regular_file(dir)) return 1;
+    if (!exists(dir) || !is_regular_file(dir)) return 1;
     
     
     // 선택 가능한 파일들 불러오기
@@ -147,7 +147,7 @@ void                                DSTree::pruning(std::filesystem::path dir){
     using namespace std::filesystem;
     
     // 존재하는 디렉토리인지 확인
-    if (exists(dir) && is_directory(dir)) return;
+    if (!exists(dir) || !is_directory(dir)) return;
     
     // 현재 디렉토리 내 파일 알아내기
     for (auto& f : directory_iterator(dir)){

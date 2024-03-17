@@ -19,6 +19,15 @@ std::vector<std::filesystem::path>  DSTree::get_selectable(){
     
     return get_available(pre);
 }
+bool                                DSTree::is_selectable(){
+    using namespace std;
+    using namespace std::filesystem;
+    
+    // 선택 가능한 목록 불러오기
+    vector<path> list_file = get_available(this->pre);
+    
+    return !list_file.empty();
+}
 void                                DSTree::print_selectable(){
     using namespace std;
     using namespace std::filesystem;
