@@ -62,8 +62,8 @@ std::vector<std::filesystem::path>  DSTree::get_available_file(std::filesystem::
     vector<path> list_file;
     for (auto& d : directory_iterator(dir)){
         // 조건 확인(파일인지, 지정된확장자, 사용가능여부)
-        if (!is_regular_file(d.path()))
-        if (find(this->target_extension.begin(), this->target_extension.end(), d.path().extension())==this->target_extension.end()) continue;
+        if (!is_regular_file(d.path())) continue;
+        if (find(this->target_extension.begin(), this->target_extension.end(), d.path().extension().string())==this->target_extension.end()) continue;
         if (!tree[d.path()].available) continue;
         //
         list_file.push_back(d.path());

@@ -7,6 +7,13 @@ int main(){
     using namespace cv;
     using namespace std::filesystem;
     
+#ifdef __MACH__
+    cout << "Platform : MacOS" << endl << endl;
+#endif
+#ifdef _WIN32
+    cout << "Platform : Windows" << endl << endl;
+    system("chcp 65001");
+#endif
     
     string s = "";
     cout << "enter the number that you want to test." << endl;
