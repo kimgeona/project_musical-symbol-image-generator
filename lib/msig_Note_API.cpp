@@ -5,29 +5,62 @@ namespace msig
 
 
 // msig_Note_API.cpp
+void    Note::print_setable(){
+    using namespace std;
+    using namespace cv;
+    using namespace std::filesystem;
+    
+    symbol_selector.print_selectable();
+}
+bool    Note::is_setable(){
+    using namespace std;
+    using namespace cv;
+    using namespace std::filesystem;
+    
+    return symbol_selector.is_selectable();
+}
+int     Note::set(std::string dir){
+    using namespace std;
+    using namespace cv;
+    using namespace std::filesystem;
+    
+    int error = symbol_selector.select(dir);
+    if (error==0){
+        // ds_complete에서 주소가 p인 ms를 찾아서 draw_list에 추가
+    }
+    
+    return error;
+}
 int     Note::set(std::string type, std::string name){
     using namespace std;
     using namespace cv;
     using namespace std::filesystem;
     
-    int error = symbol_selector.select(type, name);
+    // 선택 가능 목록 가져오기
+    vector<path> list_file = symbol_selector.get_selectable();
     
-    switch (error) {
-        case 1:
-            cout << "Note : 폴더명을 잘못 입력하셨습니다." << endl;
-            break;
-        case 2:
-            cout << "Note : 파일명을 잘못 입력하셨습니다." << endl;
-            break;
-        case -1:
-            cout << "Note : good. 이제 더이상 선택할 수 있는 악상기호가 없습니다." << endl;
-            break;
-        case 0:
-            cout << "Note : good." << endl;
-            break;
+    // 선택 가능한 목록이 없다면
+    if (list_file.empty()){
+        cout << "Note : error. there is no left to choose." << endl;
+        return -1;
     }
     
-    return error;
+    // 찾기
+    for (auto& p : list_file){
+        if (p.parent_path().filename().string()==type && p.filename().string()==name){
+            // 찾은 경우
+            int error = symbol_selector.select(p.string());
+            if (error==0){
+                // ds_complete에서 주소가 p인 ms를 찾아서 draw_list에 추가
+            }
+            
+            return error;
+        }
+    }
+
+    // 찾지 못한 경우
+    cout << "Note : error. wrong input." << endl;
+    return 1;
 }
 void    Note::save_as_img(std::string file_name){
     using namespace std;
@@ -51,13 +84,14 @@ void    Note::show(){
     namedWindow(title, WINDOW_AUTOSIZE);
     moveWindow(title, 100, 100);
     
-    // 윈도우에 이미지 그리기, ESC 입력시 종료
+    // 윈도우에 이미지 그리기
     imshow(title, image);
-    while (true) {
-        int key = waitKey();
-        if (key==27) break;
-        // key에 대한 작업 필요시 switch문 활용
-    }
+    
+    // 키보드 입력시 종료
+    waitKey();
+    
+    // 윈도우 없애기
+    destroyWindow(title);
 }
 cv::Mat Note::cv_Mat(){
     using namespace std;

@@ -58,6 +58,9 @@ public:
     Note(std::string dataset_dir);
     
     // msig_Note_API.cpp
+    void    print_setable();                            // 그릴 수 있는 음표들 출력
+    bool    is_setable();                               // 음표를 그릴 수 있는지 확인
+    int     set(std::string dir);                       // 그릴 음표 설정
     int     set(std::string type, std::string name);    // 그릴 음표 설정
     void    save_as_img(std::string file_name);         // 그린 내용을 file_name 이름으로 저장
     void    show();                                     // 그린 내용을 화면에 보여주기

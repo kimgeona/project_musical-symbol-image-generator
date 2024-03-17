@@ -33,8 +33,6 @@ public:
 
 // Dependent Selection Class
 class DSTree{
-public:
-    
     // 변수
     std::filesystem::path       root_dir;           // 최상위 폴더
     std::vector<std::string>    target_extension;   // 대상 파일 확장자 목록

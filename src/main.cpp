@@ -40,7 +40,7 @@ int main(){
             // 보여주기
             my_ds.print_selectable();
             
-            // 선택하기
+            // 선택할 내용 입력받기
             string folder, name;
             cout << "-----------------------------" << endl << "=>";
             cin >> folder;
@@ -70,12 +70,30 @@ int main(){
     }
     else if (s=="3"){
         cout << "--msig::Note()---------------" << endl;
-        
-        msig::Note n = msig::Note("new-symbol-dataset");
-        n.set("line-@", "staff-0-0.png");
-        n.set("rest-@", "rest-4-dot.png");
-        //n.save_as_img("test.png");
-        //n.show();
+        // Note 생성
+        msig::Note note = msig::Note("new-symbol-dataset");
+        // 입력 받기
+        while (true) {
+            // 그릴 수 있는 음표 확인
+            if (!note.is_setable()) break;
+            
+            // 보여주기
+            note.print_setable();
+            
+            // 선택할 내용 입력받기
+            string type, name;
+            cout << "-----------------------------" << endl << "=>";
+            cin >> type >> name;
+            
+            // 선택
+            int error = note.set(type, name);
+            switch (error) {
+                case 1: cout << path(type)/path(name) << " 을(를) 찾을 수 없습니다." << endl << endl; break;
+            }
+        }
+        // 생성된 이미지 저장
+        note.save_as_img("test.png");
+        // 모든 창 종료
         destroyAllWindows();
         
         cout << "--done.----------------------" << endl;
