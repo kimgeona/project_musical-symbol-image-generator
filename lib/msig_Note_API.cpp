@@ -24,9 +24,13 @@ int     Note::set(std::string dir){
     using namespace cv;
     using namespace std::filesystem;
     
+    // 해당 이미지(주소) 의존적 선택
     int error = symbol_selector.select(dir);
+    
+    // 의존적 선택 성공시
     if (error==0){
         // ds_complete에서 주소가 p인 ms를 찾아서 draw_list에 추가
+        this->draw_list.push_back(this->ds_complete[path(dir)]);
     }
     
     return error;
@@ -40,26 +44,24 @@ int     Note::set(std::string type, std::string name){
     vector<path> list_file = symbol_selector.get_selectable();
     
     // 선택 가능한 목록이 없다면
-    if (list_file.empty()){
-        cout << "Note : error. there is no left to choose." << endl;
-        return -1;
-    }
+    if (list_file.empty()) return -1;
     
     // 찾기
     for (auto& p : list_file){
         if (p.parent_path().filename().string()==type && p.filename().string()==name){
-            // 찾은 경우
+            // 찾은 경우,
+            // 해당 이미지(주소) 의존적 선택
             int error = symbol_selector.select(p.string());
             if (error==0){
                 // ds_complete에서 주소가 p인 ms를 찾아서 draw_list에 추가
+                this->draw_list.push_back(this->ds_complete[p]);
             }
-            
+
             return error;
         }
     }
 
     // 찾지 못한 경우
-    cout << "Note : error. wrong input." << endl;
     return 1;
 }
 void    Note::save_as_img(std::string file_name){

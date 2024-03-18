@@ -17,20 +17,20 @@
 namespace msig {
 class Note
 {
-    // 데이터셋 주소
+    // 변수 : 데이터셋 주소
     std::filesystem::path       dir_ds;             // 데이터셋 위치
     std::filesystem::path       dir_ds_config;      // 데이터셋 config 파일 위치
     std::filesystem::path       dir_ds_complete;    // 데이터셋 complete 폴더 위치
     std::filesystem::path       dir_ds_piece;       // 데이터셋 piece 폴더 위치
 
-    // 데이터셋
+    // 변수 : 데이터셋
     std::map<std::filesystem::path, MusicalSymbol>  ds_complete;    // 데이터셋 : 완성형
     std::map<std::filesystem::path, MusicalSymbol>  ds_piece;       // 데이터셋 : 조합형
     
-    // Dependent Selection Tree
+    // 변수 : Dependent Selection Tree
     dst::DSTree                 symbol_selector;    // 의존적 선택 트리 알고리즘
     
-    // draw_list
+    // 변수 : 그릴 목록
     std::vector<MusicalSymbol>  draw_list;          // 그릴 목록
 
     // msig_Note_Init.cpp
