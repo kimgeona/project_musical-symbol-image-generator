@@ -58,6 +58,9 @@ public:
     DSTree();
     DSTree(std::string root_dir, std::vector<std::string> target_extension);
     
+    // 연산자
+    bool operator==(const DSTree& other);
+    
     // API : 선택 가능 목록 확인
     std::vector<std::filesystem::path>  get_all_files();                    // 현재 트리상에 존재하는 모든 파일 가져오기
     std::vector<std::filesystem::path>  get_selectable();                   // 현재 선택 가능한 모든 파일 가져오기
