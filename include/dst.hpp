@@ -20,15 +20,11 @@ public:
     bool                    available;  // 사용가능 여부
      
     // 생성자
-    DSTree_Node() {}
-    DSTree_Node(std::string dir){
-        using namespace std;
-        using namespace std::filesystem;
-        
-        // 초기화
-        this->dir = path(dir);  // 기본 파일 주소
-        this->available = true; // 사용 가능 여부
-    }
+    DSTree_Node();
+    DSTree_Node(std::string dir);
+    
+    // 연산자
+    bool operator==(const DSTree_Node& other) const;
 };
 
 // Dependent Selection Class
@@ -59,7 +55,7 @@ public:
     DSTree(std::string root_dir, std::vector<std::string> target_extension);
     
     // 연산자
-    bool operator==(const DSTree& other);
+    bool operator==(const DSTree& other) const;
     
     // API : 선택 가능 목록 확인
     std::vector<std::filesystem::path>  get_all_files();                    // 현재 트리상에 존재하는 모든 파일 가져오기

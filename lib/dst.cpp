@@ -4,6 +4,29 @@ namespace dst {
 
 
 // 생성자
+DSTree_Node::DSTree_Node() {
+    using namespace std;
+    using namespace std::filesystem;
+    
+    this->dir = path();
+    this->available = false;
+}
+DSTree_Node::DSTree_Node(std::string dir){
+    using namespace std;
+    using namespace std::filesystem;
+    
+    // 초기화
+    this->dir = path(dir);  // 기본 파일 주소
+    this->available = true; // 사용 가능 여부
+}
+
+// 연산자
+bool DSTree_Node::operator==(const DSTree_Node& other) const{
+    return ((this->dir==other.dir) &&
+            (this->available==other.available));
+}
+
+// 생성자
 DSTree::DSTree() {
     using namespace std;
     using namespace std::filesystem;
@@ -45,10 +68,10 @@ DSTree::DSTree(std::string root_dir, std::vector<std::string> target_extension) 
 }
 
 // 연산자
-bool DSTree::operator==(const DSTree& other){
+bool DSTree::operator==(const DSTree& other) const{
     return ((this->root_dir==other.root_dir) &&
             (this->target_extension==other.target_extension) &&
-            (this->tree==other.target_extension) &&
+            (this->tree==other.tree) &&
             (this->pre==other.pre));
 }
 
