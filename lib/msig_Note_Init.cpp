@@ -63,21 +63,24 @@ int Note::init_symbol_selector(){
     // 의존적 선택 트리 생성
     this->symbol_selector = dst::DSTree(this->dir_ds_complete.string(), {".png"});
     
-    return 0;
+    // 생성한 트리 상태 체크
+    if (this->symbol_selector==dst::DSTree())   return 1;   // 생성 안됨
+    else                                        return 0;   // 잘 생성됨
 }
 int Note::init_ds(){
     using namespace std;
     using namespace cv;
     using namespace std::filesystem;
     
-    if (init_ds_complete() || init_ds_piece()) {
-        save_config(); // config 파일 저장
-        return 1;
-    }
-    else {
-        save_config(); // config 파일 저장
-        return 0;
-    }
+    int error = 0;
+    
+    error |= init_ds_complete();
+    error |= init_ds_piece();
+    
+    save_config(); // config 파일 저장
+    
+    if (error)  return 1;
+    else        return 0;
 }
 int Note::init_ds_complete(){
     using namespace std;
@@ -94,7 +97,7 @@ int Note::init_ds_complete(){
         // 악상 기호 상태 체크
         if (ms.bad) continue;
         // 악상 기호 추가
-        this->ds_complete.push_back(ms);
+        this->ds_complete[p] = ms;
         // config 내용 추가
         add_config();
     }
@@ -119,7 +122,7 @@ int Note::init_ds_piece(){
         // 악상 기호 상태 체크
         if (ms.bad) continue;
         // 악상 기호 추가
-        this->ds_piece.push_back(ms);
+        this->ds_complete[p] = ms;
         // config 내용 추가
         add_config();
     }

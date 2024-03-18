@@ -6,6 +6,8 @@
 #include <iostream>     // 입출력 스트림
 #include <fstream>      // 파일 입출력
 #include <regex>        // 정규 표현식
+#include <map>          // map 컨테이너
+#include <vector>       // vector 컨테이너
 
 // 나의 라이브러리
 #include <dst.hpp>
@@ -22,8 +24,8 @@ class Note
     std::filesystem::path       dir_ds_piece;       // 데이터셋 piece 폴더 위치
 
     // 데이터셋
-    std::vector<MusicalSymbol>  ds_complete;    // 데이터셋 : 완성형
-    std::vector<MusicalSymbol>  ds_piece;       // 데이터셋 : 조합형
+    std::map<std::filesystem::path, MusicalSymbol>  ds_complete;    // 데이터셋 : 완성형
+    std::map<std::filesystem::path, MusicalSymbol>  ds_piece;       // 데이터셋 : 조합형
     
     // Dependent Selection Tree
     dst::DSTree                 symbol_selector;    // 의존적 선택 트리 알고리즘

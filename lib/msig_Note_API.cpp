@@ -105,14 +105,14 @@ void    Note::edit_config(){
     using namespace std::filesystem;
     
     // config 수정
-    for (auto& ms : this->ds_complete){
-        if (ms.edit_config()) break;    // esc 입력시 break
+    for (auto& m : this->ds_complete){
+        if (m.second.edit_config()) break;    // esc 입력시 break
         save_config();                  // ds_complete, ds_piece에 저장되어 있는 모든 config들 저장.
     }
     
     // config 수정
-    for (auto& ms : this->ds_piece){
-        if (ms.edit_config()) break;    // esc 입력시 break
+    for (auto& m : this->ds_piece){
+        if (m.second.edit_config()) break;    // esc 입력시 break
         save_config();                  // ds_complete, ds_piece에 저장되어 있는 모든 config들 저장.
     }
 }
