@@ -23,14 +23,14 @@ void Note::save_config(){
     }
     
     // config 데이터 저장
-    for (auto& ms : this->ds_complete){
-        string dir = ms.my_dir(ms.dir);
-        string config = to_string(ms.x)+"_"+to_string(ms.y)+"_"+to_string(ms.rotate)+"_"+to_string(ms.scale);
+    for (auto& m : this->ds_complete){
+        string dir = m.second.my_dir(m.second.dir);
+        string config = to_string(m.second.x)+"_"+to_string(m.second.y)+"_"+to_string(m.second.rotate)+"_"+to_string(m.second.scale);
         fout << endl << dir + "=" + config;
     }
-    for (auto& ms : this->ds_piece){
-        string dir = ms.my_dir(ms.dir);
-        string config = to_string(ms.x)+"_"+to_string(ms.y)+"_"+to_string(ms.rotate)+"_"+to_string(ms.scale);
+    for (auto& m : this->ds_piece){
+        string dir = m.second.my_dir(m.second.dir);
+        string config = to_string(m.second.x)+"_"+to_string(m.second.y)+"_"+to_string(m.second.rotate)+"_"+to_string(m.second.scale);
         fout << endl << dir + "=" + config;
     }
     fout.close();
@@ -63,14 +63,14 @@ void Note::add_config(){
     }
     
     // config 데이터 저장
-    for (auto& ms : this->ds_complete){
-        string dir = ms.my_dir(ms.dir);
-        string config = to_string(ms.x)+"_"+to_string(ms.y)+"_"+to_string(ms.rotate)+"_"+to_string(ms.scale);
+    for (auto& m : this->ds_complete){
+        string dir = m.second.my_dir(m.second.dir);
+        string config = to_string(m.second.x)+"_"+to_string(m.second.y)+"_"+to_string(m.second.rotate)+"_"+to_string(m.second.scale);
         fout << endl << dir + "=" + config;
     }
-    for (auto& ms : this->ds_piece){
-        string dir = ms.my_dir(ms.dir);
-        string config = to_string(ms.x)+"_"+to_string(ms.y)+"_"+to_string(ms.rotate)+"_"+to_string(ms.scale);
+    for (auto& m : this->ds_piece){
+        string dir = m.second.my_dir(m.second.dir);
+        string config = to_string(m.second.x)+"_"+to_string(m.second.y)+"_"+to_string(m.second.rotate)+"_"+to_string(m.second.scale);
         fout << endl << dir + "=" + config;
     }
     

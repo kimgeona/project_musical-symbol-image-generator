@@ -4,33 +4,75 @@ namespace dst {
 
 
 // 생성자
+DSTree_Node::DSTree_Node() {
+    using namespace std;
+    using namespace std::filesystem;
+    
+    this->dir = path();
+    this->available = false;
+}
+DSTree_Node::DSTree_Node(std::string dir){
+    using namespace std;
+    using namespace std::filesystem;
+    
+    // 초기화
+    this->dir = path(dir);  // 기본 파일 주소
+    this->available = true; // 사용 가능 여부
+}
+
+// 연산자
+bool DSTree_Node::operator==(const DSTree_Node& other) const{
+    return ((this->dir==other.dir) &&
+            (this->available==other.available));
+}
+
+// 생성자
 DSTree::DSTree() {
     using namespace std;
     using namespace std::filesystem;
     
     // 초기화
-    this->root_dir          = path("");             // 폴더 경로
-    this->target_extension  = vector<string>();     // 조사 대상 확장자 목록
-    this->pre               = path("");             // 현재 위치
+    this->root_dir          = path("");                 // root 디렉토리
+    this->target_extension  = vector<string>();         // 확장자 목록
+    this->tree              = map<path, DSTree_Node>(); // 파일 트리
+    this->pre               = path("");                 // 현재 위치
 }
 DSTree::DSTree(std::string root_dir, std::vector<std::string> target_extension) {
     using namespace std;
     using namespace std::filesystem;
     
-    // 초기화
-    this->root_dir          = path(root_dir);       // 폴더 경로
-    this->target_extension  = target_extension;     // 조사 대상 확장자 목록
-    this->pre               = path(root_dir);       // 현재 위치
-    
-    // 폴더 조사, tree에 DSTree_Node 추가
-    for (auto& d : recursive_directory_iterator(path(this->root_dir))){
-        // DSTree 추가 조건들
-        if (!is_regular_file(d.path())) continue; // 파일이어야 함
-        if (find(this->target_extension.begin(), this->target_extension.end(), d.path().extension())==this->target_extension.end()) continue; // 지정된 확장자만
-        if (d.path().string().find("@")==string::npos && d.path().string().find("#")==string::npos) continue; // @,# 문자 포함
-        // DSTree에 추가
-        this->tree[d.path()] = DSTree_Node(d.path().string());
+    // 존재하는 디렉토리인지 확인
+    if (exists(path(root_dir)) && is_directory(path(root_dir))){
+        // 초기화
+        this->root_dir          = path(root_dir);       // 폴더 경로
+        this->target_extension  = target_extension;     // 조사 대상 확장자 목록
+        this->pre               = path(root_dir);       // 현재 위치
+        
+        // 폴더 조사, tree에 DSTree_Node 추가
+        for (auto& d : recursive_directory_iterator(path(this->root_dir))){
+            // DSTree 추가 조건들 (파일여부, 지정된 확장자, -@ -# 문자 포함 디렉토리)
+            if (!is_regular_file(d.path())) continue;
+            if (find(this->target_extension.begin(), this->target_extension.end(), d.path().extension())==this->target_extension.end()) continue;
+            if (d.path().string().find("-@")==string::npos && d.path().string().find("-#")==string::npos) continue;
+            // DSTree에 추가
+            this->tree[d.path()] = DSTree_Node(d.path().string());
+        }
     }
+    else {
+        // 초기화
+        this->root_dir          = path("");                 // root 디렉토리
+        this->target_extension  = vector<string>();         // 확장자 목록
+        this->tree              = map<path, DSTree_Node>(); // 파일 트리
+        this->pre               = path("");                 // 현재 위치
+    }
+}
+
+// 연산자
+bool DSTree::operator==(const DSTree& other) const{
+    return ((this->root_dir==other.root_dir) &&
+            (this->target_extension==other.target_extension) &&
+            (this->tree==other.tree) &&
+            (this->pre==other.pre));
 }
 
 // 알고리즘 : 확인

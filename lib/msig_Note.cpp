@@ -11,8 +11,8 @@ Note::Note(){
     dir_ds_complete = std::filesystem::path();
     dir_ds_piece    = std::filesystem::path();
     symbol_selector = dst::DSTree();
-    ds_complete     = std::vector<MusicalSymbol>();
-    ds_piece        = std::vector<MusicalSymbol>();
+    ds_complete     = std::map<std::filesystem::path, MusicalSymbol>();
+    ds_piece        = std::map<std::filesystem::path, MusicalSymbol>();
     draw_list       = std::vector<MusicalSymbol>();
 }
 Note::Note(std::string dataset_dir){
@@ -34,8 +34,8 @@ Note::Note(std::string dataset_dir){
         dir_ds_complete = std::filesystem::path();
         dir_ds_piece    = std::filesystem::path();
         symbol_selector = dst::DSTree();
-        ds_complete     = std::vector<MusicalSymbol>();
-        ds_piece        = std::vector<MusicalSymbol>();
+        ds_complete     = std::map<std::filesystem::path, MusicalSymbol>();
+        ds_piece        = std::map<std::filesystem::path, MusicalSymbol>();
         draw_list       = std::vector<MusicalSymbol>();
     }
 }
