@@ -97,6 +97,9 @@ int main(){
             switch (error) {
                 case 1: cout << path(type)/path(name) << " 을(를) 찾을 수 없습니다." << endl << endl; break;
             }
+            
+            // 현재까지 그려진 이미지 보여주기
+            note.show();
         }
         // 생성된 이미지 저장
         note.save_as_img("test.png");

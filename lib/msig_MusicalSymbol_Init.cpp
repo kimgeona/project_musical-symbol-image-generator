@@ -80,8 +80,8 @@ int MusicalSymbol::init_config      (){
             vector<string> configs = my_split(find, "_");
             this->x         = stoi(configs[0]);
             this->y         = stoi(configs[1]);
-            this->scale     = stod(configs[2]);
-            this->rotate    = stod(configs[3]);
+            this->rotate    = stod(configs[2]);
+            this->scale     = stod(configs[3]);
             return 0;
         }
         else {

@@ -113,8 +113,8 @@ int MusicalSymbol::edit_config      (){
     // 기존 config 정보 백업
     int     bp_x        = this->x;
     int     bp_y        = this->y;
-    double  bp_rotate   = this->rotate;
     double  bp_scale    = this->scale;
+    double  bp_rotate   = this->rotate;
     
     // 창 생성
     namedWindow(img_name, WINDOW_AUTOSIZE);
@@ -156,8 +156,8 @@ int MusicalSymbol::edit_config      (){
         if (key==27){                       // 중단에 의한 종료
             this->x         = bp_x;
             this->y         = bp_y;
-            this->rotate    = bp_rotate;
             this->scale     = bp_scale;
+            this->rotate    = bp_rotate;
             destroyWindow(img_name);
             return 1;
         }
@@ -184,14 +184,14 @@ int MusicalSymbol::edit_config      (){
             case 'x':                       // 초기화
                 this->x=bp_x;
                 this->y=bp_y;
-                this->rotate=bp_rotate;
                 this->scale=bp_scale;
+                this->rotate=bp_rotate;
                 break;
             case 'X':                       // 초기화(완젼 초기화)
                 this->x=0;
                 this->y=0;
-                this->rotate=0.0;
                 this->scale=1.0;
+                this->rotate=0.0;
                 break;
         }
         

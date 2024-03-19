@@ -1,8 +1,8 @@
 
-new-symbol-dataset_complete_edge-@_measure-@_bar-dotted.png=4_-15_1.400000_356.000000
-new-symbol-dataset_complete_edge-@_measure-@_bar-double-bold.png=7_-42_1.000000_0.000000
-new-symbol-dataset_complete_edge-@_measure-@_bar-double.png=0_0_1.200000_353.000000
-new-symbol-dataset_complete_edge-@_measure-@_bar.png=0_0_1.000000_0.000000
+new-symbol-dataset_complete_edge-@_measure-@_bar-dotted.png=0_0_0.000000_1.000000
+new-symbol-dataset_complete_edge-@_measure-@_bar-double-bold.png=0_0_0.000000_1.000000
+new-symbol-dataset_complete_edge-@_measure-@_bar-double.png=0_0_0.000000_1.000000
+new-symbol-dataset_complete_edge-@_measure-@_bar.png=0_0_0.000000_1.000000
 new-symbol-dataset_complete_edge-@_measure-@_octave-@_octave-down-middle.png=0_0_0.000000_1.000000
 new-symbol-dataset_complete_edge-@_measure-@_octave-@_octave-up-middle.png=0_0_0.000000_1.000000
 new-symbol-dataset_complete_edge-@_measure-@_repeat-end.png=0_0_0.000000_1.000000
@@ -129,7 +129,7 @@ new-symbol-dataset_piece_note_relationship_tie-start.png=0_0_0.000000_1.000000
 new-symbol-dataset_piece_note_relationship_tuplet-end.png=0_0_0.000000_1.000000
 new-symbol-dataset_piece_note_relationship_tuplet-middle.png=0_0_0.000000_1.000000
 new-symbol-dataset_piece_note_relationship_tuplet-start.png=0_0_0.000000_1.000000
-new-symbol-dataset_piece_note_tail_beam-1-down.png=0_0_1.000000_0.000000
+new-symbol-dataset_piece_note_tail_beam-1-down.png=0_0_0.000000_1.000000
 new-symbol-dataset_piece_note_tail_beam-1-flat.png=0_0_0.000000_1.000000
 new-symbol-dataset_piece_note_tail_beam-1-up.png=0_0_0.000000_1.000000
 new-symbol-dataset_piece_note_tail_beam-2-down.png=0_0_0.000000_1.000000
