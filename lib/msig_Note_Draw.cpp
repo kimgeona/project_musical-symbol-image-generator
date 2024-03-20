@@ -16,6 +16,9 @@ cv::Mat Note::draw(){
     // 흰 이미지 생성
     Mat img(img_h, img_w, CV_8UC1, Scalar(255));
     
+    // draw_list에 있는 악상 기호들 x, y 위치 조정
+    draw_adjustment();
+    
     // draw_list에 있는 악상 기호들 img에 그리기
     for(auto ms : draw_list){
         // 이미지와 config 불러오기
@@ -25,8 +28,15 @@ cv::Mat Note::draw(){
         // 악상 기호 그리기
         img = draw_symbols(img, img_symbol, img_config);
     }
+    
     // 생성된 이미지 리턴
     return img;
+}
+void    Note::draw_adjustment(){
+    using namespace std;
+    using namespace cv;
+    
+    // draw_list에 내용들의 x y 를 수정하는 코드를 작성한다.
 }
 cv::Mat Note::draw_symbols(const cv::Mat& img, const cv::Mat& img_symbol, std::string img_config, bool auxiliary_line){
     using namespace std;

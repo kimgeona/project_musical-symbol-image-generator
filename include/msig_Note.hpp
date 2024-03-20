@@ -41,7 +41,8 @@ class Note
     int init_ds_piece();                        // 조합형 데이터셋 불러오기
     
     // msig_Note_Draw.cpp
-    cv::Mat draw();
+    cv::Mat draw();                             // 그리기
+    void    draw_adjustment();                  // 그리기 위치 조정
     cv::Mat draw_symbols(const cv::Mat& img, const cv::Mat& img_symbol, std::string img_config, bool auxiliary_line=false);
     
     // msig_Note_Backup.cpp
