@@ -35,8 +35,68 @@ cv::Mat Note::draw(){
 void    Note::draw_adjustment(){
     using namespace std;
     using namespace cv;
+    using namespace std::filesystem;
     
-    // draw_list에 내용들의 x y 를 수정하는 코드를 작성한다.
+    // 변수들
+    bool LV_1 = true;  // line-up, line-down, edge
+    bool LV_2 = true;  // clef, key, note, ...
+    bool LV_3 = true;  // accidental, articulation, dynamic, ...
+    
+    // 반복
+    while (LV_1 || LV_2 || LV_3) {
+        if (LV_1)
+        {
+            continue;
+        }
+        if (LV_2)
+        {
+            continue;
+        }
+        if (LV_3)
+        {
+            continue;
+        }
+    }
+    
+    // 악상기호 면적들 [[x, y, xl, xr, yt, yb], ...]
+    map<path, vector<int>> arr_area;
+    
+    // draw_list의 MusicalSymbol들 순회
+    for (auto& ms : draw_list){
+        
+        // 악상기호 이미지 별로 xl, xr, yt, yb 값 추출
+        vector<int> area = {
+            0,                      // x
+            0,                      // y
+            ms.x,                   // xl
+            ms.img.rows - ms.x,     // xr
+            ms.y,                   // yt
+            ms.img.cols - ms.y,     // yb
+        };
+        
+        // 악상기호 이미지 별로 x, y, xl, xr, yt, yb 값 조정
+        
+        // line-up-@/note-@/articulation-#/fermata.png
+        if (ms.dir==(this->dir_ds_complete/path("line-up-@")/path("note-@")/path("articulation-#")/path("fermata.png"))){
+            
+            // 면적 합 계산
+            vector<int> result = {0, 0, 0, 0, 0, 0};
+            for (auto& e : arr_area) result = adjustment_add(result, e.second);  // 면적 합치기
+            
+            // 면적 합치기
+            result = adjustment_attach_xy(result, area, "yb");                   // 면적 붙이기
+            
+            // ms.x, ms.y 수정
+            ms.x = result[0];
+            ms.y = result[1];
+            
+            //
+            area = result;
+        }
+        
+        // 저장
+        arr_area[ms.dir] = area;
+    }
 }
 cv::Mat Note::draw_symbols(const cv::Mat& img, const cv::Mat& img_symbol, std::string img_config, bool auxiliary_line){
     using namespace std;
@@ -60,8 +120,8 @@ cv::Mat Note::draw_symbols(const cv::Mat& img, const cv::Mat& img_symbol, std::s
     //img2 = symmetry_mat(img2, configs[4]);
     
     // 이미지 합성 좌표 계산
-    int x = (img_w)/2.0 - (img2.cols/2.0) + (stoi(configs[0]));   // 이미지 중심 - sub 이미지 중심 + config 값
-    int y = (img_h)/2.0 - (img2.rows/2.0) + (stoi(configs[1]));
+    int x = (img_w)/2.0 - (stoi(configs[0]));   // 이미지 중심 - sub 이미지 중심 + config 값
+    int y = (img_h)/2.0 - (stoi(configs[1]));
     
     // 보조선 그리기 (오선지)
     if (auxiliary_line==true){
