@@ -47,13 +47,13 @@ int MusicalSymbol::make_config      (){
         // 이미지 합성
         img1 = mat_attach(img1, img2, x, y);
         
-        // 이미지 화면에 그리기
-        imshow(img_name, img1);
-        
         // 보조선 그리기(십자선)
         Point cross(img1.cols/2.0, img1.rows/2.0);
         line(img1, cross+Point(-10,0), cross+Point(10,0), Scalar(100), 1, LINE_AA);
         line(img1, cross+Point(0,-10), cross+Point(0,10), Scalar(100), 1, LINE_AA);
+        
+        // 이미지 화면에 그리기
+        imshow(img_name, img1);
         
         // 키보드 이벤트
         int key = waitKey(1000/30);         // 키보드 레이턴시
@@ -142,13 +142,13 @@ int MusicalSymbol::edit_config      (){
         // 이미지 합성
         img1 = mat_attach(img1, img2, x, y);
         
-        // 이미지 화면에 그리기
-        imshow(img_name, img1);
-        
         // 보조선 그리기(십자선)
         Point cross(img1.cols/2.0, img1.rows/2.0);
         line(img1, cross+Point(-10,0), cross+Point(10,0), Scalar(100), 1, LINE_AA);
         line(img1, cross+Point(0,-10), cross+Point(0,10), Scalar(100), 1, LINE_AA);
+        
+        // 이미지 화면에 그리기
+        imshow(img_name, img1);
         
         // 키보드 이벤트
         int key = waitKey(1000/30);         // 키보드 레이턴시
