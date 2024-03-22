@@ -202,4 +202,4 @@ new-symbol-dataset_piece_time_5.png=0_0_0.000000_1.000000
 new-symbol-dataset_piece_time_6.png=0_0_0.000000_1.000000
 new-symbol-dataset_piece_time_7.png=0_0_0.000000_1.000000
 new-symbol-dataset_piece_time_8.png=0_0_0.000000_1.000000
-new-symbol-dataset_piece_time_9.png=0_0_0.000000_1.000000
+new-symbol-dataset_piece_time_9.png=0_0_0.000000_1.100000
