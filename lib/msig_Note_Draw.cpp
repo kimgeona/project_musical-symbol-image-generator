@@ -37,65 +37,26 @@ void    Note::draw_adjustment(){
     using namespace cv;
     using namespace std::filesystem;
     
-    // 변수들
-    bool LV_1 = true;  // line-up, line-down, edge
-    bool LV_2 = true;  // clef, key, note, ...
-    bool LV_3 = true;  // accidental, articulation, dynamic, ...
+    // 백업용
+    map<path, vector<size_t>> dirs_pts; // {xl, xr, yt, yb}
     
-    // 반복
-    while (LV_1 || LV_2 || LV_3) {
-        if (LV_1)
-        {
-            continue;
-        }
-        if (LV_2)
-        {
-            continue;
-        }
-        if (LV_3)
-        {
-            continue;
-        }
-    }
-    
-    // 악상기호 면적들 [[x, y, xl, xr, yt, yb], ...]
-    map<path, vector<int>> arr_area;
-    
-    // draw_list의 MusicalSymbol들 순회
+    // draw_list 순회
     for (auto& ms : draw_list){
         
-        // 악상기호 이미지 별로 xl, xr, yt, yb 값 추출
-        vector<int> area = {
-            0,                      // x
-            0,                      // y
-            ms.x,                   // xl
-            ms.img.rows - ms.x,     // xr
-            ms.y,                   // yt
-            ms.img.cols - ms.y,     // yb
-        };
+        // 현재 pt
+        vector<size_t> pt;
         
-        // 악상기호 이미지 별로 x, y, xl, xr, yt, yb 값 조정
+        // 백업용 pt 찾기
+        if (dirs_pts.find(ms.dir.parent_path())==dirs_pts.end())    pt = {0b0, 0b0, 0b0, 0b0};              // 못찾은 경우
+        else                                                        pt = dirs_pts[ms.dir.parent_path()];    // 찾은 경우
         
-        // line-up-@/note-@/articulation-#/fermata.png
-        if (ms.dir==(this->dir_ds_complete/path("line-up-@")/path("note-@")/path("articulation-#")/path("fermata.png"))){
-            
-            // 면적 합 계산
-            vector<int> result = {0, 0, 0, 0, 0, 0};
-            for (auto& e : arr_area) result = adjustment_add(result, e.second);  // 면적 합치기
-            
-            // 면적 합치기
-            result = adjustment_attach_xy(result, area, "yb");                   // 면적 붙이기
-            
-            // ms.x, ms.y 수정
-            ms.x = result[0];
-            ms.y = result[1];
-            
-            //
-            area = result;
-        }
+        // 악상기호 이미지 별로 xl, xr, yt, yb 값 조정 0b0000->0bxxxx
+        // ...
+        // 악상기호 이미지 별로 xl, xr, yt, yb 값에 의한 config x, y 조정
+        // ...
         
-        // 저장
-        arr_area[ms.dir] = area;
+        // pt 백업
+        dirs_pts[ms.dir.parent_path()] = pt;
     }
 }
 cv::Mat Note::draw_symbols(const cv::Mat& img, const cv::Mat& img_symbol, std::string img_config, bool auxiliary_line){
