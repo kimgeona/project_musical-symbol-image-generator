@@ -173,7 +173,13 @@ cv::Mat mat_symmetry    (const cv::Mat& img, std::string symmetry){
 }
 
 // 흑백 영상 패딩 제거
-cv::Mat remove_padding  (const cv::Mat& img){
+cv::Mat remove_padding(const cv::Mat& img) {
+    using namespace std;
+    using namespace cv;
+    int x = 0, y = 0;
+    return remove_padding(img, x, y);
+}
+cv::Mat remove_padding  (const cv::Mat& img, int& center_x, int& center_y){
     using namespace std;
     using namespace cv;
     
@@ -182,6 +188,7 @@ cv::Mat remove_padding  (const cv::Mat& img){
     
     // img1 픽셀값 흑백으로 처리
     // img1 부드럽게 만들어주는(?) 알고리즘 처리
+    // 여백 제거에 의한 이미지 중심 좌표(center_x, center_y) 다시 계산
     
     return img1;
 }

@@ -15,7 +15,8 @@ cv::Mat mat_scale       (const cv::Mat& img, double scale);                     
 cv::Mat mat_symmetry    (const cv::Mat& img, std::string symmetry);                 // 대칭
 
 // 영상 처리
-cv::Mat remove_padding  (const cv::Mat& img);   // 흑백 영상 패딩 제거
+cv::Mat remove_padding(const cv::Mat& img);											// 흑백 영상 패딩 제거
+cv::Mat remove_padding(const cv::Mat& img, int& center_x, int& center_y);			// 흑백 영상 패딩 제거
 
 
 }
