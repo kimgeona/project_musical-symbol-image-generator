@@ -11,7 +11,7 @@ new-symbol-dataset_complete_edge-@_measure-@_repetition-@_coda.png=25_116_0.0000
 new-symbol-dataset_complete_edge-@_measure-@_repetition-@_da-capo.png=29_107_0.000000_1.200000
 new-symbol-dataset_complete_edge-@_measure-@_repetition-@_dal-segno.png=31_104_0.000000_1.200000
 new-symbol-dataset_complete_edge-@_measure-@_repetition-@_segno.png=14_106_0.000000_0.600000
-new-symbol-dataset_complete_edge-@_measure-@_repetition-@_volta-end-close.png=0_0_0.000000_1.000000
+
 
 
 
