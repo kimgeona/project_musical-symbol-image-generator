@@ -1,5 +1,5 @@
 #include <msig_MusicalSymbol.hpp>
-#include <windows.h>
+
 
 namespace msig
 {
@@ -65,10 +65,10 @@ int MusicalSymbol::make_config      (){
         }
         switch (key) {
             // 기본 속도
-            case 'a':  this->x += 1; break;  // 좌로 이동
+            case 'a': this->x += 1; break;  // 좌로 이동
             case 'd': this->x -= 1; break;  // 우로 이동
-            case 'w':    this->y += 1; break;  // 상으로 이동
-            case 's':  this->y -= 1; break;  // 하로 이동
+            case 'w': this->y += 1; break;  // 상으로 이동
+            case 's': this->y -= 1; break;  // 하로 이동
 
             case 'q': this->rotate+=1.0;  break;  // 반시계 회전
             case 'e': this->rotate-=1.0;  break;  // 시계 회전
