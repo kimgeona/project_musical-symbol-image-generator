@@ -21,7 +21,7 @@ int main(){
     cout << "1)dst::DSTree()"               << endl;
     cout << "2)msig::MusicalSymbol()"       << endl;
     cout << "3)msig::Note()"                << endl;
-    cout << "---- Junhyuk Lim ------------" << endl;
+    cout << "---- Junhyuck yim ------------" << endl;
     cout << "4)msig::remove_padding()"      << endl;
     cout << "-----------------------------" << endl;
     cout << ">>";
