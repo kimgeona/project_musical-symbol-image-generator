@@ -4,7 +4,7 @@
 
 // c++17
 #include <opencv2/opencv.hpp>   // OpenCV
-
+#include <vector>
 namespace msig {
 
 
