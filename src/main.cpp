@@ -111,7 +111,7 @@ int main(){
     else if (s=="4"){
         cout << "--msig::remove_padding()-----" << endl;
         
-        Mat img = imread("이미지주소입력", IMREAD_GRAYSCALE);
+        Mat img = imread(R"(여따 경로 지정해서 테스트 하세용)", IMREAD_GRAYSCALE);
         CV_Assert(img.data);
         Mat img_out = msig::remove_padding(img);
         imshow("img", img);
