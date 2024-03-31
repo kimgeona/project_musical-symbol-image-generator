@@ -203,10 +203,10 @@ cv::Mat remove_padding(const cv::Mat& img, int& center_x, int& center_y) {
     threshold(inverted, binary, 220, 255, THRESH_BINARY);
 
     // Contour를 찾아 가장 큰 영역의 바운딩 박스를 찾음
-    vector<vector<Point>> contours;
+    vector<vector<Point>> contours;//윤곽선을 나타내는 점들의 집합
     findContours(binary, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
-    Rect boundingBox;
+    Rect boundingBox;// 윤곽선을 하나에 벡터에 모아서 바운딩박스 계산
     if (!contours.empty()) {
         vector<Point> allPoints;
         for (auto& contour : contours) {
