@@ -10,7 +10,7 @@
 #include <vector>       // vector 컨테이너
 
 // 나의 라이브러리
-#include <dst.hpp>
+#include <msig_Algorithm.hpp>
 #include <msig_Matrix.hpp>
 #include <msig_Util.hpp>
 #include <msig_MusicalSymbol.hpp>
@@ -29,7 +29,7 @@ class Note
     std::map<std::filesystem::path, MusicalSymbol>  ds_piece;       // 데이터셋 : 조합형
     
     // 변수 : Dependent Selection Tree
-    dst::DSTree                 symbol_selector;    // 의존적 선택 트리 알고리즘
+    DSTree                 symbol_selector;         // 의존적 선택 트리 알고리즘
     
     // 변수 : 그릴 목록
     std::vector<MusicalSymbol>  draw_list;          // 그릴 목록

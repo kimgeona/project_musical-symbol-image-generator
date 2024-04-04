@@ -61,11 +61,11 @@ int Note::init_symbol_selector(){
     using namespace std::filesystem;
     
     // 의존적 선택 트리 생성
-    this->symbol_selector = dst::DSTree(this->dir_ds_complete.string(), {".png"});
+    this->symbol_selector = DSTree(this->dir_ds_complete.string(), {".png"});
     
     // 생성한 트리 상태 체크
-    if (this->symbol_selector==dst::DSTree())   return 1;   // 생성 안됨
-    else                                        return 0;   // 잘 생성됨
+    if (this->symbol_selector==DSTree())    return 1;   // 생성 안됨
+    else                                    return 0;   // 잘 생성됨
 }
 int Note::init_ds(){
     using namespace std;

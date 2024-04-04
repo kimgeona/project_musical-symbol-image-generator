@@ -8,7 +8,7 @@
 #include <map>
 
 
-namespace dst {
+namespace msig {
 
 
 // Dependent Selection Node

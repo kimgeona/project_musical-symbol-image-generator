@@ -10,7 +10,7 @@ Note::Note(){
     dir_ds_config   = std::filesystem::path();
     dir_ds_complete = std::filesystem::path();
     dir_ds_piece    = std::filesystem::path();
-    symbol_selector = dst::DSTree();
+    symbol_selector = DSTree();
     ds_complete     = std::map<std::filesystem::path, MusicalSymbol>();
     ds_piece        = std::map<std::filesystem::path, MusicalSymbol>();
     draw_list       = std::vector<MusicalSymbol>();
@@ -33,7 +33,7 @@ Note::Note(std::string dataset_dir){
         dir_ds_config   = std::filesystem::path();
         dir_ds_complete = std::filesystem::path();
         dir_ds_piece    = std::filesystem::path();
-        symbol_selector = dst::DSTree();
+        symbol_selector = DSTree();
         ds_complete     = std::map<std::filesystem::path, MusicalSymbol>();
         ds_piece        = std::map<std::filesystem::path, MusicalSymbol>();
         draw_list       = std::vector<MusicalSymbol>();

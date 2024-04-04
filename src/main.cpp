@@ -37,7 +37,7 @@ int main(){
         path p = p1 / p2;
         
         // 자료구조 접근 알고리즘 생성
-        dst::DSTree my_ds(p.string(), {".png"});
+        msig::DSTree my_ds(p.string(), {".png"});
         
         // 반복
         while(true){
