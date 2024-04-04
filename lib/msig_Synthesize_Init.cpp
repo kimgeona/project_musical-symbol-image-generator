@@ -1,4 +1,4 @@
-#include <msig_Note.hpp>
+#include <msig_Synthesize.hpp>
 
 namespace msig
 {
