@@ -46,6 +46,7 @@ cv::Mat mat_attach      (const cv::Mat& img, const cv::Mat& img_sub, int x, int 
     return img1;
 }
 
+
 // 행렬 회전
 cv::Mat mat_rotate      (const cv::Mat& img, double degree, int x, int y){
     using namespace std;
@@ -132,6 +133,7 @@ cv::Mat mat_rotate      (const cv::Mat& img, double degree, int x, int y){
     return img2;
 }
 
+
 // 행렬 확대
 cv::Mat mat_scale       (const cv::Mat& img, double scale){
     using namespace std;
@@ -150,6 +152,7 @@ cv::Mat mat_scale       (const cv::Mat& img, double scale){
     
     return img1;
 }
+
 
 // 행렬 대칭
 cv::Mat mat_symmetry    (const cv::Mat& img, std::string symmetry){
@@ -173,14 +176,13 @@ cv::Mat mat_symmetry    (const cv::Mat& img, std::string symmetry){
 }
 
 
-
+// 흑백 영상 패딩 제거
 cv::Mat remove_padding(const cv::Mat& img) {
     using namespace std;
     using namespace cv;
     int x = 0, y = 0;
     return remove_padding(img, x, y);
 }
-
 cv::Mat remove_padding(const cv::Mat& img, int& center_x, int& center_y) {
     using namespace std;
     using namespace cv;

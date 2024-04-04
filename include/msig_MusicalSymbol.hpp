@@ -10,6 +10,7 @@
 
 // 나의 라이브러리
 #include <msig_Matrix.hpp>
+#include <msig_Util.hpp>
 
 namespace msig {
 class MusicalSymbol {
@@ -40,11 +41,6 @@ public:
     // msig_MusicalSymbol_Data.cpp
     int make_config     ();                             // config 생성하기
     int edit_config     ();                             // config 수정하기
-    
-    // msig_MusicalSymbol_Utility.cpp
-    std::string                 my_dir(std::filesystem::path dir);                  // 나의 주소로 변환
-    std::string                 my_grep(std::filesystem::path dir, std::string s);  // 터미널 grep
-    std::vector<std::string>    my_split(std::string s1, std::string s2);           // 파이썬 split
     
     // msig_MusicalSymbol_Preprocessing.cpp
     void                        restore_img(std::filesystem::path dir);             // 이미지 재생성

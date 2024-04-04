@@ -24,12 +24,12 @@ void Note::save_config(){
     
     // config 데이터 저장
     for (auto& m : this->ds_complete){
-        string dir = m.second.my_dir(m.second.dir);
+        string dir = my_dir(m.second.dir);
         string config = to_string(m.second.x)+"_"+to_string(m.second.y)+"_"+to_string(m.second.rotate)+"_"+to_string(m.second.scale);
         fout << endl << dir + "=" + config;
     }
     for (auto& m : this->ds_piece){
-        string dir = m.second.my_dir(m.second.dir);
+        string dir = my_dir(m.second.dir);
         string config = to_string(m.second.x)+"_"+to_string(m.second.y)+"_"+to_string(m.second.rotate)+"_"+to_string(m.second.scale);
         fout << endl << dir + "=" + config;
     }
@@ -64,12 +64,12 @@ void Note::add_config(){
     
     // config 데이터 저장
     for (auto& m : this->ds_complete){
-        string dir = m.second.my_dir(m.second.dir);
+        string dir = my_dir(m.second.dir);
         string config = to_string(m.second.x)+"_"+to_string(m.second.y)+"_"+to_string(m.second.rotate)+"_"+to_string(m.second.scale);
         fout << endl << dir + "=" + config;
     }
     for (auto& m : this->ds_piece){
-        string dir = m.second.my_dir(m.second.dir);
+        string dir = my_dir(m.second.dir);
         string config = to_string(m.second.x)+"_"+to_string(m.second.y)+"_"+to_string(m.second.rotate)+"_"+to_string(m.second.scale);
         fout << endl << dir + "=" + config;
     }
