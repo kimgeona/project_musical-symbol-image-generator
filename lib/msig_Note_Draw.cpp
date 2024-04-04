@@ -42,21 +42,48 @@ void    Note::draw_adjustment(){
     
     // draw_list 순회
     for (auto& ms : draw_list){
-        
+        /*
         // 현재 pt
-        vector<size_t> pt;
+        static vector<size_t> pt = {0b0, 0b0, 0b0, 0b0};
         
         // 백업용 pt 찾기
-        if (dirs_pts.find(ms.dir.parent_path())==dirs_pts.end())    pt = {0b0, 0b0, 0b0, 0b0};              // 못찾은 경우
-        else                                                        pt = dirs_pts[ms.dir.parent_path()];    // 찾은 경우
+        if (dirs_pts.find(ms.dir.parent_path())!=dirs_pts.end())
+            pt = dirs_pts[ms.dir.parent_path()];    // 찾은 경우 현재 pt를 백업용 pt로 교체
         
         // 악상기호 이미지 별로 xl, xr, yt, yb 값 조정 0b0000->0bxxxx
-        // ...
+        string p = ms.dir.parent_path().string();
+        if (p=="line-@"){
+            // 지울 오선지 갯수 구하기
+            int n = 0;
+            char c = ms.dir.filename().string()[6];
+            for (int i=1; i<stoi(ms.dir.filename().string()[7]); i++) n += 7;
+                 if (c == 'c') n+= 1;
+            else if (c == 'd') n+= 2;
+            else if (c == 'e') n+= 3;
+            else if (c == 'f') n+= 4;
+            else if (c == 'g') n+= 5;
+            else if (c == 'a') n+= 6;
+            else if (c == 'b') n+= 7;
+            
+            if (n % 2 == 0) n = 3;
+            else            n = 2;
+            
+            // 해당 갯수만큼 xl, xr, yt, yb 값 조정
+            // 그 그 config 조정
+        }
+        else if (p=="note-up-@"){
+            
+        }
+        else if (p=="accidental-#"){
+            
+        }
+        
         // 악상기호 이미지 별로 xl, xr, yt, yb 값에 의한 config x, y 조정
         // ...
         
         // pt 백업
         dirs_pts[ms.dir.parent_path()] = pt;
+         */
     }
 }
 cv::Mat Note::draw_symbols(const cv::Mat& img, const cv::Mat& img_symbol, std::string img_config, bool auxiliary_line){
@@ -104,5 +131,6 @@ cv::Mat Note::draw_symbols(const cv::Mat& img, const cv::Mat& img_symbol, std::s
     
     return img1;
 }
+
 
 }

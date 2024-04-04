@@ -50,9 +50,9 @@ class Note
     void add_config();          // config 값 추가(업데이트)
     
     // msig_Note_Utility.cpp
-    std::vector<std::string>    my_split(std::string s1, std::string s2);   // 문자열 분리
-    std::string                 my_trim(std::string s1);                    // 문자열 앞,뒤 공백 제거
-    std::string                 my_lower(std::string s1);                   // 문자열 소문자로 변환
+    std::vector<std::string>        my_split(std::string s1, std::string s2);   // 문자열 분리
+    std::string                     my_trim(std::string s1);                    // 문자열 앞,뒤 공백 제거
+    std::string                     my_lower(std::string s1);                   // 문자열 소문자로 변환
     
     
 public:

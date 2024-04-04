@@ -5,7 +5,7 @@ namespace msig
 
 
 // msig_Note_Utility.cpp
-std::vector<std::string>    Note::my_split(std::string s1, std::string s2){
+std::vector<std::string>        Note::my_split(std::string s1, std::string s2){
     using namespace std;
     using namespace cv;
     
@@ -24,7 +24,7 @@ std::vector<std::string>    Note::my_split(std::string s1, std::string s2){
     s_out.push_back(s1.substr(p, s1.length() - p));
     return s_out;
 }
-std::string                 Note::my_trim(std::string s1){
+std::string                     Note::my_trim(std::string s1){
     using namespace std;
     using namespace cv;
     
@@ -42,7 +42,7 @@ std::string                 Note::my_trim(std::string s1){
     // 공백이 제거된 문자열 범위 추출
     return s1.substr(left, right - left);
 }
-std::string                 Note::my_lower(std::string s1){
+std::string                     Note::my_lower(std::string s1){
     using namespace std;
     using namespace cv;
     
