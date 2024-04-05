@@ -43,9 +43,11 @@ class Canvas
     
 public:
     // msig_Canvas.cpp
-    Canvas();                                   // 빈 생성자
-    Canvas(std::filesystem::path dataset_dir);  // 기본 사용 생성자
-    bool operator==(const Canvas& other) const;       // 비교 연산자
+    Canvas();                                       // 빈 생성자
+    Canvas(std::filesystem::path dataset_dir);      // 기본 사용 생성자
+    Canvas(const Canvas& other);                    // 복사 생성자
+    Canvas& operator=(const Canvas& other);         // 복사(대입) 연산자
+    bool    operator==(const Canvas& other) const;  // 비교 연산자
     
     // msig_Canvas_API.cpp
     int     set(std::filesystem::path dir);             // 그릴 음표 설정

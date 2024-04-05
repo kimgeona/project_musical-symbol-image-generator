@@ -43,6 +43,15 @@ int main(void)
     // 3. 악상기호 조합 준비
     prepare_Canvas();
     
+    //
+    canvas.set(path("new-symbol-dataset/complete/line-@/staff-b4.png"));
+    canvas.set(path("new-symbol-dataset/complete/line-@/note-down-@/note-4.png"));
+    canvas.set(path("new-symbol-dataset/complete/line-@/note-down-@/articulation-#/staccato.png"));
+    canvas.set(path("new-symbol-dataset/complete/line-@/note-down-@/articulation-#/accent.png"));
+    canvas.set(path("new-symbol-dataset/complete/line-@/note-down-@/articulation-#/tenuto.png"));
+    canvas.set(path("new-symbol-dataset/complete/line-@/note-down-@/articulation-#/fermata.png"));
+    canvas.show();
+    
     // *. 악상 기호 편집
     //edit_musical_symbol_image_config("이미지 경로", "config 파일 경로");
     return 0;
@@ -84,7 +93,7 @@ void prepare_dataset(void)
 void prepare_DSTree(void)
 {
     cout << endl << "2. 의존적 선택 알고리즘 준비" << endl;
-    msig::DSTree selector((dataset_dir/path("complete")).string(), {".png"});
+    selector = msig::DSTree((dataset_dir/path("complete")).string(), {".png"});
     if (selector==msig::DSTree()){
         cout << "DSTree가 생성이 되지 않았습니다." << endl;
         exit(-1);
@@ -97,7 +106,7 @@ void prepare_DSTree(void)
 void prepare_Canvas(void)
 {
     cout << endl << "3. 악상기호 조합 준비" << endl;
-    msig::Canvas canvas(dataset_dir);
+    canvas = msig::Canvas(dataset_dir);
     if (canvas==msig::Canvas()){
         cout << "Canvas가 생성이 되지 않았습니다." << endl;
         exit(-1);
