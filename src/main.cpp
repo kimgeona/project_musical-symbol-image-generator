@@ -6,8 +6,8 @@
 #include <msig.hpp>
 
 using namespace std;
-using namespace cv;
 using namespace std::filesystem;
+using namespace cv;
 
 
 // 데이터셋 주소
@@ -25,6 +25,7 @@ void prepare_platform(void);
 void prepare_dataset(void);
 void prepare_DSTree(void);
 void prepare_Canvas(void);
+void edit_musical_symbol_image_config(string image_dir, string image_config_dir);
 
 
 // 프로그램
@@ -42,6 +43,8 @@ int main(void)
     // 3. 악상기호 조합 준비
     prepare_Canvas();
     
+    // *. 악상 기호 편집
+    //edit_musical_symbol_image_config("이미지 경로", "config 파일 경로");
     return 0;
 }
 
@@ -100,4 +103,17 @@ void prepare_Canvas(void)
         exit(-1);
     }
     cout << "----완료." << endl;
+}
+
+
+// *. 악상 기호 편집
+void edit_musical_symbol_image_config(string image_dir, string image_config_dir)
+{
+    path dir(image_dir);
+    path config_dir(image_config_dir);
+    
+    msig::MusicalSymbol ms(dir, config_dir);
+    
+    if (ms.status) return;
+    else ms.edit_config();
 }
