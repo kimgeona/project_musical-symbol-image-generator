@@ -33,7 +33,6 @@ class Canvas
 
     // msig_Canvas_Init.cpp
     int init_dir(std::filesystem::path dir);    // 주소 초기화
-    int init_symbol_selector();                 // 의존적 선택 트리 알고리즘 초기화
     int init_ds_complete();                     // 완성형 데이터셋 불러오기
     int init_ds_piece();                        // 조합형 데이터셋 불러오기
     
