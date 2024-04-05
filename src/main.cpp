@@ -53,6 +53,10 @@ int main(){
     // 3. 악상기호 조합
     cout << endl << "3. 악상기호 조합" << endl;
     msig::Canvas canvas(dataset_dir);
+    if (canvas==msig::Canvas()){
+        cout << "Canvas 가 생성이 되지 않았습니다." << endl;
+        return -1;
+    }
     cout << "완료." << endl;
     
     return 0;
