@@ -74,7 +74,7 @@ MusicalSymbol&  MusicalSymbol::operator=(const MusicalSymbol& other) {
 
 
 // 연산자 함수 ==
-bool            MusicalSymbol::operator==(const MusicalSymbol& other) {
+bool            MusicalSymbol::operator==(const MusicalSymbol& other) const {
     if (this->status        == other.status &&
         this->dir           == other.dir &&
         this->dir_config    == other.dir_config &&

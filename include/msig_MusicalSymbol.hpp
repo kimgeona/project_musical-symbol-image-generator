@@ -50,7 +50,7 @@ public:
     MusicalSymbol(std::filesystem::path dir, std::filesystem::path dir_config);     // 기본 생성자
     MusicalSymbol(const MusicalSymbol& other);                                      // 복사 생성자
     MusicalSymbol&  operator=(const MusicalSymbol& other);                          // 복사(대입) 연산자
-    bool            operator==(const MusicalSymbol& other);                         // 비교 연산자
+    bool            operator==(const MusicalSymbol& other) const;                   // 비교 연산자
 };
 }
 

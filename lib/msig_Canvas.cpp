@@ -44,16 +44,15 @@ Canvas::Canvas(std::filesystem::path dataset_dir){
 
 
 // 연산자 함수 ==
-bool Canvas::operator==(const Canvas& other){
-    if (this->dir_ds        == other.dir_ds &&
-        this->dir_ds_config == other.dir_ds_config &&
-        this->dir_ds_piece  == other.dir_ds_piece &&
-        this->dir_ds_piece  == other.dir_ds_piece //&&
-        //this->ds_complete   == other.ds_complete &&
-        //this->ds_piece      == other.ds_piece &&
-        //this->draw_list     == other.draw_list
-        ) return true;
-    else                                        return false;
+bool Canvas::operator==(const Canvas& other) const {
+    if (this->dir_ds            == other.dir_ds &&
+        this->dir_ds_config     == other.dir_ds_config &&
+        this->dir_ds_complete   == other.dir_ds_complete &&
+        this->dir_ds_piece      == other.dir_ds_piece &&
+        this->ds_complete       == other.ds_complete &&
+        this->ds_piece          == other.ds_piece &&
+        this->draw_list         == other.draw_list) return true;
+    else                                            return false;
 }
 
 
