@@ -6,7 +6,7 @@ namespace msig
 
 // 빈 생성자
 MusicalSymbol::MusicalSymbol() {
-    this->bad           = 1;
+    this->status        = -1;
     this->dir           = std::filesystem::path();
     this->dir_config    = std::filesystem::path();
     this->img           = cv::Mat();
@@ -30,7 +30,7 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path dir, std::filesystem::path di
         init_config())
     {
         cout << "MusicalSymbol: " << dir.filename().string() << " 을(를) 생성하는 과정에서 문제가 있습니다." << endl;
-        this->bad           = 1;
+        this->status        = -1;
         this->dir           = std::filesystem::path();
         this->dir_config    = std::filesystem::path();
         this->img           = cv::Mat();
@@ -40,13 +40,13 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path dir, std::filesystem::path di
         this->rotate        = 0.0;
         
     }
-    else bad = 0;
+    else this->status = 0;
 }
 
 
 // 복사 생성자
 MusicalSymbol::MusicalSymbol(const MusicalSymbol& other) {
-    this->bad           = other.bad;
+    this->status        = other.status;
     this->dir           = other.dir;
     this->dir_config    = other.dir_config;
     this->img           = other.img.clone();
@@ -59,7 +59,7 @@ MusicalSymbol::MusicalSymbol(const MusicalSymbol& other) {
 
 // 연산자 함수 =
 MusicalSymbol&  MusicalSymbol::operator=(const MusicalSymbol& other) {
-    this->bad           = other.bad;
+    this->status        = other.status;
     this->dir           = other.dir;
     this->dir_config    = other.dir_config;
     this->img           = other.img.clone();
@@ -73,7 +73,7 @@ MusicalSymbol&  MusicalSymbol::operator=(const MusicalSymbol& other) {
 
 // 연산자 함수 ==
 bool            MusicalSymbol::operator==(const MusicalSymbol& other) {
-    if (this->bad           == other.bad &&
+    if (this->status        == other.status &&
         this->dir           == other.dir &&
         this->dir_config    == other.dir_config &&
         //this->img           == other.img &&

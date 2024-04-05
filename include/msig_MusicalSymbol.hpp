@@ -16,7 +16,7 @@ namespace msig {
 class MusicalSymbol {
 public:
     // 상태 체크
-    int                     bad;
+    size_t                  status;
     
     // 악상기호 이미지 기본 설정
     int                     img_w = 256;    // 생성할 이미지 너비

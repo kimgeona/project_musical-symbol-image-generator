@@ -60,7 +60,7 @@ int MusicalSymbol::make_config      (){
         if (key=='\n'|| key=='\r') break;   // 완료에 의한 종료
         if (key==27){                       // 중단에 의한 종료
             destroyWindow(img_name);
-            return 1;
+            return -1;
         }
         switch (key) {
             // 기본 속도
@@ -107,6 +107,12 @@ int MusicalSymbol::edit_config      (){
     using namespace std;
     using namespace cv;
     using namespace std::filesystem;
+    
+    // 상태 체크
+    if (this->status){
+        cout << "수정이 불가능한 악상 기호 이미지입니다." << endl;
+        return -1;
+    }
     
     // 변수들
     Mat     img_out(img_h, img_w, CV_8UC1, Scalar(255));    // 흰 배경
@@ -161,7 +167,7 @@ int MusicalSymbol::edit_config      (){
             this->scale     = bp_scale;
             this->rotate    = bp_rotate;
             destroyWindow(img_name);
-            return 1;
+            return -1;
         }
         switch (key) {
             // 기본 속도

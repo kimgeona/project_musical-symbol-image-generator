@@ -95,7 +95,7 @@ int Note::init_ds_complete(){
         // 악상 기호 생성
         MusicalSymbol ms(p, this->dir_ds_config);
         // 악상 기호 상태 체크
-        if (ms.bad) continue;
+        if (ms.status) continue;
         // 악상 기호 추가
         this->ds_complete[p] = ms;
         // config 내용 추가
@@ -120,7 +120,7 @@ int Note::init_ds_piece(){
         // 악상 기호 생성
         MusicalSymbol ms(p, this->dir_ds_config);
         // 악상 기호 상태 체크
-        if (ms.bad) continue;
+        if (ms.status) continue;
         // 악상 기호 추가
         this->ds_complete[p] = ms;
         // config 내용 추가
