@@ -7,6 +7,6 @@
 #include <msig_Matrix.hpp>
 #include <msig_Util.hpp>
 #include <msig_MusicalSymbol.hpp>
-#include <msig_Synthesize.hpp>
+#include <msig_Canvas.hpp>
 
 #endif

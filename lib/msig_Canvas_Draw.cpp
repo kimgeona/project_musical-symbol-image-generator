@@ -1,11 +1,11 @@
-#include <msig_Synthesize.hpp>
+#include <msig_Canvas.hpp>
 
 namespace msig
 {
 
 
 // 그리기
-cv::Mat Note::draw(){
+cv::Mat Canvas::draw(){
     using namespace std;
     using namespace cv;
     
@@ -35,7 +35,7 @@ cv::Mat Note::draw(){
 
 
 // 그리기 위치 조정
-void    Note::draw_adjustment(){
+void    Canvas::draw_adjustment(){
     using namespace std;
     using namespace cv;
     using namespace std::filesystem;
@@ -92,7 +92,7 @@ void    Note::draw_adjustment(){
 
 
 // 악상 기호 그리기
-cv::Mat Note::draw_symbols(const cv::Mat& img, const cv::Mat& img_symbol, std::string img_config, bool auxiliary_line){
+cv::Mat Canvas::draw_symbols(const cv::Mat& img, const cv::Mat& img_symbol, std::string img_config, bool auxiliary_line){
     using namespace std;
     using namespace cv;
     

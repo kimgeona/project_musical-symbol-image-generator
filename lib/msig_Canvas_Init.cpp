@@ -1,11 +1,11 @@
-#include <msig_Synthesize.hpp>
+#include <msig_Canvas.hpp>
 
 namespace msig
 {
 
 
 // 주소 초기화
-int Note::init_dir(std::filesystem::path dir){
+int Canvas::init_dir(std::filesystem::path dir){
     using namespace std;
     using namespace cv;
     using namespace std::filesystem;
@@ -40,29 +40,18 @@ int Note::init_dir(std::filesystem::path dir){
 }
 
 
-// 의존적 선택 트리 알고리즘 초기화
-int Note::init_symbol_selector(){
-    using namespace std;
-    using namespace cv;
-    using namespace std::filesystem;
-    
-    // 의존적 선택 트리 생성
-    this->symbol_selector = DSTree(this->dir_ds_complete.string(), {".png"});
-    
-    // 생성한 트리 상태 체크
-    if (this->symbol_selector==DSTree())    return -1;  // 생성 안됨
-    else                                    return 0;   // 잘 생성됨
-}
-
-
 // 완성형 데이터셋 불러오기
-int Note::init_ds_complete(){
+int Canvas::init_ds_complete(){
     using namespace std;
     using namespace cv;
     using namespace std::filesystem;
     
     // 불러올 (완성형) 악상기호 이미지 목록 구하기
-    vector<path> list_png = this->symbol_selector.get_all_files();
+    vector<path> list_png;
+    for (auto& p : recursive_directory_iterator(this->dir_ds_complete)){
+        if (exists(p.path()) && is_regular_file(p.path()) && p.path().extension()==".png")
+            list_png.push_back(p.path());
+    }
     
     // 악상기호 불러오기
     for (auto& p : list_png){
@@ -81,7 +70,7 @@ int Note::init_ds_complete(){
 
 
 // 조합형 데이터셋 불러오기
-int Note::init_ds_piece(){
+int Canvas::init_ds_piece(){
     using namespace std;
     using namespace cv;
     using namespace std::filesystem;
@@ -103,7 +92,7 @@ int Note::init_ds_piece(){
             continue;
         }
         // 악상 기호 추가
-        this->ds_complete[p] = ms;
+        this->ds_piece[p] = ms;
     }
     return 0;
 }

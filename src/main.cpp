@@ -23,12 +23,11 @@ int main(){
     path dataset_config_dir = dataset_dir / path("symbol_dataset_config.txt");
     
     
-    // 데이터셋 준비
-    for (auto& p : recursive_directory_iterator(dataset_dir))
-    {
+    // 1. 데이터셋 준비
+    cout << endl << "1. 데이터셋 준비" << endl;
+    for (auto& p : recursive_directory_iterator(dataset_dir)){
         // 존재하는 파일이고, .png 형식이라면 생성
-        if (exists(p.path()) && is_regular_file(p.path()) && p.path().extension()==".png")
-        {
+        if (exists(p.path()) && is_regular_file(p.path()) && p.path().extension()==".png"){
             // 악상 기호 생성
             msig::MusicalSymbol ms(p, dataset_config_dir);
             
@@ -37,12 +36,24 @@ int main(){
                 cout << "fail    : " << p << endl;
                 continue;
             }
-            else
-                cout << "success : " << p << endl;
+            else cout << "success : " << p << endl;
         }
     }
+    cout << "완료." << endl;
     
-    // 악상기호 조합하는 코드 작성
+    // 2. 의존적 선택 알고리즘 준비
+    cout << endl << "2. 의존적 선택 알고리즘 준비" << endl;
+    msig::DSTree selector((dataset_dir/path("complete")).string(), {".png"});
+    if (selector==msig::DSTree()){
+        cout << "DSTree 가 생성이 되지 않았습니다." << endl;
+        return -1;
+    }
+    cout << "완료." << endl;
+    
+    // 3. 악상기호 조합
+    cout << endl << "3. 악상기호 조합" << endl;
+    msig::Canvas canvas(dataset_dir);
+    cout << "완료." << endl;
     
     return 0;
 }
