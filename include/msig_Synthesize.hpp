@@ -58,7 +58,6 @@ public:
     void    save_as_img(std::string file_name);         // 그린 내용을 file_name 이름으로 저장
     void    show();                                     // 그린 내용을 화면에 보여주기
     cv::Mat cv_Mat();                                   // 그린 내용을 cv::Mat() 형식으로 반환
-    void    edit_config();                              // 현재 불러와진 config 정보들 수정
 };
  
 
