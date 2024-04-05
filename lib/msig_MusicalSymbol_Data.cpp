@@ -226,8 +226,13 @@ int MusicalSymbol::save_config     (){
         return -1;
     }
     
-    // config 파일에 config 정보 저장 하는 코드 작성하기
+    // "key=value" 문자열 생성
+    string key = my_dir(this->dir);           // 나의 주소 구하기
+    string value = to_string(this->x)+"_"+to_string(this->y)+"_"+to_string(this->rotate)+"_"+to_string(this->scale);
     
+    // config 파일에 저장
+    my_filter_out(this->dir_config, key);               // config 에서 해당 이름을 가진 라인 제거
+    my_attach(this->dir_config, key + "=" + value);     // config 맨 뒤에 추가
     
     return 0;
 }

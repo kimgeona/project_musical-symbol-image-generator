@@ -15,7 +15,9 @@ namespace msig {
 std::string                 my_dir(std::filesystem::path dir);                  // 주소 변환
 
 // 파일 관련
-std::string                 my_grep(std::filesystem::path dir, std::string s);  // 터미널 grep
+std::string                 my_grep(std::filesystem::path dir, std::string s);          // 터미널 grep
+void                        my_filter_out(std::filesystem::path dir, std::string s);    // 특정 문자열을 포함하는 라인 제거
+void                        my_attach(std::filesystem::path dir, std::string s);        // 특정 문자열을 파일 맨 뒤에다 붙이기
 
 // 문자열 관련
 std::vector<std::string>    my_split(std::string s1, std::string s2);           // 파이썬 split

@@ -42,6 +42,66 @@ std::string                 my_grep(std::filesystem::path dir, std::string s){
 }
 
 
+// 특정 문자열을 포함하는 라인 제거
+void                        my_filter_out(std::filesystem::path dir, std::string s){
+    using namespace std;
+    using namespace std::filesystem;
+    
+    // 파일 내용들
+    vector<string> file;
+    
+    // 파일 읽기
+    fstream fin(dir.string(), ios::in);
+    if (!fin){
+        cout << "my_filter_out(): ";
+        cout << "can't open " << dir << " for reading.";
+        cout << endl;
+        exit(1);
+    }
+    string line;
+    while (getline(fin, line)) {
+        if (line.find(s)!=std::string::npos)    continue;
+        else                                    file.push_back(line);
+    }
+    fin.close();
+    
+    // 기존 파일 제거
+    remove(dir);
+    
+    // 파일 쓰기
+    fstream fout(dir.string(), ios::out|ios::app);
+    if (!fout){
+        cout << "my_filter_out(): ";
+        cout << "can't open " << dir << " for writing.";
+        cout << endl;
+        exit(1);
+    }
+    for(auto& s : file){
+        if (s=="") continue;
+        fout << endl << s;
+    }
+    fout.close();
+}
+
+
+// 특정 문자열을 파일 맨 뒤에다 붙이기
+void                        my_attach(std::filesystem::path dir, std::string s){
+    using namespace std;
+    using namespace std::filesystem;
+    
+    // 파일 쓰기
+    fstream fout(dir.string(), ios::out|ios::app);
+    if (!fout){
+        cout << "my_filter_out(): ";
+        cout << "can't open " << dir << " for writing.";
+        cout << endl;
+        exit(1);
+    }
+    fout << endl << s;
+    fout.close();
+}
+
+
 // 파이썬 split
 std::vector<std::string>    my_split(std::string s1, std::string s2){
     using namespace std;
