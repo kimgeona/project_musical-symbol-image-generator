@@ -4,7 +4,7 @@ namespace msig
 {
 
 
-// msig_Note_Draw.cpp
+// 그리기
 cv::Mat Note::draw(){
     using namespace std;
     using namespace cv;
@@ -32,6 +32,9 @@ cv::Mat Note::draw(){
     // 생성된 이미지 리턴
     return img;
 }
+
+
+// 그리기 위치 조정
 void    Note::draw_adjustment(){
     using namespace std;
     using namespace cv;
@@ -86,6 +89,9 @@ void    Note::draw_adjustment(){
          */
     }
 }
+
+
+// 악상 기호 그리기
 cv::Mat Note::draw_symbols(const cv::Mat& img, const cv::Mat& img_symbol, std::string img_config, bool auxiliary_line){
     using namespace std;
     using namespace cv;

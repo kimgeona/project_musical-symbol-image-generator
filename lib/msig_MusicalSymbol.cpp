@@ -23,6 +23,9 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path dir, std::filesystem::path di
     using namespace cv;
     using namespace std::filesystem;
     
+    // 기본 상태 설정
+    this->status = 0;
+    
     // 아래 과정에서 이상이 있을 경우
     if (init_dir(dir)               ||
         init_dir_config(dir_config) ||
@@ -40,7 +43,6 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path dir, std::filesystem::path di
         this->rotate        = 0.0;
         
     }
-    else this->status = 0;
 }
 
 

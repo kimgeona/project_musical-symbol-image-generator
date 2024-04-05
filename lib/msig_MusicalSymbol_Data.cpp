@@ -98,7 +98,7 @@ int MusicalSymbol::make_config      (){
     }
     destroyWindow(img_name);
     
-    return 0;
+    return save_config();
 }
 
 
@@ -209,6 +209,25 @@ int MusicalSymbol::edit_config      (){
         if (this->scale<0.1)    this->scale = 0.1;
     }
     destroyWindow(img_name);
+    
+    return save_config();
+}
+
+
+// config 저장하기
+int MusicalSymbol::save_config     (){
+    using namespace std;
+    using namespace cv;
+    using namespace std::filesystem;
+    
+    // 상태 체크
+    if (this->status){
+        cout << "수정이 불가능한 악상 기호 이미지입니다." << endl;
+        return -1;
+    }
+    
+    // config 파일에 config 정보 저장 하는 코드 작성하기
+    
     
     return 0;
 }

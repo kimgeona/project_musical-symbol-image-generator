@@ -4,7 +4,7 @@ namespace msig
 {
 
 
-// msig_Note_API.cpp
+// 그릴 수 있는 음표들 출력
 void    Note::print_setable(){
     using namespace std;
     using namespace cv;
@@ -12,6 +12,9 @@ void    Note::print_setable(){
     
     symbol_selector.print_selectable();
 }
+
+
+// 음표를 그릴 수 있는지 확인
 bool    Note::is_setable(){
     using namespace std;
     using namespace cv;
@@ -19,6 +22,9 @@ bool    Note::is_setable(){
     
     return symbol_selector.is_selectable();
 }
+
+
+// 그릴 음표 설정
 int     Note::set(std::string dir){
     using namespace std;
     using namespace cv;
@@ -64,6 +70,9 @@ int     Note::set(std::string type, std::string name){
     // 찾지 못한 경우
     return 1;
 }
+
+
+// 그린 내용을 file_name 이름으로 저장
 void    Note::save_as_img(std::string file_name){
     using namespace std;
     using namespace cv;
@@ -74,6 +83,9 @@ void    Note::save_as_img(std::string file_name){
     // 이미지 저장
     imwrite(file_name, image);
 }
+
+
+// 그린 내용을 화면에 보여주기
 void    Note::show(){
     using namespace std;
     using namespace cv;
@@ -95,12 +107,18 @@ void    Note::show(){
     // 윈도우 없애기
     destroyWindow(title);
 }
+
+
+// 그린 내용을 cv::Mat() 형식으로 반환
 cv::Mat Note::cv_Mat(){
     using namespace std;
     using namespace cv;
     
     return draw();
 }
+
+
+// 현재 불러와진 config 정보들 수정
 void    Note::edit_config(){
     using namespace std;
     using namespace cv;

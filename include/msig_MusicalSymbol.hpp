@@ -43,6 +43,7 @@ public:
     // msig_MusicalSymbol_Data.cpp
     int make_config     ();                             // config 생성하기
     int edit_config     ();                             // config 수정하기
+    int save_config     ();                             // config 저장하기
     
     // msig_MusicalSymbol.cpp
     MusicalSymbol();                                                                // 빈 생성자

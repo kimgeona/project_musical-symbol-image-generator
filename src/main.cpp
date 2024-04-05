@@ -1,5 +1,8 @@
+// c++17
 #include <iostream>
 #include <opencv2/opencv.hpp>
+
+// 나의 라이브러리
 #include <msig.hpp>
 
 int main(){
@@ -15,115 +18,31 @@ int main(){
     system("chcp 65001");
 #endif
     
-    string s = "";
-    cout << "enter the number that you want to test." << endl;
-    cout << "---- Geona Kim --------------" << endl;
-    cout << "1)dst::DSTree()"               << endl;
-    cout << "2)msig::MusicalSymbol()"       << endl;
-    cout << "3)msig::Note()"                << endl;
-    cout << "---- Junhyuck yim ------------" << endl;
-    cout << "4)msig::remove_padding()"      << endl;
-    cout << "-----------------------------" << endl;
-    cout << ">>";
-    cin >> s;
-    cout << endl << endl << endl;
+    // 데이터셋 주소
+    path dataset_dir = path("new-symbol-dataset");
+    path dataset_config_dir = dataset_dir / path("symbol_dataset_config.txt");
     
     
-    
-    if      (s=="1"){
-        cout << "--dst::DSTree()--------------" << endl << endl;
-        // 자료구조 위치
-        path p1("new-symbol-dataset"), p2("complete");
-        path p = p1 / p2;
-        
-        // 자료구조 접근 알고리즘 생성
-        msig::DSTree my_ds(p.string(), {".png"});
-        
-        // 반복
-        while(true){
-            // 선택 가능한지 확인
-            if (!my_ds.is_selectable()) break;
+    // 데이터셋 준비
+    for (auto& p : recursive_directory_iterator(dataset_dir))
+    {
+        // 존재하는 파일이고, .png 형식이라면 생성
+        if (exists(p.path()) && is_regular_file(p.path()) && p.path().extension()==".png")
+        {
+            // 악상 기호 생성
+            msig::MusicalSymbol ms(p, dataset_config_dir);
             
-            // 보여주기
-            my_ds.print_selectable();
-            
-            // 선택할 내용 입력받기
-            string folder, name;
-            cout << "-----------------------------" << endl << "=>";
-            cin >> folder;
-            cout << endl;
-            
-            if (folder=="exit"){
-                cout << "프로그램을 종료합니다." << endl;
-                break;
+            // 악상 기호 상태 체크
+            if (ms.status){
+                cout << "fail    : " << p << endl;
+                continue;
             }
-            cin >> name;
-            if (name=="exit"){
-                cout << "프로그램을 종료합니다." << endl;
-                break;
-            }
-            
-            // 선택
-            int error = my_ds.select(folder, name);
-            switch (error) {
-                case 1: cout << path(folder)/path(name) << " 을(를) 찾을 수 없습니다." << endl << endl; break;
-            }
+            else
+                cout << "success : " << p << endl;
         }
-        cout << "--done.----------------------" << endl;
     }
-    else if (s=="2"){
-        cout << "--msig::MusicalSymbol()------" << endl;
-        cout << "--done.----------------------" << endl;
-    }
-    else if (s=="3"){
-        cout << "--msig::Note()---------------" << endl;
-        // Note 생성
-        msig::Note note = msig::Note("new-symbol-dataset");
-        // 입력 받기
-        while (true) {
-            // 그릴 수 있는 음표 확인
-            if (!note.is_setable()) break;
-            
-            // 보여주기
-            note.print_setable();
-            
-            // 선택할 내용 입력받기
-            string type, name;
-            cout << "-----------------------------" << endl << "=>";
-            cin >> type >> name;
-            
-            // 선택
-            int error = note.set(type, name);
-            switch (error) {
-                case 1: cout << path(type)/path(name) << " 을(를) 찾을 수 없습니다." << endl << endl; break;
-            }
-            
-            // 현재까지 그려진 이미지 보여주기
-            note.show();
-        }
-        // 생성된 이미지 저장
-        note.save_as_img("test.png");
-        // 모든 창 종료
-        destroyAllWindows();
-        
-        cout << "--done.----------------------" << endl;
-    }
-    else if (s=="4"){
-        cout << "--msig::remove_padding()-----" << endl;
-        
-        Mat img = imread(R"(여따 경로 지정해서 테스트 하세용)", IMREAD_GRAYSCALE);
-        CV_Assert(img.data);
-        Mat img_out = msig::remove_padding(img);
-        imshow("img", img);
-        imshow("img_out", img_out);
-        waitKey();
-        
-        cout << "--done.----------------------" << endl;
-    }
-    else {
-        cout << "worng input." << endl;
-        cout << "exit the program." << endl;
-    }
+    
+    // 악상기호 조합하는 코드 작성
     
     return 0;
 }

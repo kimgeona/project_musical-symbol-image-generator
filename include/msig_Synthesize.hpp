@@ -18,26 +18,25 @@
 namespace msig {
 class Note
 {
-    // 변수 : 데이터셋 주소
+    // 데이터셋 주소
     std::filesystem::path       dir_ds;             // 데이터셋 위치
     std::filesystem::path       dir_ds_config;      // 데이터셋 config 파일 위치
     std::filesystem::path       dir_ds_complete;    // 데이터셋 complete 폴더 위치
     std::filesystem::path       dir_ds_piece;       // 데이터셋 piece 폴더 위치
 
-    // 변수 : 데이터셋
+    // 불러온 데이터셋
     std::map<std::filesystem::path, MusicalSymbol>  ds_complete;    // 데이터셋 : 완성형
     std::map<std::filesystem::path, MusicalSymbol>  ds_piece;       // 데이터셋 : 조합형
     
-    // 변수 : Dependent Selection Tree
+    // Dependent Selection Tree 알고리즘
     DSTree                 symbol_selector;         // 의존적 선택 트리 알고리즘
     
-    // 변수 : 그릴 목록
+    // 그릴 목록
     std::vector<MusicalSymbol>  draw_list;          // 그릴 목록
 
     // msig_Note_Init.cpp
-    int init_dir(std::filesystem::path dir);    // 데이터셋 주소 초기화 함수
-    int init_symbol_selector();                 // 의존적 선택 트리 알고리즘 초기화 함수
-    int init_ds();                              // 데이터셋 불러오기
+    int init_dir(std::filesystem::path dir);    // 주소 초기화
+    int init_symbol_selector();                 // 의존적 선택 트리 알고리즘 초기화
     int init_ds_complete();                     // 완성형 데이터셋 불러오기
     int init_ds_piece();                        // 조합형 데이터셋 불러오기
     
@@ -46,15 +45,10 @@ class Note
     void    draw_adjustment();                  // 그리기 위치 조정
     cv::Mat draw_symbols(const cv::Mat& img, const cv::Mat& img_symbol, std::string img_config, bool auxiliary_line=false);
     
-    // msig_Note_Backup.cpp
-    void save_config();         // config 값 새로 저장(리프레쉬)
-    void add_config();          // config 값 추가(업데이트)
-    
-    
 public:
     // msig_Note.cpp
-    Note();
-    Note(std::string dataset_dir);
+    Note();                                     // 빈 생성자
+    Note(std::filesystem::path dataset_dir);    // 기본 사용 생성자
     
     // msig_Note_API.cpp
     void    print_setable();                            // 그릴 수 있는 음표들 출력
