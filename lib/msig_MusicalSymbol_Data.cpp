@@ -5,7 +5,7 @@ namespace msig
 {
 
 
-// msig_MusicalSymbol_Data.cpp
+// config 데이터 생성
 int MusicalSymbol::make_config      (){
     using namespace std;
     using namespace cv;
@@ -27,13 +27,12 @@ int MusicalSymbol::make_config      (){
     
     // 화면에 그리기 (30Hz)
     while (true) {
-        Mat     img1 = img_out.clone();
-        Mat     img2 = img_symbol.clone();
+        Mat     img1 = img_out.clone();     // 흰 배경
+        Mat     img2 = img_symbol.clone();  // 악상 기호 이미지
         
         // 이미지 편집
-        img2 = mat_rotate(img2, this->rotate, img2.cols/2.0, img2.rows/2.0);
-        img2 = mat_scale(img2, this->scale);
-        //img2 = mat_symmetry(img2, this->symmetry);
+        img2 = mat_rotate(img2, this->rotate, img2.cols/2.0, img2.rows/2.0);    // 이미지 회전
+        img2 = mat_scale(img2, this->scale);                                    // 이미지 확대 축소
         
         // 보조선 그리기(오선)
         for (auto h : vector<int>({-pad*2, -pad, 0, pad, pad*2})){
@@ -69,7 +68,6 @@ int MusicalSymbol::make_config      (){
             case 'd': this->x -= 1; break;  // 우로 이동
             case 'w': this->y += 1; break;  // 상으로 이동
             case 's': this->y -= 1; break;  // 하로 이동
-
             case 'q': this->rotate+=1.0;  break;  // 반시계 회전
             case 'e': this->rotate-=1.0;  break;  // 시계 회전
             case 'z': this->scale-=0.1;   break;  // 축소
@@ -102,6 +100,9 @@ int MusicalSymbol::make_config      (){
     
     return 0;
 }
+
+
+// config 데이터 수정
 int MusicalSymbol::edit_config      (){
     using namespace std;
     using namespace cv;
@@ -123,13 +124,12 @@ int MusicalSymbol::edit_config      (){
     
     // 화면에 그리기 (30Hz)
     while (true) {
-        Mat     img1 = img_out.clone();
-        Mat     img2 = img_symbol.clone();
+        Mat     img1 = img_out.clone();     // 흰 배경
+        Mat     img2 = img_symbol.clone();  // 악상 기호 이미지
         
         // 이미지 편집
-        img2 = mat_rotate(img2, this->rotate, img2.cols/2.0, img2.rows/2.0);
-        img2 = mat_scale(img2, this->scale);
-        //img2 = mat_symmetry(img2, this->symmetry);
+        img2 = mat_rotate(img2, this->rotate, img2.cols/2.0, img2.rows/2.0);    // 이미지 회전
+        img2 = mat_scale(img2, this->scale);                                    // 이미지 확대 축소
         
         // 보조선 그리기(오선)
         for (auto h : vector<int>({-pad*2, -pad, 0, pad, pad*2})){

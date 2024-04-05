@@ -176,6 +176,22 @@ cv::Mat mat_symmetry    (const cv::Mat& img, std::string symmetry){
 }
 
 
+// 이미지 재생성(이미지 복구)
+void    restore_img(std::filesystem::path dir){
+    using namespace std;
+    using namespace cv;
+    using namespace std::filesystem;
+    
+    // 이미지 존재 여부 확인
+    if (exists(dir) && is_regular_file(dir) && dir.extension().string()==".png"){
+        Mat img = imread(dir.string(), IMREAD_GRAYSCALE);   // 흑백 영상으로 이미지 불러오기
+        CV_Assert(img.data);                                // 잘 불러와졌는지 확인
+        imwrite(dir.string(), img);                         // 불러온 이미지 저장
+    }
+    else return;
+}
+
+
 // 흑백 영상 패딩 제거
 cv::Mat remove_padding(const cv::Mat& img) {
     using namespace std;

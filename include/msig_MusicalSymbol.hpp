@@ -18,42 +18,38 @@ public:
     // 상태 체크
     int                     bad;
     
-    // 생성할 이미지 정보
-    int                     img_w=256;  // 생성할 이미지 너비
-    int                     img_h=512;  // 생성할 이미지 높이
-    int                     pad = 26;   // 오선지 간격
+    // 악상기호 이미지 기본 설정
+    int                     img_w = 256;    // 생성할 이미지 너비
+    int                     img_h = 512;    // 생성할 이미지 높이
+    int                     pad = 26;       // 오선지 간격
     
-    // 변수
-    std::filesystem::path   dir;        // 악상 기호 저장 주소
-    std::filesystem::path   dir_config; // 악상 기호 config 파일 주소
-    cv::Mat                 img;        // 악상 기호 이미지
-    int                     x;          // 중심점 x
-    int                     y;          // 중심점 y
-    double                  rotate;     // 회전
-    double                  scale;      // 확대, 축소
+    // 악상기호 이미지 관련 디렉토리
+    std::filesystem::path   dir;            // 악상 기호 저장 주소
+    std::filesystem::path   dir_config;     // 악상 기호 config 파일 주소
+    
+    // 데이터
+    cv::Mat                 img;            // 악상 기호 이미지
+    int                     x;              // 중심점 x
+    int                     y;              // 중심점 y
+    double                  rotate;         // 회전
+    double                  scale;          // 확대, 축소
     
     // msig_MusicalSymbol_Init.cpp
-    int init_dir        (std::filesystem::path dir);    // image 주소 확인
-    int init_dir_config (std::filesystem::path dir);    // config 주소 확인
-    int init_img        ();                             // image 불러오기
-    int init_config     ();                             // config 불러오기
+    int init_dir        (std::filesystem::path dir);    // dir 초기화
+    int init_dir_config (std::filesystem::path dir);    // dir_config 초기화
+    int init_img        ();                             // image 초기화
+    int init_config     ();                             // config 초기화
     
     // msig_MusicalSymbol_Data.cpp
     int make_config     ();                             // config 생성하기
     int edit_config     ();                             // config 수정하기
     
-    // msig_MusicalSymbol_Preprocessing.cpp
-    void                        restore_img(std::filesystem::path dir);             // 이미지 재생성
-    void                        remove_padding(std::filesystem::path dir);          // 이미지 여백 제거
-    
     // msig_MusicalSymbol.cpp
-    MusicalSymbol();
-    MusicalSymbol(std::filesystem::path dir, std::filesystem::path dir_config);
-    MusicalSymbol(const MusicalSymbol& other);
-    
-    // msig_MusicalSymbol_Operator.cpp
-    MusicalSymbol&  operator=(const MusicalSymbol& other);
-    bool            operator==(const MusicalSymbol& other);
+    MusicalSymbol();                                                                // 빈 생성자
+    MusicalSymbol(std::filesystem::path dir, std::filesystem::path dir_config);     // 기본 생성자
+    MusicalSymbol(const MusicalSymbol& other);                                      // 복사 생성자
+    MusicalSymbol&  operator=(const MusicalSymbol& other);                          // 복사(대입) 연산자
+    bool            operator==(const MusicalSymbol& other);                         // 비교 연산자
 };
 }
 

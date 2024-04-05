@@ -1,4 +1,4 @@
-#include <msig_Algorithm.hpp>
+#include <msig_Algorithm_DST.hpp>
 
 namespace msig {
 
