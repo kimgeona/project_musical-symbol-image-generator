@@ -43,14 +43,21 @@ int main(void)
     // 3. 악상기호 조합 준비
     prepare_Canvas();
     
+    // Canvas.set() 확인
     //
-    canvas.set(path("new-symbol-dataset/complete/line-@/staff-b4.png"));
-    canvas.set(path("new-symbol-dataset/complete/line-@/note-down-@/note-4.png"));
-    canvas.set(path("new-symbol-dataset/complete/line-@/note-down-@/articulation-#/staccato.png"));
-    canvas.set(path("new-symbol-dataset/complete/line-@/note-down-@/articulation-#/accent.png"));
-    canvas.set(path("new-symbol-dataset/complete/line-@/note-down-@/articulation-#/tenuto.png"));
-    canvas.set(path("new-symbol-dataset/complete/line-@/note-down-@/articulation-#/fermata.png"));
-    canvas.show();
+    //canvas.set(path("new-symbol-dataset/complete/line-@/staff-b4.png"));
+    //canvas.set(path("new-symbol-dataset/complete/line-@/note-down-@/note-4.png"));
+    //canvas.set(path("new-symbol-dataset/complete/line-@/note-down-@/articulation-#/staccato.png"));
+    //canvas.set(path("new-symbol-dataset/complete/line-@/note-down-@/articulation-#/accent.png"));
+    //canvas.set(path("new-symbol-dataset/complete/line-@/note-down-@/articulation-#/tenuto.png"));
+    //canvas.set(path("new-symbol-dataset/complete/line-@/note-down-@/articulation-#/fermata.png"));
+    //canvas.show();
+    
+    // MusicalSymbol.operator&() 확인
+    //
+    //msig::MusicalSymbol ms1(path("new-symbol-dataset/complete/line-@/note-up-@/note-4.png"), dataset_config_dir);
+    //msig::MusicalSymbol ms2(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/fermata.png"), dataset_config_dir);
+    //cout << endl << endl << "ms1 & ms2 : " << (ms1 & ms2) << endl;
     
     // *. 악상 기호 편집
     //edit_musical_symbol_image_config("이미지 경로", "config 파일 경로");
