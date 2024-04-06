@@ -1,6 +1,6 @@
 #pragma once
-#ifndef dst_hpp
-#define dst_hpp
+#ifndef msig_Algorithm_DST_hpp
+#define msig_Algorithm_DST_hpp
 
 #include <iostream>
 #include <filesystem>
