@@ -23,6 +23,11 @@ class MSPA
 public:
     
     MSPA();
+    MSPA(string pitch){
+        // 음정을 파악하여 t, b, l, r 갯수를 알아내고 MSPA(int, int, int, int) 생성자 호출.
+        int t=0, b=0, l=0, r=0;
+        MSPA(t, b, l, r);
+    }
     MSPA(int t, int b, int l, int r){
         // 공간 확보
         this->top       << t;
