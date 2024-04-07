@@ -31,8 +31,10 @@ int MusicalSymbol::make_config      (){
         Mat     img2 = img_symbol.clone();  // 악상 기호 이미지
         
         // 이미지 편집
-        img2 = mat_rotate(img2, this->rotate, img2.cols/2.0, img2.rows/2.0);    // 이미지 회전
-        img2 = mat_scale(img2, this->scale);                                    // 이미지 확대 축소
+        int tmp_x = this->x;
+        int tmp_y = this->y;
+        img2 = mat_rotate(img2, this->rotate, tmp_x, tmp_y);    // 이미지 회전
+        img2 = mat_scale(img2, this->scale, tmp_x, tmp_y);      // 이미지 확대 축소
         
         // 보조선 그리기(오선)
         for (auto h : vector<int>({-pad*2, -pad, 0, pad, pad*2})){
@@ -41,8 +43,8 @@ int MusicalSymbol::make_config      (){
         }
         
         // 이미지 합성 좌표 계산 : img1 중심 - img2 중심 + img2 config 값
-        int x = (img_w/2.0) - this->x;
-        int y = (img_h/2.0) - this->y;
+        int x = (img_w/2.0) - tmp_x;
+        int y = (img_h/2.0) - tmp_y;
         
         // 이미지 합성
         img1 = mat_attach(img1, img2, x, y);
@@ -134,8 +136,10 @@ int MusicalSymbol::edit_config      (){
         Mat     img2 = img_symbol.clone();  // 악상 기호 이미지
         
         // 이미지 편집
-        img2 = mat_rotate(img2, this->rotate, img2.cols/2.0, img2.rows/2.0);    // 이미지 회전
-        img2 = mat_scale(img2, this->scale);                                    // 이미지 확대 축소
+        int tmp_x = this->x;
+        int tmp_y = this->y;
+        img2 = mat_scale(img2, this->scale, tmp_x, tmp_y);      // 이미지 확대 축소
+        img2 = mat_rotate(img2, this->rotate, tmp_x, tmp_y);    // 이미지 회전
         
         // 보조선 그리기(오선)
         for (auto h : vector<int>({-pad*2, -pad, 0, pad, pad*2})){
@@ -144,8 +148,8 @@ int MusicalSymbol::edit_config      (){
         }
         
         // 이미지 합성 좌표 계산 : img1 중심 - img2 중심 + img2 config 값
-        int x = (img_w/2.0) - this->x;
-        int y = (img_h/2.0) - this->y;
+        int x = (img_w/2.0) - tmp_x;
+        int y = (img_h/2.0) - tmp_y;
         
         // 이미지 합성
         img1 = mat_attach(img1, img2, x, y);

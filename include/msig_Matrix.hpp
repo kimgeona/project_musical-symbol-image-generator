@@ -11,10 +11,10 @@ namespace msig {
 
 
 // 행렬 연산
-cv::Mat mat_attach      (const cv::Mat& img, const cv::Mat& img_sub, int x, int y); // 합성
-cv::Mat mat_rotate      (const cv::Mat& img, double degree, int x, int y);          // 회전
-cv::Mat mat_scale       (const cv::Mat& img, double scale);                         // 확대
-cv::Mat mat_symmetry    (const cv::Mat& img, std::string symmetry);                 // 대칭
+cv::Mat mat_attach      (const cv::Mat& img, const cv::Mat& img_sub, int x, int y, bool trim=true); // 합성
+cv::Mat mat_rotate      (const cv::Mat& img, double degree, int& cx, int& cy);                      // 회전
+cv::Mat mat_scale       (const cv::Mat& img, double scale, int& cx, int& cy);                       // 확대
+cv::Mat mat_symmetry    (const cv::Mat& img, std::string symmetry);                                 // 대칭
 
 // 영상 처리
 void    restore_img(std::filesystem::path dir);                                     // 이미지 재생성(이미지 복구)

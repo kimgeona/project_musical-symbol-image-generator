@@ -14,19 +14,30 @@ cv::Mat Canvas::draw(){
     int     img_h=512;  // 생성할 이미지 높이
     
     // 흰 이미지 생성
-    Mat img(img_h, img_w, CV_8UC1, Scalar(255));
+    Mat img = Mat(img_h, img_w, CV_8UC1, Scalar(255));
     
-    // draw_list에 있는 악상 기호들 x, y 위치 조정
-    draw_adjustment();
+    // 누적된 악상기호 이미지
+    MusicalSymbol ms_all;
     
     // draw_list에 있는 악상 기호들 img에 그리기
     for(auto ms : draw_list){
-        // 이미지와 config 불러오기
-        Mat     img_symbol = ms.img.clone();
-        string  img_config = to_string(ms.x)+"_"+to_string(ms.y)+"_"+to_string(ms.rotate)+"_"+to_string(ms.scale);
-        
+        // 누적된 이미지 확인
+        if (!(ms_all==MusicalSymbol())){
+            // 위치 조정 (아래로 보내기)
+            while (ms_all & ms){
+                // 겹치지 않을 때 까지 내려보내기
+                while (ms_all & ms) ms.y = ms.y - 1;
+                // 추가 간격 조정
+                ms.y = ms.y - 13;
+                // 위치 조정 확인
+                if (ms_all & ms)    continue;
+                else                break;
+            }
+            ms_all += ms;
+        }
+        else ms_all = ms;
         // 악상 기호 그리기
-        img = draw_symbols(img, img_symbol, img_config);
+        img = draw_symbols(img, ms);
     }
     
     // 생성된 이미지 리턴
@@ -92,7 +103,7 @@ void    Canvas::draw_adjustment(){
 
 
 // 악상 기호 그리기
-cv::Mat Canvas::draw_symbols(const cv::Mat& img, const cv::Mat& img_symbol, std::string img_config, bool auxiliary_line){
+cv::Mat Canvas::draw_symbols(const cv::Mat& img, const msig::MusicalSymbol& ms, bool auxiliary_line){
     using namespace std;
     using namespace cv;
     
@@ -103,19 +114,18 @@ cv::Mat Canvas::draw_symbols(const cv::Mat& img, const cv::Mat& img_symbol, std:
     
     // 편집할 이미지들
     Mat img1 = img.clone();         // 행렬 복사
-    Mat img2 = img_symbol.clone();  // 행렬 복사
+    Mat img2 = ms.img.clone();      // 행렬 복사
     
-    // 편집 정보 추출
-    vector<string> configs = my_split(img_config, "_"); // "x_y_각도_확대축소_대칭"
     
     // 이미지 편집(회전, 확대 및 축소, 대칭)
-    img2 = mat_rotate(img2, stod(configs[2]), img2.cols/2.0, img2.rows/2.0);
-    img2 = mat_scale(img2, stod(configs[3]));
-    //img2 = symmetry_mat(img2, configs[4]);
+    int tmp_x = ms.x;
+    int tmp_y = ms.y;
+    img2 = mat_rotate(img2, ms.rotate, tmp_x, tmp_y);
+    img2 = mat_scale(img2, ms.scale, tmp_x, tmp_y);
     
     // 이미지 합성 좌표 계산
-    int x = (img_w)/2.0 - (stoi(configs[0]));   // 이미지 중심 - sub 이미지 중심 + config 값
-    int y = (img_h)/2.0 - (stoi(configs[1]));
+    int x = (img_w)/2.0 - tmp_x;   // 이미지 중심 - sub 이미지 중심 + config 값
+    int y = (img_h)/2.0 - tmp_y;
     
     // 보조선 그리기 (오선지)
     if (auxiliary_line==true){

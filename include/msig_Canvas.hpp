@@ -39,7 +39,7 @@ class Canvas
     // msig_Canvas_Draw.cpp
     cv::Mat draw();                             // 그리기
     void    draw_adjustment();                  // 그리기 위치 조정
-    cv::Mat draw_symbols(const cv::Mat& img, const cv::Mat& img_symbol, std::string img_config, bool auxiliary_line=false);
+    cv::Mat draw_symbols(const cv::Mat& img, const msig::MusicalSymbol& ms, bool auxiliary_line=false);
     
 public:
     // msig_Canvas.cpp
