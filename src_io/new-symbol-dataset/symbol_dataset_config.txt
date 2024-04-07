@@ -1,4 +1,5 @@
 
+new-symbol-dataset_complete_line-@_staff-c4-0-0.png=50_59_0.000000_2.100000
 new-symbol-dataset_complete_edge-@_measure-@_bar-dotted.png=27_25_0.000000_2.100000
 new-symbol-dataset_complete_edge-@_measure-@_bar-double-bold.png=78_25_0.000000_2.100000
 new-symbol-dataset_complete_edge-@_measure-@_bar-double.png=39_25_0.000000_2.100000
@@ -164,7 +165,17 @@ new-symbol-dataset_complete_line-@_rest-@_rest-64-dot.png=40_50_0.000000_0.80000
 new-symbol-dataset_complete_line-@_rest-@_rest-64.png=39_52_0.000000_0.900000
 new-symbol-dataset_complete_line-@_rest-@_rest-8-dot.png=24_40_0.000000_1.000000
 new-symbol-dataset_complete_line-@_rest-@_rest-8.png=23_42_0.000000_0.900000
+new-symbol-dataset_complete_line-@_staff-a4-0-0.png=48_35_0.000000_2.100000
 new-symbol-dataset_complete_line-@_staff-b4-0-0.png=50_29_0.000000_2.200000
+new-symbol-dataset_complete_line-@_staff-c5-0-0.png=50_23_0.000000_2.100000
+new-symbol-dataset_complete_line-@_staff-d4-0-0.png=50_59_0.000000_2.100000
+new-symbol-dataset_complete_line-@_staff-d5-0-0.png=51_17_0.000000_2.100000
+new-symbol-dataset_complete_line-@_staff-e4-0-0.png=51_53_0.000000_2.100000
+new-symbol-dataset_complete_line-@_staff-e5-0-0.png=51_11_0.000000_2.100000
+new-symbol-dataset_complete_line-@_staff-f4-0-0.png=50_47_0.000000_2.200000
+new-symbol-dataset_complete_line-@_staff-f5-0-0.png=50_5_0.000000_2.100000
+new-symbol-dataset_complete_line-@_staff-g4-0-0.png=51_41_0.000000_2.200000
+new-symbol-dataset_complete_line-@_staff-g5-0-0.png=51_-1_0.000000_2.100000
 new-symbol-dataset_complete_line-@_time-@_common.png=14_15_0.000000_1.000000
 new-symbol-dataset_complete_line-@_time-@_cut.png=17_22_0.000000_1.200000
 new-symbol-dataset_piece_line_ledger.png=51_13_0.000000_1.300000
