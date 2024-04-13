@@ -56,7 +56,7 @@ cv::Mat Canvas::draw(){
                 }
                 
                 // 추가 간격 조정
-                ms.y = ms.y - (ms.pad / 2.5);
+                ms.y = ms.y - (ms.pad / 4.5);
                 
                 // 겹치는지 확인
                 if (ms_buff & ms)   continue;
