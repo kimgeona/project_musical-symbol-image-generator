@@ -78,7 +78,7 @@ int main(void)
     //waitKey();
     
     // *. 악상 기호 편집
-    //edit_musical_symbol_image_config("new-symbol-dataset\\complete\\line-@\\note-up-@\\articulation-#\\accent.png", dataset_config_dir.string());
+    edit_musical_symbol_image_config("new-symbol-dataset\\complete\\line-@\\note-up-@\\articulation-#\\accent.png", dataset_config_dir.string());
     //edit_musical_symbol_image_config("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/fermata.png", dataset_config_dir);
     return 0;
 }
