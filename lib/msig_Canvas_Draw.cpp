@@ -16,24 +16,14 @@ cv::Mat Canvas::draw(){
     // 흰 이미지 생성
     Mat img = Mat(img_h, img_w, CV_8UC1, Scalar(255));
     
-    // 누적된 악상기호 이미지
-    MusicalSymbol ms_buff;
-    
-    // 누적된 앙상기호 패딩
-    int pad = 0;
+    // 악상기호 배치 알고리즘(MSPA)
+    MSPA mspa;
     
     // draw_list에 있는 악상 기호들 img에 그리기
-    for(auto ms : draw_list)
+    for(auto& ms : draw_list)
     {
         // 악상기호 패딩 제거
         //remove_padding(ms.img, ms.x, ms.y);
-        
-        // 처음 그려지는 경우
-        if (ms_buff==MusicalSymbol())
-        {
-            ms_buff = ms;                   // 이미지 복사
-            continue;
-        }
         
         // 독립적 위치
         if (ms.dir.parent_path().filename().string()=="line-@"      ||
@@ -41,34 +31,44 @@ cv::Mat Canvas::draw(){
             ms.dir.parent_path().filename().string()=="note-up-@"   ||
             ms.dir.parent_path().filename().string()=="note-down-@")
         {
-            ms_buff += ms;                  // 이미지 갱신
+            mspa.add(ms, "fixed");
         }
         
-        // 의존적 위치 : 악상기호 위치 조정(아래로 보내기)
+        // 의존적 위치 : 상
+        else if (ms.dir.parent_path().filename().string()=="octave-#")
+        {
+            mspa.add(ms, "top");
+        }
+        
+        // 의존적 위치 : 아래
+        else if (ms.dir.parent_path().filename().string()=="articulation-#" ||
+                 ms.dir.parent_path().filename().string()=="dynamic-#")
+        {
+            mspa.add(ms, "bottom");
+        }
+        
+        // 의존적 위치 : 좌
+        else if (ms.dir.parent_path().filename().string()=="accidental-#")
+        {
+            mspa.add(ms, "left", {"line-@", "edge-@"});
+        }
+        
+        // 의존적 위치 : 우
+        else if (ms.dir.parent_path().filename().string()=="accidental-#")
+        {
+            mspa.add(ms, "right", {"line-@", "edge-@"}); // 아마 없을껄...?
+        }
+        
+        //
         else
         {
-            while (true)
-            {
-                // 겹치지 않을 때 까지 내려보내기
-                while (ms_buff & ms)
-                {
-                    ms.y = ms.y - 1;
-                }
-                
-                // 추가 간격 조정
-                ms.y = ms.y - (ms.pad / 4.5);
-                
-                // 겹치는지 확인
-                if (ms_buff & ms)   continue;
-                else                break;
-            }
-            
-            ms_buff += ms;                  // 이미지 갱신
+            cout << "msig::Canvas::draw() : 악상기호 " << ms.dir.filename().string() << "에 대한 설정이 없어 기본(fixed)으로 진행합니다." << endl;
+            mspa.add(ms, "fixed");
         }
     }
     
     // 악상기호 이미지 그리기
-    img = draw_symbols(img, ms_buff);
+    img = draw_symbols(img, mspa.get());
     
     // 생성된 이미지 리턴
     return img;

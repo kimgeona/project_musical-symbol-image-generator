@@ -45,12 +45,13 @@ int main(void)
     
     // Canvas.set() 확인
     //
-    //canvas.set(path("new-symbol-dataset/complete/line-@/staff-b4.png"));
+    //canvas.set(path("new-symbol-dataset/complete/line-@/staff-a4-0-0.png"));
     //canvas.set(path("new-symbol-dataset/complete/line-@/note-up-@/note-4.png"));
     //canvas.set(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/staccato.png"));
     //canvas.set(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/accent.png"));
     //canvas.set(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/tenuto.png"));
     //canvas.set(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/fermata.png"));
+    //canvas.set(path("new-symbol-dataset/complete/line-@/note-up-@/accidental-#/flat.png"));
     //canvas.show();
     
     // MusicalSymbol.operator&() 확인
@@ -72,7 +73,6 @@ int main(void)
     //msig::MusicalSymbol ms1(path("new-symbol-dataset/complete/line-@/note-up-@/note-1.png"), dataset_config_dir);
     //msig::MusicalSymbol ms2(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/fermata.png"), dataset_config_dir);
     //while (ms1 & ms2) ms2.y--;
-    //ms2.y = ms2.y - 13;
     //ms1 += ms2;
     //imshow("ms1.img", ms1.img);
     //waitKey();
