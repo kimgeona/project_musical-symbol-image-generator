@@ -192,6 +192,7 @@ void    restore_img(std::filesystem::path dir){
 cv::Mat remove_padding(const cv::Mat& img) {
     using namespace std;
     using namespace cv;
+    
     int x = 0, y = 0;
     return remove_padding(img, x, y);
 }

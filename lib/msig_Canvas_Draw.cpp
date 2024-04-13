@@ -17,27 +17,54 @@ cv::Mat Canvas::draw(){
     Mat img = Mat(img_h, img_w, CV_8UC1, Scalar(255));
     
     // 누적된 악상기호 이미지
-    MusicalSymbol ms_all;
+    MusicalSymbol ms_buff;
+    
+    // 누적된 앙상기호 패딩
+    int pad = 0;
     
     // draw_list에 있는 악상 기호들 img에 그리기
-    for(auto ms : draw_list){
-        // 누적된 이미지 확인
-        if (!(ms_all==MusicalSymbol())){
-            // 위치 조정 (아래로 보내기)
-            while (ms_all & ms){
-                // 겹치지 않을 때 까지 내려보내기
-                while (ms_all & ms) ms.y = ms.y - 1;
-                // 추가 간격 조정
-                ms.y = ms.y - 13;
-                // 위치 조정 확인
-                if (ms_all & ms)    continue;
-                else                break;
-            }
-            ms_all += ms;
+    for(auto ms : draw_list)
+    {
+        // 독립적 위치
+        if (ms_buff==MusicalSymbol()                                ||
+            ms.dir.parent_path().filename().string()=="line-@"      ||
+            ms.dir.parent_path().filename().string()=="edge-@"      ||
+            ms.dir.parent_path().filename().string()=="note-up-@"   ||
+            ms.dir.parent_path().filename().string()=="note-down-@")
+        {
+            ms_buff += ms;                  // 이미지 갱신
+            img = draw_symbols(img, ms);    // 이미지 그리기
         }
-        else ms_all = ms;
-        // 악상 기호 그리기
-        img = draw_symbols(img, ms);
+        
+        /*
+         // 의존적 위치 : 악상기호 위치 조정(아래로 보내기)
+         else
+         {
+             while (ms_buff & ms)
+             {
+                 // 누적 값 반영
+                 ms.y = ms.y - pad;
+                 
+                 // 겹치지 않을 때 까지 내려보내기
+                 while (ms_buff & ms)
+                 {
+                     ms.y = ms.y - 1;
+                     pad = pad + 1;
+                 }
+                 
+                 // 추가 간격 조정
+                 ms.y = ms.y - 7;
+                 pad = pad + 7;
+                 
+                 // 위치 조정 확인
+                 if (ms_buff & ms)   continue;
+                 else                break;
+             }
+             
+             ms_buff += ms;                  // 이미지 갱신
+             img = draw_symbols(img, ms);    // 이미지 그리기
+         }
+         */
     }
     
     // 생성된 이미지 리턴
