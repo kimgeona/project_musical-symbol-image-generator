@@ -41,7 +41,6 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path dir, std::filesystem::path di
         this->y             = 0;
         this->scale         = 1.0;
         this->rotate        = 0.0;
-        
     }
 }
 
@@ -93,15 +92,25 @@ MusicalSymbol&   MusicalSymbol::operator+=(const MusicalSymbol& other) {
     using namespace cv;
     using namespace std::filesystem;
     
+    // 이미지 복사 및 편집 1
+    MusicalSymbol ms1(*this);
+    ms1.img = mat_rotate(ms1.img, ms1.rotate, ms1.x, ms1.y);
+    ms1.img = mat_scale(ms1.img, ms1.scale, ms1.x, ms1.y);
+    
+    // 이미지 복사 및 편집 2
+    MusicalSymbol ms2(other);
+    ms2.img = mat_rotate(ms2.img, ms2.rotate, ms2.x, ms2.y);
+    ms2.img = mat_scale(ms2.img, ms2.scale, ms2.x, ms2.y);
+    
     // 두 이미지를 포함하는 영역 계산
-    int ms1_t = (this->y);
-    int ms1_b = (this->img.rows) - (this->y);
-    int ms1_l = (this->x);
-    int ms1_r = (this->img.cols) - (this->x);
-    int ms2_t = (other.y);
-    int ms2_b = (other.img.rows) - (other.y);
-    int ms2_l = (other.x);
-    int ms2_r = (other.img.cols) - (other.x);
+    int ms1_t = (ms1.y);
+    int ms1_b = (ms1.img.rows) - (ms1.y);
+    int ms1_l = (ms1.x);
+    int ms1_r = (ms1.img.cols) - (ms1.x);
+    int ms2_t = (ms2.y);
+    int ms2_b = (ms2.img.rows) - (ms2.y);
+    int ms2_l = (ms2.x);
+    int ms2_r = (ms2.img.cols) - (ms2.x);
     
     int t = (ms1_t > ms2_t) ? (ms1_t) : (ms2_t);
     int b = (ms1_b > ms2_b) ? (ms1_b) : (ms2_b);
@@ -132,24 +141,27 @@ MusicalSymbol&   MusicalSymbol::operator+=(const MusicalSymbol& other) {
         p1_y = ms2_t - ms1_t;
         p2_y = 0;
     }
-    this->img.copyTo(img1(Rect(p1_x, p1_y, this->img.cols, this->img.rows)));   // this->img 를 img1 안에 복사
-    other.img.copyTo(img2(Rect(p2_x, p2_y, other.img.cols, other.img.rows)));   // other->img 를 img2 안에 복사
+    ms1.img.copyTo(img1(Rect(p1_x, p1_y, ms1.img.cols, ms1.img.rows)));   // ms1.img 를 img1 안에 복사
+    ms2.img.copyTo(img2(Rect(p2_x, p2_y, ms2.img.cols, ms2.img.rows)));   // other->img 를 img2 안에 복사
     
     // 합성
     Mat new_img;
     bitwise_and(img1, img2, new_img);
     
     // 기존 정보 조정
-    this->status        = -1;
-    this->dir           = path();
-    this->dir_config    = path();
-    this->img           = new_img.clone();  // 새로운 이미지로 교체
-    this->rotate        = 0.0;
-    this->scale         = 1.0;
+    ms1.status        = -1;
+    ms1.dir           = path();
+    ms1.dir_config    = path();
+    ms1.img           = new_img.clone();  // 새로운 이미지로 교체
+    ms1.rotate        = 0.0;
+    ms1.scale         = 1.0;
     
     // 기존 정보 수정
-    if (ms1_l < ms2_l) this->x = ms2_l;
-    if (ms1_t < ms2_t) this->y = ms2_t;
+    if (ms1_l < ms2_l) ms1.x = ms2_l;
+    if (ms1_t < ms2_t) ms1.y = ms2_t;
+    
+    // 새로운 데이터로 교체
+    *this = ms1;
     
     return *this;
 }
@@ -161,15 +173,25 @@ bool            MusicalSymbol::operator&(const MusicalSymbol& other){
     using namespace cv;
     using namespace std::filesystem;
     
+    // 이미지 복사 및 편집 1
+    MusicalSymbol ms1(*this);
+    ms1.img = mat_rotate(ms1.img, ms1.rotate, ms1.x, ms1.y);
+    ms1.img = mat_scale(ms1.img, ms1.scale, ms1.x, ms1.y);
+    
+    // 이미지 복사 및 편집 2
+    MusicalSymbol ms2(other);
+    ms2.img = mat_rotate(ms2.img, ms2.rotate, ms2.x, ms2.y);
+    ms2.img = mat_scale(ms2.img, ms2.scale, ms2.x, ms2.y);
+    
     // 두 이미지를 포함하는 영역 계산
-    int ms1_t = (this->y);
-    int ms1_b = (this->img.rows) - (this->y);
-    int ms1_l = (this->x);
-    int ms1_r = (this->img.cols) - (this->x);
-    int ms2_t = (other.y);
-    int ms2_b = (other.img.rows) - (other.y);
-    int ms2_l = (other.x);
-    int ms2_r = (other.img.cols) - (other.x);
+    int ms1_t = (ms1.y);
+    int ms1_b = (ms1.img.rows) - (ms1.y);
+    int ms1_l = (ms1.x);
+    int ms1_r = (ms1.img.cols) - (ms1.x);
+    int ms2_t = (ms2.y);
+    int ms2_b = (ms2.img.rows) - (ms2.y);
+    int ms2_l = (ms2.x);
+    int ms2_r = (ms2.img.cols) - (ms2.x);
     
     int t = (ms1_t > ms2_t) ? (ms1_t) : (ms2_t);
     int b = (ms1_b > ms2_b) ? (ms1_b) : (ms2_b);
@@ -200,8 +222,8 @@ bool            MusicalSymbol::operator&(const MusicalSymbol& other){
         p1_y = ms2_t - ms1_t;
         p2_y = 0;
     }
-    this->img.copyTo(img1(Rect(p1_x, p1_y, this->img.cols, this->img.rows)));   // this->img 를 img1 안에 복사
-    other.img.copyTo(img2(Rect(p2_x, p2_y, other.img.cols, other.img.rows)));   // other->img 를 img2 안에 복사
+    ms1.img.copyTo(img1(Rect(p1_x, p1_y, ms1.img.cols, ms1.img.rows)));   // ms1.img 를 img1 안에 복사
+    ms2.img.copyTo(img2(Rect(p2_x, p2_y, ms2.img.cols, ms2.img.rows)));   // ms2.img 를 img2 안에 복사
     
     // 임계값 처리
     threshold(img1, img1, 128, 255, THRESH_BINARY);   // 5를 기준으로 이미지 img1 이진화
