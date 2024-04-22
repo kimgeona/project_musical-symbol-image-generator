@@ -79,7 +79,7 @@ int main(void)
     
     // *. 악상 기호 편집
     //edit_musical_symbol_image_config("new-symbol-dataset\\complete\\line-@\\note-up-@\\articulation-#\\accent.png", dataset_config_dir.string());
-    //edit_musical_symbol_image_config("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/fermata.png", dataset_config_dir);
+    //edit_musical_symbol_image_config("new-symbol-dataset/complete/line-@/note-up-@/note-4.png", dataset_config_dir);
     //for (auto& p : std::filesystem::recursive_directory_iterator(std::filesystem::path("new-symbol-dataset"))) {
     //    if (exists(p.path()) && is_regular_file(p.path()) && p.path().extension() == ".png") {
     //       msig::MusicalSymbol ms(p, std::filesystem::path("new-symbol-dataset\\symbol_dataset_config.txt"));
@@ -87,7 +87,8 @@ int main(void)
     //    }
     //
     //}
-    //return 0;
+    
+    return 0;
 }
 
 
