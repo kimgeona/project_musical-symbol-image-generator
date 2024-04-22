@@ -92,36 +92,64 @@ cv::Mat mat_rotate      (const cv::Mat& img, double degree, int& cx, int& cy){
     //
     if (degree==0.0) return img.clone();
     
-    // 이미지 준비
-    Mat img1 = img.clone();
-    Mat img2 = Mat(img.size(), img.type(), Scalar(255));
+    // 화면 좌표계에 의한 각도 변환
+    degree = -degree;
     
     // radian, sin, cos 값 계산
-    double radian = degree * CV_PI / 180.0 ;
-    double sin_value = sin(radian);
-    double cos_value = cos(radian);
+    double r1 = CV_PI / 180.0 * degree;         // degree -> radian
+    double r2 = CV_PI / 180.0 * (90 - degree);  // (90 - degree) -> radian
+    double sin_value1 = sin(r1);
+    double sin_value2 = sin(r2);
+    double cos_value1 = cos(r1);
+    double cos_value2 = cos(r2);
     
+    // 새로운 이미지 크기 계산
+    int new_width = abs(img.rows * cos_value2) + abs(img.cols * cos_value1);
+    int new_height = abs(img.cols * cos_value2) + abs(img.rows * cos_value1);
+    
+    // 기존 영상과 새로운 영상의 시작 좌표 차이 계산 : 순방향 사상
+    int x_min = (0 - cx) * cos_value1 - (0 - cy) * sin_value1 + cx;
+    int y_min = (0 - cx) * sin_value1 + (0 - cy) * cos_value1 + cy;
+    for (auto& pt : vector<Point>({Point(img.cols, 0), Point(0, img.rows), Point(img.cols, img.rows)}))
+    {
+        // 좌표 계산
+        int x_new = (pt.x - cx) * cos_value1 - (pt.y - cy) * sin_value1 + cx;
+        int y_new = (pt.x - cx) * sin_value1 + (pt.y - cy) * cos_value1 + cy;
+        
+        // 최소값 찾기
+        if (x_new < x_min) x_min = x_new;
+        if (y_new < y_min) y_min = y_new;
+    }
+    x_min = -x_min;
+    y_min = -y_min;
+    cout << "degree : " << degree << "  cx : " << cx << "  cy : " << cy << "  x_min : " <<  x_min << " y_min : " <<  y_min << endl;
+    
+    // 이미지 준비
+    Mat img_new = Mat(new_height, new_width, img.type());
+
     // 역방향사상 범위 제한
-    Rect rect(Point(0, 0), img1.size());
+    Rect rect(Point(0, 0), img.size());
     
-    // 역방향 사상
-    for (int y_new=0; y_new<img2.rows; y_new++){
-        for (int x_new=0; x_new<img2.cols; x_new++){
+    // 이미지 사상 : 역방향 사상
+    for (int y_new=-y_min; y_new<img_new.rows-y_min; y_new++)
+    {
+        for (int x_new=-x_min; x_new<img_new.cols-x_min; x_new++)
+        {
             // 좌표 계산
-            double x_old = (x_new - cx) * cos_value + (y_new - cy) * sin_value + cx;
-            double y_old = -(x_new - cx) * sin_value + (y_new - cy) * cos_value + cy;
+            int x_old = (x_new - cx) * cos_value1 + (y_new - cy) * sin_value1 + cx;
+            int y_old = -(x_new - cx) * sin_value1 + (y_new - cy) * cos_value1 + cy;
             
-            // 올림, 내림 처리
-            x_old>=0 ? x_old=ceil(x_old) : x_old=floor(x_old);
-            y_old>=0 ? y_old=ceil(y_old) : y_old=floor(y_old);
-            
-            // 범위 제한 확인
-            if (rect.contains(Point(x_old, y_old))){
-                img2.at<uchar>((int)y_new, (int)x_new) = img1.at<uchar>(y_old, x_old);
-            }
+            // 사상 범위 제한에 따른 픽셀값 배정
+            if (rect.contains(Point(x_old, y_old))) img_new.at<uchar>(y_new+y_min, x_new+x_min) = img.at<uchar>(y_old, x_old);
+            else                                    img_new.at<uchar>(y_new+y_min, x_new+x_min) = 255;
         }
     }
-    return img2;
+    
+    // 중심 좌표 계산
+    cx = cx + x_min;
+    cy = cy + y_min;
+    
+    return img_new;
 }
 
 
