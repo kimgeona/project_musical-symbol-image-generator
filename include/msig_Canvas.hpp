@@ -38,8 +38,8 @@ class Canvas
     int init_ds_piece();                        // 조합형 데이터셋 불러오기
     
     // msig_Canvas_Draw.cpp
-    cv::Mat draw();                             // 그리기
-    void    draw_adjustment();                  // 그리기 위치 조정
+    cv::Mat draw();                                             // 그리기
+    void    draw_locationing(MSPA& mspa, MusicalSymbol& ms);    // 그리기 위치 조정
     cv::Mat draw_symbols(const cv::Mat& img, const msig::MusicalSymbol& ms, bool auxiliary_line=false);
     
 public:

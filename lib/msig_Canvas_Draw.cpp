@@ -19,55 +19,17 @@ cv::Mat Canvas::draw(){
     // 악상기호 배치 알고리즘(MSPA)
     MSPA mspa;
     
-    // draw_list에 있는 악상 기호들 img에 그리기
+    // 그리기 목록(draw_list)에 있는 악상 기호들 배치
     for(auto& ms : draw_list)
     {
         // 악상기호 패딩 제거
         //remove_padding(ms.img, ms.x, ms.y);
         
-        // 독립적 위치
-        if (ms.dir.parent_path().filename().string()=="line-@"      ||
-            ms.dir.parent_path().filename().string()=="edge-@"      ||
-            ms.dir.parent_path().filename().string()=="note-up-@"   ||
-            ms.dir.parent_path().filename().string()=="note-down-@")
-        {
-            mspa.add(ms, "fixed");
-        }
-        
-        // 의존적 위치 : 상
-        else if (ms.dir.parent_path().filename().string()=="octave-#")
-        {
-            mspa.add(ms, "top");
-        }
-        
-        // 의존적 위치 : 아래
-        else if (ms.dir.parent_path().filename().string()=="articulation-#" ||
-                 ms.dir.parent_path().filename().string()=="dynamic-#")
-        {
-            mspa.add(ms, "bottom");
-        }
-        
-        // 의존적 위치 : 좌
-        else if (ms.dir.parent_path().filename().string()=="accidental-#")
-        {
-            mspa.add(ms, "left", {"line-@", "edge-@"});
-        }
-        
-        // 의존적 위치 : 우
-        else if (ms.dir.parent_path().filename().string()=="accidental-#")
-        {
-            mspa.add(ms, "right", {"line-@", "edge-@"}); // 아마 없을껄...?
-        }
-        
-        //
-        else
-        {
-            cout << "msig::Canvas::draw() : 악상기호 " << ms.dir.filename().string() << "에 대한 설정이 없어 기본(fixed)으로 진행합니다." << endl;
-            mspa.add(ms, "fixed");
-        }
+        // 악상기호 종류에 따라 적절한 위치에 배치
+        draw_adjustment(mspa, ms);
     }
     
-    // 악상기호 이미지 그리기
+    // 배치가 완료된 악상기호 이미지에 그리기
     img = draw_symbols(img, mspa.get());
     
     // 생성된 이미지 리턴
@@ -76,59 +38,169 @@ cv::Mat Canvas::draw(){
 
 
 // 그리기 위치 조정
-void    Canvas::draw_adjustment(){
+void    Canvas::draw_locationing(MSPA& mspa, MusicalSymbol& ms){
     using namespace std;
     using namespace cv;
     using namespace std::filesystem;
     
-    // 백업용
-    map<path, vector<size_t>> dirs_pts; // {xl, xr, yt, yb}
+    // 파일
+    /*
+     edge-@ measure-@       octave-@        : --
+     octave-down-middle.png                 : bottom
+     octave-up-middle.png                   : top
+     
+     line-@ note-down-@     octave-#        : --
+     octave-down-end.png                    : bottom
+     octave-down-middle.png                 : bottom
+     octave-down-start-8.png                : bottom
+     octave-down-start-15.png               : bottom
+     octave-up-end.png                      : up
+     octave-up-middle.png                   : up
+     octave-up-start-8.png                  : up
+     octave-up-start-15.png                 : up
+     
+     line-@ note-up-@       octave-#        : --
+     octave-down-end.png                    : bottom
+     octave-down-middle.png                 : bottom
+     octave-down-start-8.png                : bottom
+     octave-down-start-15.png               : bottom
+     octave-up-end.png                      : up
+     octave-up-middle.png                   : up
+     octave-up-start-8.png                  : up
+     octave-up-start-15.png                 : up
+     */
+    vector<string> f_fixed  = {};
+    vector<string> f_top    = {
+        path("octave-up-end.png"),
+        path("octave-up-middle.png"),
+        path("octave-up-start-8.png"),
+        path("octave-up-start-15.png"),};
+    vector<string> f_bottom = {
+        path("octave-down-end.png"),
+        path("octave-down-middle.png"),
+        path("octave-down-start-8.png"),
+        path("octave-down-start-15.png"),
+    };
+    vector<string> f_left   = {};
+    vector<string> f_right  = {};
     
-    // draw_list 순회
-    for (auto& ms : draw_list){
-        /*
-        // 현재 pt
-        static vector<size_t> pt = {0b0, 0b0, 0b0, 0b0};
-        
-        // 백업용 pt 찾기
-        if (dirs_pts.find(ms.dir.parent_path())!=dirs_pts.end())
-            pt = dirs_pts[ms.dir.parent_path()];    // 찾은 경우 현재 pt를 백업용 pt로 교체
-        
-        // 악상기호 이미지 별로 xl, xr, yt, yb 값 조정 0b0000->0bxxxx
-        string p = ms.dir.parent_path().string();
-        if (p=="line-@"){
-            // 지울 오선지 갯수 구하기
-            int n = 0;
-            char c = ms.dir.filename().string()[6];
-            for (int i=1; i<stoi(ms.dir.filename().string()[7]); i++) n += 7;
-                 if (c == 'c') n+= 1;
-            else if (c == 'd') n+= 2;
-            else if (c == 'e') n+= 3;
-            else if (c == 'f') n+= 4;
-            else if (c == 'g') n+= 5;
-            else if (c == 'a') n+= 6;
-            else if (c == 'b') n+= 7;
-            
-            if (n % 2 == 0) n = 3;
-            else            n = 2;
-            
-            // 해당 갯수만큼 xl, xr, yt, yb 값 조정
-            // 그 그 config 조정
-        }
-        else if (p=="note-up-@"){
-            
-        }
-        else if (p=="accidental-#"){
-            
-        }
-        
-        // 악상기호 이미지 별로 xl, xr, yt, yb 값에 의한 config x, y 조정
-        // ...
-        
-        // pt 백업
-        dirs_pts[ms.dir.parent_path()] = pt;
-         */
+    // 폴더
+    /*
+     edge-@                                 : fixed
+     edge-@ measure-@                       : fixed
+     edge-@ measure-@       octave-@        : --
+     edge-@ measure-@       repetition-@    : top
+     line-@                                 : fixed
+     line-@ clef-@                          : fixed
+     line-@ key-@                           : fixed
+     line-@ note-down-@                     : fixed
+     line-@ note-down-@     accidental-#    : left
+     line-@ note-down-@     articulation-#  : top
+     line-@ note-down-@     dynamic-#       : bottom
+     line-@ note-down-@     octave-#        : --
+     line-@ note-down-@     ornament-#      : top
+     line-@ note-down-@     repetition-#    : top
+     line-@ note-up-@                       : fixed
+     line-@ note-up-@       accidental-#    : left
+     line-@ note-up-@       articulation-#  : bottom
+     line-@ note-up-@       dynamic-#       : bottom
+     line-@ note-up-@       octave-#        : --
+     line-@ note-up-@       ornament-#      : top
+     line-@ note-up-@       repetition-#    : top
+     line-@ repetition-@                    : fixed
+     line-@ rest-@                          : fixed
+     line-@ time-@                          : fixed
+     */
+    vector<path> d_fixed    = {
+        dir_ds/path("complete")/path("edge-@"),
+        dir_ds/path("complete")/path("edge-@")/path("measure-@"),
+        dir_ds/path("complete")/path("line-@"),
+        dir_ds/path("complete")/path("line-@")/path("clef-@"),
+        dir_ds/path("complete")/path("line-@")/path("key-@"),
+        dir_ds/path("complete")/path("line-@")/path("note-down-@"),
+        dir_ds/path("complete")/path("line-@")/path("note-up-@"),
+        dir_ds/path("complete")/path("line-@")/path("repetition-@"),
+        dir_ds/path("complete")/path("line-@")/path("rest-@"),
+        dir_ds/path("complete")/path("line-@")/path("time-@"),
+    };
+    vector<path> d_top      = {
+        dir_ds/path("complete")/path("edge-@")/path("measure-@")/path("repetition-@"),
+        dir_ds/path("complete")/path("line-@")/path("note-down-@")/path("articulation-#"),
+        dir_ds/path("complete")/path("line-@")/path("note-down-@")/path("ornament-#"),
+        dir_ds/path("complete")/path("line-@")/path("note-down-@")/path("repetition-#"),
+        dir_ds/path("complete")/path("line-@")/path("note-up-@")/path("ornament-#"),
+        dir_ds/path("complete")/path("line-@")/path("note-up-@")/path("repetition-#"),
+    };
+    vector<path> d_bottom   = {
+        dir_ds/path("complete")/path("line-@")/path("note-down-@")/path("dynamic-#"),
+        dir_ds/path("complete")/path("line-@")/path("note-up-@")/path("articulation-#"),
+        dir_ds/path("complete")/path("line-@")/path("note-up-@")/path("dynamic-#"),
+    };
+    vector<path> d_left     = {
+        dir_ds/path("complete")/path("line-@")/path("note-down-@")/path("accidental-#"),
+        dir_ds/path("complete")/path("line-@")/path("note-up-@")/path("accidental-#"),
+    };
+    vector<path> d_right    = {};
+    
+
+    // 파일 이름 매칭
+    if (find(f_fixed.begin(), f_fixed.end(), ms.dir.filename()) != f_fixed.end())
+    {
+        mspa.add(ms, "fixed", {});
+        return;
     }
+    if (find(f_top.begin(), f_top.end(), ms.dir.filename()) != f_top.end())
+    {
+        mspa.add(ms, "top", {});
+        return;
+    }
+    if (find(f_bottom.begin(), f_bottom.end(), ms.dir.filename()) != f_bottom.end())
+    {
+        mspa.add(ms, "bottom", {});
+        return;
+    }
+    if (find(f_left.begin(), f_left.end(), ms.dir.filename()) != f_left.end())
+    {
+        mspa.add(ms, "left", {"line-@", "edge-@"});
+        return;
+    }
+    if (find(f_right.begin(), f_right.end(), ms.dir.filename()) != f_right.end())
+    {
+        mspa.add(ms, "right", {"line-@", "edge-@"});
+        return;
+    }
+        
+    
+    // 폴더 이름 매칭
+    if (find(d_fixed.begin(), d_fixed.end(), ms.dir.parent_path()) != d_fixed.end())
+    {
+        mspa.add(ms, "fixed", {});
+        return;
+    }
+    if (find(d_top.begin(), d_top.end(), ms.dir.parent_path()) != d_top.end())
+    {
+        mspa.add(ms, "top", {});
+        return;
+    }
+    if (find(d_bottom.begin(), d_bottom.end(), ms.dir.parent_path()) != d_bottom.end())
+    {
+        mspa.add(ms, "bottom", {});
+        return;
+    }
+    if (find(d_left.begin(), d_left.end(), ms.dir.parent_path()) != d_left.end())
+    {
+        mspa.add(ms, "left", {"line-@", "edge-@"});
+        return;
+    }
+    if (find(d_right.begin(), d_right.end(), ms.dir.parent_path()) != d_right.end())
+    {
+        mspa.add(ms, "right", {"line-@", "edge-@"});
+        return;
+    }
+    
+    // 매칭 되지 않은 악상기호들
+    cout << "msig::Canvas::draw() : 악상기호 " << ms.dir.filename().string() << "에 대한 설정이 없어 기본(fixed)으로 진행합니다." << endl;
+    mspa.add(ms, "fixed");
 }
 
 
