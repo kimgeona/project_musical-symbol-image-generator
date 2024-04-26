@@ -4,12 +4,14 @@ namespace msig
 {
 
 
-// 빈 생성자
+// 기본 생성자
 Canvas::Canvas(){
     using namespace std;
     using namespace cv;
     using namespace std::filesystem;
     
+    this->width             = 0;
+    this->height            = 0;
     this->dir_ds            = path();
     this->dir_ds_config     = path();
     this->dir_ds_complete   = path();
@@ -20,18 +22,19 @@ Canvas::Canvas(){
 }
 
 
-// 기본 사용 생성자
-Canvas::Canvas(std::filesystem::path dataset_dir){
+// 기본 생성자
+Canvas::Canvas(std::filesystem::path dataset_dir, int width, int height){
     using namespace std;
     using namespace cv;
     using namespace std::filesystem;
     
     // 아래 과정에서 이상이 있을 경우
-    if (init_dir(dataset_dir)   ||
-        init_ds_complete()      ||
-        init_ds_piece())
+    if (set_size(width, height) ||
+        set_dataset_dirs(dataset_dir))
     {
         cout << "Note: " << dataset_dir.string() << " 을(를) 통하여 초기화하는 과정에서 문제가 있습니다." << endl;
+        this->width             = 0;
+        this->height            = 0;
         this->dir_ds            = path();
         this->dir_ds_config     = path();
         this->dir_ds_complete   = path();
@@ -45,6 +48,8 @@ Canvas::Canvas(std::filesystem::path dataset_dir){
 
 // 복사 생성자
 Canvas::Canvas(const Canvas& other){
+    this->width             = other.width;
+    this->height            = other.height;
     this->dir_ds            = other.dir_ds;
     this->dir_ds_config     = other.dir_ds_config;
     this->dir_ds_complete   = other.dir_ds_complete;
@@ -57,6 +62,8 @@ Canvas::Canvas(const Canvas& other){
 
 // 연산자 함수 =
 Canvas& Canvas::operator=(const Canvas& other){
+    this->width             = other.width;
+    this->height            = other.height;
     this->dir_ds            = other.dir_ds;
     this->dir_ds_config     = other.dir_ds_config;
     this->dir_ds_complete   = other.dir_ds_complete;
@@ -70,12 +77,14 @@ Canvas& Canvas::operator=(const Canvas& other){
 
 // 연산자 함수 ==
 bool Canvas::operator==(const Canvas& other) const {
-    if (this->dir_ds            == other.dir_ds &&
-        this->dir_ds_config     == other.dir_ds_config &&
-        this->dir_ds_complete   == other.dir_ds_complete &&
-        this->dir_ds_piece      == other.dir_ds_piece &&
-        this->ds_complete       == other.ds_complete &&
-        this->ds_piece          == other.ds_piece &&
+    if (this->width             == other.width              &&
+        this->height            == other.height             &&
+        this->dir_ds            == other.dir_ds             &&
+        this->dir_ds_config     == other.dir_ds_config      &&
+        this->dir_ds_complete   == other.dir_ds_complete    &&
+        this->dir_ds_piece      == other.dir_ds_piece       &&
+        this->ds_complete       == other.ds_complete        &&
+        this->ds_piece          == other.ds_piece           &&
         this->draw_list         == other.draw_list) return true;
     else                                            return false;
 }

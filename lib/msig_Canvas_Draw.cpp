@@ -5,16 +5,13 @@ namespace msig
 
 
 // 그리기
-cv::Mat Canvas::draw(){
+cv::Mat Canvas::draw()
+{
     using namespace std;
     using namespace cv;
     
-    // 변수들
-    int     img_w=256;  // 생성할 이미지 너비
-    int     img_h=512;  // 생성할 이미지 높이
-    
     // 흰 이미지 생성
-    Mat img = Mat(img_h, img_w, CV_8UC1, Scalar(255));
+    Mat img = Mat(height, width, CV_8UC1, Scalar(255));
     
     // 악상기호 배치 알고리즘(MSPA)
     MSPA mspa;
@@ -26,7 +23,7 @@ cv::Mat Canvas::draw(){
         //remove_padding(ms.img, ms.x, ms.y);
         
         // 악상기호 종류에 따라 적절한 위치에 배치
-        draw_locationing(mspa, ms);
+        locationing(mspa, ms);
     }
     
     // 배치가 완료된 악상기호 이미지에 그리기
@@ -38,7 +35,8 @@ cv::Mat Canvas::draw(){
 
 
 // 그리기 위치 조정
-void    Canvas::draw_locationing(MSPA& mspa, MusicalSymbol& ms){
+void    Canvas::locationing(MSPA& mspa, MusicalSymbol& ms)
+{
     using namespace std;
     using namespace cv;
     using namespace std::filesystem;
@@ -205,25 +203,28 @@ void    Canvas::draw_locationing(MSPA& mspa, MusicalSymbol& ms){
 
 
 // 악상 기호 그리기
-cv::Mat Canvas::draw_symbols(const cv::Mat& img, const msig::MusicalSymbol& ms, bool auxiliary_line){
+cv::Mat Canvas::draw_symbols(const cv::Mat& img, const MusicalSymbol& ms, bool auxiliary_line)
+{
     using namespace std;
     using namespace cv;
     
-    // 편집할 이미지들
-    Mat img1 = img.clone();         // 행렬 복사
-    Mat img2 = ms.img.clone();      // 행렬 복사
+    // 배경 이미지 준비
+    Mat img1 = img.clone();
     
-    // 악상기호 이미지 중점
+    // 악상 기호 이미지 준비
+    Mat img2 = ms.img.clone();
     int cx = ms.x;
     int cy = ms.y;
     
     // 이미지 편집(회전, 확대 및 축소, 대칭)
-    //img2 = mat_rotate(img2, ms.rotate, cx, cy);
-    img2 = mat_scale(img2, ms.scale, cx, cy);
+    img2 = mat_rotate(img2, ms.rotate, cx, cy);     // 이미지 회전
+    img2 = mat_scale(img2, ms.scale, cx, cy);       // 이미지 확대
     
     // 보조선 그리기 (오선지)
-    if (auxiliary_line==true){
-        for (auto h : vector<int>({-ms.pad*2, -ms.pad, 0, ms.pad, ms.pad*2})){
+    if (auxiliary_line==true)
+    {
+        for (auto h : vector<int>({-ms.pad*2, -ms.pad, 0, ms.pad, ms.pad*2}))
+        {
             int n = img1.rows/2.0;
             line(img1, Point(0,n+h), Point(img1.cols,n+h), Scalar(200), 2.2, LINE_AA);
         }
@@ -237,7 +238,8 @@ cv::Mat Canvas::draw_symbols(const cv::Mat& img, const msig::MusicalSymbol& ms, 
     img1 = mat_attach(img1, img2, x, y);
     
     // 보조선 그리기 (십자선)
-    if (auxiliary_line==true){
+    if (auxiliary_line==true)
+    {
         Point cross(img1.cols/2.0, img1.rows/2.0);
         line(img1, cross+Point(-10,0), cross+Point(10,0), Scalar(100), 1, LINE_AA);
         line(img1, cross+Point(0,-10), cross+Point(0,10), Scalar(100), 1, LINE_AA);

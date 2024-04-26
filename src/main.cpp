@@ -43,50 +43,30 @@ int main(void)
     // 3. 악상기호 조합 준비
     prepare_Canvas();
     
-    // Canvas.set() 확인
-    //
-    //canvas.set(path("new-symbol-dataset/complete/line-@/staff-a4-0-0.png"));
-    //canvas.set(path("new-symbol-dataset/complete/line-@/note-up-@/note-4.png"));
-    //canvas.set(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/staccato.png"));
-    //canvas.set(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/accent.png"));
-    //canvas.set(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/tenuto.png"));
-    //canvas.set(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/fermata.png"));
-    //canvas.set(path("new-symbol-dataset/complete/line-@/note-up-@/accidental-#/flat.png"));
-    //canvas.show();
     
-    // MusicalSymbol.operator&() 확인
-    //
-    //msig::MusicalSymbol ms1(path("new-symbol-dataset/complete/line-@/note-up-@/note-4.png"), dataset_config_dir);
-    //msig::MusicalSymbol ms2(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/fermata.png"), dataset_config_dir);
-    //cout << endl << endl << "ms1 & ms2 : " << (ms1 & ms2) << endl;
+    /*
+    // Canvas 테스트 코드
+    canvas.select(path("new-symbol-dataset/complete/line-@/staff-a4-0-0.png"));
+    canvas.select(path("new-symbol-dataset/complete/line-@/note-up-@/note-4.png"));
+    canvas.select(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/staccato.png"));
+    canvas.select(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/accent.png"));
+    canvas.select(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/tenuto.png"));
+    canvas.select(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/fermata.png"));
+    canvas.select(path("new-symbol-dataset/complete/line-@/note-up-@/accidental-#/flat.png"));
+    canvas.show();
+    */
     
-    // MusicalSymbol.operator+=() 확인
-    //
-    //msig::MusicalSymbol ms1(path("new-symbol-dataset/complete/line-@/note-up-@/note-1.png"), dataset_config_dir);
-    //msig::MusicalSymbol ms2(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/fermata.png"), dataset_config_dir);
-    //ms1 += ms2;
-    //imshow("ms1.img", ms1.img);
-    //waitKey();
-    
-    // MusicalSymbol.operator&(), MusicalSymbol.operator+=() 동시 확인
-    //
-    //msig::MusicalSymbol ms1(path("new-symbol-dataset/complete/line-@/note-up-@/note-1.png"), dataset_config_dir);
-    //msig::MusicalSymbol ms2(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/fermata.png"), dataset_config_dir);
-    //while (ms1 & ms2) ms2.y--;
-    //ms1 += ms2;
-    //imshow("ms1.img", ms1.img);
-    //waitKey();
-    
-    // *. 악상 기호 편집
-    //edit_musical_symbol_image_config("new-symbol-dataset\\complete\\line-@\\note-up-@\\articulation-#\\accent.png", dataset_config_dir.string());
-    //edit_musical_symbol_image_config("new-symbol-dataset/complete/line-@/note-up-@/note-4.png", dataset_config_dir);
-    //for (auto& p : std::filesystem::recursive_directory_iterator(std::filesystem::path("new-symbol-dataset"))) {
-    //    if (exists(p.path()) && is_regular_file(p.path()) && p.path().extension() == ".png") {
-    //       msig::MusicalSymbol ms(p, std::filesystem::path("new-symbol-dataset\\symbol_dataset_config.txt"));
-    //        ms.edit_config();
-    //    }
-    //
-    //}
+    /*
+    // 데이터셋 악상 기호 전부 편집
+    for (auto& p : std::filesystem::recursive_directory_iterator(std::filesystem::path("new-symbol-dataset")))
+    {
+        if (exists(p.path()) && is_regular_file(p.path()) && p.path().extension() == ".png")
+        {
+            msig::MusicalSymbol ms(p, dataset_config_dir);
+            ms.edit_config();
+        }
+    }
+    */
     
     return 0;
 }
@@ -140,7 +120,7 @@ void prepare_DSTree(void)
 void prepare_Canvas(void)
 {
     cout << endl << "3. 악상기호 조합 준비" << endl;
-    canvas = msig::Canvas(dataset_dir);
+    canvas = msig::Canvas(dataset_dir, 256, 512);
     if (canvas==msig::Canvas()){
         cout << "Canvas가 생성이 되지 않았습니다." << endl;
         exit(-1);
