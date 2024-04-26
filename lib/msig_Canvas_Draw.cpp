@@ -26,7 +26,7 @@ cv::Mat Canvas::draw(){
         //remove_padding(ms.img, ms.x, ms.y);
         
         // 악상기호 종류에 따라 적절한 위치에 배치
-        draw_adjustment(mspa, ms);
+        draw_locationing(mspa, ms);
     }
     
     // 배치가 완료된 악상기호 이미지에 그리기
