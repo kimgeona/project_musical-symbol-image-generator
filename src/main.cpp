@@ -45,6 +45,24 @@ int main(void)
     
     
     /*
+    // 테스트 : 특정 악상기호만 조합 설정
+    vector<path> list = {
+        "new-symbol-dataset/complete/line-@",
+        "new-symbol-dataset/complete/line-@/clef-@",
+        "new-symbol-dataset/complete/line-@/key-@",
+    };
+    selector.state(list, true);
+    
+    // 테스트 : 조합 목록 구하기
+    vector<vector<path>> start;
+    for (auto& v : selector.get_list(start, path("new-symbol-dataset/complete")))
+    {
+        for (auto& p : v) cout << p.filename().string() << " ";
+        cout << endl;
+    }
+    */
+    
+    /*
     // Canvas 테스트 코드
     canvas.select(path("new-symbol-dataset/complete/line-@/staff-a4-0-0.png"));
     canvas.select(path("new-symbol-dataset/complete/line-@/note-up-@/note-4.png"));

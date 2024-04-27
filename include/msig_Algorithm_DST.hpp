@@ -77,6 +77,7 @@ public:
     std::vector<std::filesystem::path>  get();                              // 현재 선택 가능한 파일 목록 구하기
     void                                reset();                            // 선택 초기화
     void                                state(std::vector<std::filesystem::path> list, bool available_state); // list에 명시된 것들만 available 또는 disavailable 시킴
+    std::vector<std::vector<std::filesystem::path>> get_list(const std::vector<std::vector<std::filesystem::path>>& list, std::filesystem::path p); // 가능한 모든 조합을 반환
 };
 
 
