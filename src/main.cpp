@@ -13,6 +13,7 @@ using namespace cv;
 // 데이터셋 주소
 path dataset_dir = path("new-symbol-dataset");
 path dataset_config_dir = dataset_dir / path("symbol_dataset_config.txt");
+path dataset_create_dir;
 
 // 의존적 선택 알고리즘
 msig::DSTree selector;
@@ -25,7 +26,9 @@ void prepare_platform(void);
 void prepare_dataset(void);
 void prepare_DSTree(void);
 void prepare_Canvas(void);
+void start_program(void);
 void edit_musical_symbol_image_config(string image_dir, string image_config_dir);
+void edit_musical_symbol_image_config(string ds_dir);
 
 
 // 프로그램
@@ -43,48 +46,11 @@ int main(void)
     // 3. 악상기호 조합 준비
     prepare_Canvas();
     
+    // 4. 악상기호 생성 프로그램 실행
+    start_program();
     
-    /*
-    // 테스트 : 특정 악상기호만 조합 설정
-    vector<path> list = {
-        "new-symbol-dataset/complete/line-@",
-        "new-symbol-dataset/complete/line-@/clef-@",
-        "new-symbol-dataset/complete/line-@/key-@",
-    };
-    selector.state(list, true);
-    
-    // 테스트 : 조합 목록 구하기
-    vector<vector<path>> start;
-    for (auto& v : selector.get_list(start, path("new-symbol-dataset/complete")))
-    {
-        for (auto& p : v) cout << p.filename().string() << " ";
-        cout << endl;
-    }
-    */
-    
-    /*
-    // Canvas 테스트 코드
-    canvas.select(path("new-symbol-dataset/complete/line-@/staff-a4-0-0.png"));
-    canvas.select(path("new-symbol-dataset/complete/line-@/note-up-@/note-4.png"));
-    canvas.select(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/staccato.png"));
-    canvas.select(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/accent.png"));
-    canvas.select(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/tenuto.png"));
-    canvas.select(path("new-symbol-dataset/complete/line-@/note-up-@/articulation-#/fermata.png"));
-    canvas.select(path("new-symbol-dataset/complete/line-@/note-up-@/accidental-#/flat.png"));
-    canvas.show();
-    */
-    
-    /*
-    // 데이터셋 악상 기호 전부 편집
-    for (auto& p : std::filesystem::recursive_directory_iterator(std::filesystem::path("new-symbol-dataset")))
-    {
-        if (exists(p.path()) && is_regular_file(p.path()) && p.path().extension() == ".png")
-        {
-            msig::MusicalSymbol ms(p, dataset_config_dir);
-            ms.edit_config();
-        }
-    }
-    */
+    // *. 악상기호 config 데이터 조정
+    //edit_musical_symbol_image_config(dataset_dir);
     
     return 0;
 }
@@ -147,6 +113,35 @@ void prepare_Canvas(void)
 }
 
 
+// 4. 악상기호 생성 프로그램 실행
+void start_program(void)
+{
+    // 제외할 악상기호 리스트
+    vector<path> list_except = {
+        "new-symbol-dataset/complete/edge-@",
+    };
+    
+    // 악상기호 제외(비활성화)하기
+    selector.state(list_except, false);
+    
+    // 가능한 모든 조합의 경우의수 구하기
+    vector<vector<path>> all_combination = selector.get_list();
+    
+    // 이미지 생성 후 저장
+    for (auto& v : selector.get_list())
+    {
+        // 벡터 안에 있는 path 순차적으로 canvas에 select
+        for (auto& p : v) canvas.select(p);
+        
+        // 보여주기 (나중에 사진 저장으로 대체하기)
+        canvas.show();
+        
+        // canvas 선택 초기화
+        canvas.select_celar();
+    }
+}
+
+
 // *. 악상 기호 편집
 void edit_musical_symbol_image_config(string image_dir, string image_config_dir)
 {
@@ -157,4 +152,19 @@ void edit_musical_symbol_image_config(string image_dir, string image_config_dir)
     
     if (ms.status) return;
     else ms.edit_config();
+}
+void edit_musical_symbol_image_config(string ds_dir)
+{
+    path ds(ds_dir);
+    path ds_config = ds / path("symbol_dataset_config.txt");
+    
+    for (auto& p : std::filesystem::recursive_directory_iterator(ds))
+    {
+        if (exists(p.path()) && is_regular_file(p.path()) && p.path().extension() == ".png")
+        {
+            msig::MusicalSymbol ms(p, ds_config);
+            if (ms.status) continue;
+            else ms.edit_config();
+        }
+    }
 }
