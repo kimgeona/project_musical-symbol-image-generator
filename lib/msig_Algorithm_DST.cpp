@@ -4,160 +4,299 @@ namespace msig {
 
 
 // 생성자
-DSTree_Node::DSTree_Node() {
-    using namespace std;
-    using namespace std::filesystem;
-    
-    this->dir = path();
-    this->available = false;
-}
-DSTree_Node::DSTree_Node(std::string dir){
+DSTree::DSTree()
+{
     using namespace std;
     using namespace std::filesystem;
     
     // 초기화
-    this->dir = path(dir);  // 기본 파일 주소
-    this->available = true; // 사용 가능 여부
+    this->root_dir  = path("");             // root 디렉토리
+    this->target    = vector<string>();     // 확장자 목록
+    this->nodes     = map<path, DSNode>();  // 파일 트리
+    this->pre       = path("");             // 현재 위치
 }
-
-// 연산자
-bool DSTree_Node::operator==(const DSTree_Node& other) const{
-    return ((this->dir==other.dir) &&
-            (this->available==other.available));
-}
-
-// 생성자
-DSTree::DSTree() {
+DSTree::DSTree(std::string root_dir, std::vector<std::string> target_extension)
+{
     using namespace std;
     using namespace std::filesystem;
     
-    // 초기화
-    this->root_dir          = path("");                 // root 디렉토리
-    this->target_extension  = vector<string>();         // 확장자 목록
-    this->tree              = map<path, DSTree_Node>(); // 파일 트리
-    this->pre               = path("");                 // 현재 위치
-}
-DSTree::DSTree(std::string root_dir, std::vector<std::string> target_extension) {
-    using namespace std;
-    using namespace std::filesystem;
+    // 디렉토리 확인
+    if (exists(path(root_dir)) && is_directory(path(root_dir)))
+    {
+        this->root_dir  = path(root_dir);    // 최상위 폴더 주소
+        this->pre       = path(root_dir);    // 현재 노드 주소
+        this->target    = target_extension;  // 대상 확장자 목록
+    }
+    else throw std::runtime_error("DSTree::DSTree() : 잘못된 주소 입니다.");
     
-    // 존재하는 디렉토리인지 확인
-    if (exists(path(root_dir)) && is_directory(path(root_dir))){
-        // 초기화
-        this->root_dir          = path(root_dir);       // 폴더 경로
-        this->target_extension  = target_extension;     // 조사 대상 확장자 목록
-        this->pre               = path(root_dir);       // 현재 위치
+    // 디렉토리를 순회하며 파일들 nodes에 추가하기
+    for (auto& d : recursive_directory_iterator(path(this->root_dir)))
+    {
+        // 대상 파일인지 확인
+        if (check_file(d.path())) continue;
         
-        // 폴더 조사, tree에 DSTree_Node 추가
-        for (auto& d : recursive_directory_iterator(path(this->root_dir))){
-            // DSTree 추가 조건들 (파일여부, 지정된 확장자, -@ -# 문자 포함 디렉토리)
-            if (!is_regular_file(d.path())) continue;
-            if (find(this->target_extension.begin(), this->target_extension.end(), d.path().extension())==this->target_extension.end()) continue;
-            if (d.path().string().find("-@")==string::npos && d.path().string().find("-#")==string::npos) continue;
-            // DSTree에 추가
-            this->tree[d.path()] = DSTree_Node(d.path().string());
-        }
+        // DSTree에 추가
+        this->nodes[d.path()] = DSNode(d.path().string());
     }
-    else {
-        // 초기화
-        this->root_dir          = path("");                 // root 디렉토리
-        this->target_extension  = vector<string>();         // 확장자 목록
-        this->tree              = map<path, DSTree_Node>(); // 파일 트리
-        this->pre               = path("");                 // 현재 위치
-    }
+    
+    // nodes 추가된 내용 확인
+    if (nodes.empty()) throw std::runtime_error("DSTree::DSTree() : 해당 디렉토리에서 불러올 파일들이 없습니다.");
 }
 
+
 // 연산자
-bool DSTree::operator==(const DSTree& other) const{
+bool DSTree::operator==(const DSTree& other) const
+{
     return ((this->root_dir==other.root_dir) &&
-            (this->target_extension==other.target_extension) &&
-            (this->tree==other.tree) &&
+            (this->target==other.target) &&
+            (this->nodes==other.nodes) &&
             (this->pre==other.pre));
 }
 
-// 알고리즘 : 확인
-std::vector<std::filesystem::path>  DSTree::get_available_folder(std::filesystem::path dir){
-    using namespace std;
-    using namespace std::filesystem;
-    
-    // 존재하는 디렉토리인지 확인
-    if (!exists(dir) || !is_directory(dir)) return vector<path>();
-    
-    vector<path> list_dir;
-    for (auto& d : directory_iterator(dir)){
-        // 조건 확인(디렉토리인지, @# 문자 포함, 하위 파일 사용가능여부)
-        if (!is_directory(d.path())) continue;
-        if (d.path().string().find("-@")==string::npos && d.path().string().find("-#")==string::npos) continue;
-        if (get_available_file(d.path()).empty()) continue;
-        //
-        list_dir.push_back(d.path());
-    }
-    return list_dir;
-}
-std::vector<std::filesystem::path>  DSTree::get_available_file(std::filesystem::path dir){
-    using namespace std;
-    using namespace std::filesystem;
-    
-    // 존재하는 디렉토리인지 확인
-    if (!exists(dir) || !is_directory(dir)) return vector<path>();
-    
-    vector<path> list_file;
-    for (auto& d : directory_iterator(dir)){
-        // 조건 확인(파일인지, 지정된확장자, 사용가능여부)
-        if (!is_regular_file(d.path())) continue;
-        if (find(this->target_extension.begin(), this->target_extension.end(), d.path().extension().string())==this->target_extension.end()) continue;
-        if (!tree[d.path()].available) continue;
-        //
-        list_file.push_back(d.path());
-    }
-    return list_file;
-}
-std::vector<std::filesystem::path>  DSTree::get_available(std::filesystem::path dir){
-    using namespace std;
-    using namespace std::filesystem;
-    
-    // 존재하는 디렉토리인지 확인
-    if (!exists(dir) || !is_directory(dir)) return vector<path>();
-    
-    // 선택 가능한 폴더 안에, 선택 가능한 파일들 push_back()
-    vector<path> list_file;
-    for (auto& d : get_available_folder(dir))
-        for (auto& f : get_available_file(d))
-            list_file.push_back(f);
-    return list_file;
-}
 
-// 알고리즘 : pre 이동
-int                                 DSTree::select(std::filesystem::path dir){
+// 확인 함수
+inline int DSTree::check_file(std::filesystem::path p, bool available_check)
+{
     using namespace std;
     using namespace std::filesystem;
     
     // 존재하는 파일인지 확인
-    if (!exists(dir) || !is_regular_file(dir)) return 1;
+    if (!exists(p)) return -1;
     
+    // 파일인지 확인
+    if (!is_regular_file(p)) return -1;
+    
+    // 대상 확장자인지 확인
+    if (find(target.begin(), target.end(), p.extension().string()) == target.end()) return -1;
+    
+    // -@ -# 문자 포함 되어 있는지
+    if (p.parent_path().filename().string().find("-@")==string::npos &&
+        p.parent_path().filename().string().find("-#")==string::npos) return -1;
+    
+    // 사용 가능 여부 확인
+    if (available_check && (nodes[p].available==false)) return -1;
+    
+    return 0;
+}
+inline int DSTree::check_directory(std::filesystem::path p, bool available_check)
+{
+    using namespace std;
+    using namespace std::filesystem;
+    
+    // 존재하는 폴더인지 확인
+    if (!exists(p)) return -1;
+    
+    // 폴더인지 확인
+    if (!is_directory(p)) return -1;
+    
+    // -@ -# 문자 포함 되어 있는지
+    if (p.filename().string().find("-@")==string::npos &&
+        p.filename().string().find("-#")==string::npos) return -1;
+    
+    // 사용 가능 여부 확인
+    if (available_check && get_files(p).empty()) return -1;;
+    
+    return 0;
+}
+
+
+// 목록 구하기 함수
+std::vector<std::filesystem::path>  DSTree::get_files(std::filesystem::path dir)
+{
+    using namespace std;
+    using namespace std::filesystem;
+    
+    // 파일 목록
+    vector<path> list_file;
+    
+    // 주소 확인
+    if (!exists(dir) || !is_directory(dir))
+        throw std::runtime_error("DSTree::get_files() : 주소가 잘못되었습니다.");
+    
+    // 주소 순회
+    for (auto& d : directory_iterator(dir))
+    {
+        // 대상 파일인지 확인(사용 가능 여부 포함)
+        if (check_file(d.path(), true)) continue;
+        
+        // 파일 추가
+        list_file.push_back(d.path());
+    }
+    
+    return list_file;
+}
+std::vector<std::filesystem::path>  DSTree::get_folders(std::filesystem::path dir)
+{
+    using namespace std;
+    using namespace std::filesystem;
+    
+    // 디렉토리 목록
+    vector<path> list_dir;
+    
+    // 주소 확인
+    if (!exists(dir) || !is_directory(dir))
+        throw std::runtime_error("DSTree::get_folders() : 주소가 잘못되었습니다.");
+    
+    // 주소 순회
+    for (auto& d : directory_iterator(dir))
+    {
+        // 대상 폴더인지 확인(사용 가능 여부 포함)
+        if (check_directory(d.path(), true)) continue;
+        
+        // 폴더 추가
+        list_dir.push_back(d.path());
+    }
+    
+    return list_dir;
+}
+std::vector<std::filesystem::path>  DSTree::get(std::filesystem::path dir)
+{
+    using namespace std;
+    using namespace std::filesystem;
+    
+    // 파일 목록
+    vector<path> list_file;
+    
+    // 주소 확인
+    if (!exists(dir) || !is_directory(dir))
+        throw std::runtime_error("DSTree::get_available() : 주소가 잘못되었습니다.");
+    
+    // 선택 가능한 파일들 구하기
+    for (auto& d : get_folders(dir))
+        for (auto& f : get_files(d))
+            list_file.push_back(f);
+    
+    return list_file;
+}
+
+
+// 수정 함수
+void                                DSTree::pruning(std::filesystem::path dir)
+{
+    using namespace std;
+    using namespace std::filesystem;
+    
+    // 존재하는 디렉토리인지 확인
+    if (!exists(dir))
+        throw std::runtime_error("DSTree::pruning() : 주소가 잘못되었습니다.");
+    
+    // 파일일 경우
+    if (is_regular_file(dir))
+    {
+        // 대상 파일인지 확인(사용 가능 여부 포함)
+        if (check_file(dir, true)) return;
+        
+        // 대상 파일 사용 가능 여부 비활성화
+        nodes[dir].available = false;
+        return;
+    }
+    
+    // 폴더일 경우
+    if (is_directory(dir))
+    {
+        // 현재 디렉토리에 있는 파일 순회
+        for (auto& f : directory_iterator(dir))
+        {
+            // 대상 파일인지 확인(사용 가능 여부 포함)
+            if (check_file(f.path(), true)) continue;
+            
+            // 대상 파일 사용 가능 여부 비활성화
+            nodes[f.path()].available = false;
+        }
+        return;
+    }
+    
+    throw std::runtime_error("DSTree::pruning() : 주소가 잘못되었습니다.");
+}
+void                                DSTree::grafting(std::filesystem::path dir)
+{
+    using namespace std;
+    using namespace std::filesystem;
+    
+    // 존재하는 디렉토리인지 확인
+    if (!exists(dir))
+        throw std::runtime_error("DSTree::grafting() : 주소가 잘못되었습니다.");
+    
+    // 파일일 경우
+    if (is_regular_file(dir))
+    {
+        // 대상 파일인지 확인(사용 가능 여부 포함)
+        if (check_file(dir)) return;
+        
+        // 대상 파일 사용 가능 여부 비활성화
+        nodes[dir].available = true;
+        return;
+    }
+    
+    // 폴더일 경우
+    if (is_directory(dir))
+    {
+        // 현재 디렉토리에 있는 파일 순회
+        for (auto& f : directory_iterator(dir))
+        {
+            // 대상 파일인지 확인(사용 가능 여부 포함)
+            if (check_file(f.path())) continue;
+            
+            // 대상 파일 사용 가능 여부 비활성화
+            nodes[f.path()].available = true;
+        }
+        return;
+    }
+    
+    throw std::runtime_error("DSTree::grafting() : 주소가 잘못되었습니다.");
+}
+void                                DSTree::pre_refresh()
+{
+    using namespace std;
+    using namespace std::filesystem;
+    
+    // root_dir 탈출 방지
+    if (this->pre==this->root_dir) return;
+    
+    // pre 새로 고쳐야 하는지 확인
+    vector<path>list_file = get(this->pre);
+    
+    // pre 한단계 위로 빠져나가기
+    if (list_file.empty())
+    {
+        pre = pre.parent_path();
+        pre_refresh();
+    }
+}
+
+
+// 사용자
+int                                 DSTree::select(std::filesystem::path dir)
+{
+    using namespace std;
+    using namespace std::filesystem;
+    
+    // 존재하는 파일인지 확인
+    if (!exists(dir) || !is_regular_file(dir))
+        throw std::runtime_error("DSTree::select() : 주소가 잘못되었습니다.");
     
     // 선택 가능한 파일들 불러오기
-    vector<path> list_file = get_available(this->pre);
+    vector<path> list_file = get(pre);
     
-    // 선택 가능한 파일이 없는 경우
-    if (list_file.empty()) return -1;
-    
-    // 파일을 찾을 수 없는 경우
-    if (find(list_file.begin(), list_file.end(), dir)==list_file.end()){
-        return 1;
+    // 선택한 파일(dir)을 목록(list_file)에서 찾을 수 없는 경우
+    if (find(list_file.begin(), list_file.end(), dir)==list_file.end())
+    {
+        return -1;
     }
-    // 파일을 찾은 경우
-    else this->pre = dir.parent_path();
     
+    // pre 값 갱신
+    pre = dir.parent_path();
     
-    // @ 의존성 가지치기 실행 : 같은 깊이의 파일 모두 available=false
-    if (dir.parent_path().string().find("-@")!=string::npos){
-        for (auto& p : directory_iterator(dir.parent_path().parent_path())){
-            pruning(p.path());
-        }
+    // @ 의존성 가지치기 : 현재 부모 폴더와 같은 디렉토리에 있는 다른 폴더들도 가지치기
+    if (dir.parent_path().string().find("-@")!=string::npos)
+    {
+        for (auto& p : directory_iterator(dir.parent_path().parent_path()))
+            if (is_directory(p.path())) pruning(p.path());
     }
-    // # 의존성 가지치기 실행 : 현재 디렉토리의 파일만 모두 available=false
-    if (dir.parent_path().string().find("-#")!=string::npos){
+    
+    // # 의존성 가지치기 : 현재 부모 폴더만 가지치기
+    if (dir.parent_path().string().find("-#")!=string::npos)
+    {
         pruning(dir.parent_path());
     }
     
@@ -166,123 +305,47 @@ int                                 DSTree::select(std::filesystem::path dir){
     
     return 0;
 }
-void                                DSTree::pre_refresh(){
+int                                 DSTree::selectable()
+{
     using namespace std;
     using namespace std::filesystem;
     
-    // root_dir 탈출 방지
-    if (this->pre==this->root_dir) return;
+    if (get(pre).empty())   return 0;
+    else                    return 1;
+}
+std::vector<std::filesystem::path>  DSTree::get()
+{
+    using namespace std;
+    using namespace std::filesystem;
     
-    // pre 새로 고쳐야 하는지 확인
-    vector<path>list_file = get_available(this->pre);
+    return get(pre);
+}
+void                                DSTree::reset()
+{
+    using namespace std;
+    using namespace std::filesystem;
     
-    // pre 한단계 위로 빠져나가기
-    if (list_file.empty()){
-        pre = pre.parent_path();
-        pre_refresh();
+    // pre 위치 초기화
+    pre = root_dir;
+    
+    // 모든 파일 availabel==true로 바꿈
+    for(auto& pair : nodes)
+    {
+        pair.second.available = true;
     }
 }
-
-// 알고리즘 : 데이터 변경
-void                                DSTree::pruning(std::filesystem::path dir){
+void                                DSTree::state(std::vector<std::filesystem::path> list, bool available_state)
+{
     using namespace std;
     using namespace std::filesystem;
     
-    // 존재하는 디렉토리인지 확인
-    if (!exists(dir) || !is_directory(dir)) return;
+    // 전체 상태 설정
+    if (available_state)    for (auto& pair : nodes) pair.second.available=false;   // 전체 비활성화
+    else                    for (auto& pair : nodes) pair.second.available=true;    // 전체 활성화
     
-    // 현재 디렉토리 내 파일 알아내기
-    for (auto& f : directory_iterator(dir)){
-        // 조건 확인(파일, 지정된확장자)
-        if (!is_regular_file(f.path())) continue;
-        if (find(this->target_extension.begin(), this->target_extension.end(), f.path().extension())==this->target_extension.end()) continue;
-        //
-        tree[f.path()].available = false;
-    }
-}
-
-// API : 선택 가능 목록 확인
-std::vector<std::filesystem::path>  DSTree::get_all_files(){
-    using namespace std;
-    using namespace std::filesystem;
-    
-    vector<path> list_file;
-    for (auto& e : tree)
-        list_file.push_back(e.first);
-    return list_file;
-}
-std::vector<std::filesystem::path>  DSTree::get_selectable(){
-    using namespace std;
-    using namespace std::filesystem;
-    
-    return get_available(pre);
-}
-bool                                DSTree::is_selectable(){
-    using namespace std;
-    using namespace std::filesystem;
-    
-    // 선택 가능한 목록 불러오기
-    vector<path> list_file = get_available(this->pre);
-    
-    return !list_file.empty();
-}
-void                                DSTree::print_selectable(){
-    using namespace std;
-    using namespace std::filesystem;
-    
-    vector<path> list_dir = get_available_folder(pre);
-    vector<path> list_file;
-    
-    size_t count_dir = list_dir.size();
-    size_t count_file ;
-    
-    for (auto& p : list_dir){
-        count_dir--;
-        if (count_dir==0)   cout << "└── ";
-        else                cout << "├── ";
-        cout << p.filename().string() << endl;
-        
-        list_file = get_available_file(p);
-        count_file = list_file.size();
-        for (auto& f : list_file){
-            count_file--;
-            if (count_dir==0)   cout << "    ";
-            else                cout << "│   ";
-            if (count_file==0)  cout << "└── ";
-            else                cout << "├── ";
-            cout << f.filename().string() << endl;
-        }
-    }
-}
-
-// API : 선택
-int                                 DSTree::select(std::string dir){
-    using namespace std;
-    using namespace std::filesystem;
-    
-    return select(path(dir));
-}
-int                                 DSTree::select(std::string folder, std::string file){
-    using namespace std;
-    using namespace std::filesystem;
-    
-    // 선택 가능한 목록 불러오기
-    vector<path> list_file = get_available(this->pre);
-    
-    // 선택 가능한 목록이 없다면
-    if (list_file.empty()) return -1;
-    
-    // 찾기
-    for (auto& p : list_file){
-        if (p.parent_path().filename().string()==folder && p.filename().string()==file){
-            // 찾은 경우
-            return select(p);
-            break;
-        }
-    }
-
-    // 찾지 못한 경우
-    return 1;
+    // list에 명시된 파일이나 폴더 상태 설정
+    if (available_state)    for (auto& p : list) grafting(p);   // 선택된 목록 활성화
+    else                    for (auto& p : list) pruning(p);    // 선택된 목록 비활성화
 }
 
 }

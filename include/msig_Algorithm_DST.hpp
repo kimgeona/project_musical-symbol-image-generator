@@ -12,62 +12,71 @@ namespace msig {
 
 
 // Dependent Selection Node
-class DSTree_Node{
+class DSNode
+{
 public:
     
-    // 노드 구성
-    std::filesystem::path   dir;        // 파일 경로 : ~start/line-@/staff.png
-    bool                    available;  // 사용가능 여부
-     
+    // 변수
+    std::filesystem::path   dir;        // 파일 경로
+    bool                    available;  // 해당 파일 사용가능 여부
+    
     // 생성자
-    DSTree_Node();
-    DSTree_Node(std::string dir);
+    DSNode(){}
+    DSNode(std::string dir){
+        this->dir = std::filesystem::path();
+        this->available = true;
+    }
     
     // 연산자
-    bool operator==(const DSTree_Node& other) const;
+    bool operator==(const DSNode& other) const {
+        return ((this->dir==other.dir) && (this->available==other.available));
+    }
 };
 
-// Dependent Selection Class
-class DSTree{
-    // 변수
-    std::filesystem::path       root_dir;           // 최상위 폴더
-    std::vector<std::string>    target_extension;   // 대상 파일 확장자 목록
+
+// Dependent Selection Tree
+class DSTree
+{
+    // 트리 정보
+    std::filesystem::path       root_dir;   // 최상위 폴더
+    std::vector<std::string>    target;     // 대상 확장자 목록
     
-    // 자료구조
-    std::map<std::filesystem::path, DSTree_Node>    tree;
-    std::filesystem::path                           pre;
+    // 불러온 파일 목록
+    std::map<std::filesystem::path, DSNode> nodes;
     
-    // 알고리즘 : 확인
-    std::vector<std::filesystem::path>  get_available_folder(std::filesystem::path dir);    // 해당 dir 내 선택 가능 디렉토리 가져오기
-    std::vector<std::filesystem::path>  get_available_file(std::filesystem::path dir);      // 해당 dir 내 선택 가능한 파일 가져오기
-    std::vector<std::filesystem::path>  get_available(std::filesystem::path dir);           // 해당 dir을 기준으로 선택 가능한 파일 가져오기
-    
-    // 알고리즘 : pre 이동
-    int                                 select(std::filesystem::path dir);      // 파일 선택
-    void                                pre_refresh();                          // pre 위치 계산
-    
-    // 알고리즘 : 데이터 변경
-    void                                pruning(std::filesystem::path dir);     // 가지치기
+    // 현재 위치
+    std::filesystem::path pre;
     
 public:
     // 생성자
-    DSTree();
-    DSTree(std::string root_dir, std::vector<std::string> target_extension);
-    
+    DSTree();                                                                   // 기본 생성자
+    DSTree(std::string root_dir, std::vector<std::string> target_extension);    // 생성자
+
     // 연산자
-    bool operator==(const DSTree& other) const;
+    bool operator==(const DSTree& other) const;                                 // 비교 연산자 함수
     
-    // API : 선택 가능 목록 확인
-    std::vector<std::filesystem::path>  get_all_files();                    // 현재 트리상에 존재하는 모든 파일 가져오기
-    std::vector<std::filesystem::path>  get_selectable();                   // 현재 선택 가능한 모든 파일 가져오기
-    bool                                is_selectable();                    // 현재 선택 가능한지 여부 확인
-    void                                print_selectable();                 // 선택 가능 목록 출력
+    // 확인 함수
+    inline int check_file(std::filesystem::path p, bool available_check=false);         // 대상 파일인지 확인
+    inline int check_directory(std::filesystem::path p, bool available_check=false);    // 대상 폴더인지 확인
     
-    // API : 선택
-    int select(std::string folder, std::string file);                       // 선택
-    int select(std::string dir);                                            // 선택
+    // 목록 구하기 함수
+    std::vector<std::filesystem::path>  get_files(std::filesystem::path dir);       // 선택 가능 파일 구하기
+    std::vector<std::filesystem::path>  get_folders(std::filesystem::path dir);     // 선택 가능 디렉토리 구하기
+    std::vector<std::filesystem::path>  get(std::filesystem::path dir);             // 선택 가능한 파일들 구하기
+
+private:
+    // 수정 함수
+    void pruning(std::filesystem::path dir);    // 가지치기
+    void grafting(std::filesystem::path dir);   // 가지치기 되돌리기
+    void pre_refresh();                         // pre 위치 계산
     
-    
+public:
+    // 사용자
+    int                                 select(std::filesystem::path dir);  // 파일 선택
+    int                                 selectable();                       // 파일 선택 가능한지 확인
+    std::vector<std::filesystem::path>  get();                              // 현재 선택 가능한 파일 목록 구하기
+    void                                reset();                            // 선택 초기화
+    void                                state(std::vector<std::filesystem::path> list, bool available_state); // list에 명시된 것들만 available 또는 disavailable 시킴
 };
 
 
