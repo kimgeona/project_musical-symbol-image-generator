@@ -168,6 +168,67 @@ std::vector<std::filesystem::path>  DSTree::get(std::filesystem::path dir)
     
     return list_file;
 }
+std::vector<std::vector<std::filesystem::path>> DSTree::get_list(const std::vector<std::vector<std::filesystem::path>>& list, std::filesystem::path p)
+{
+    using namespace std;
+    using namespace std::filesystem;
+    
+    // 변수들
+    vector<vector<path>>    list_1 = list;          // 부모 위치의 리스트
+    vector<path>            list_2 = get_files(p);  // 현재 위치의 파일들
+    vector<vector<path>>    list_pre;               // 현재 위치의 리스트
+    vector<vector<path>>    list_return;            // list_return = 현재 위치의 리스트 + 자식 위치의 리스트
+    
+    // 현재 위치의 리스트 계산 방법
+    //
+    // list_total      list_pre    list_return
+    //
+    // hello world 0   a b         hello world 0 a
+    // hello world 1               hello world 0 b
+    // hello world 2               hello world 1 a
+    // hello world 3               hello world 1 b
+    //                             hello world 2 a
+    //                             hello world 2 b
+    //                             hello world 3 a
+    //                             hello world 3 b
+    // 현재 위치 리스트 구하기
+    for (auto& l1 : list_1)
+    {
+        for (auto& l2 : list_2)
+        {
+            vector<path> tmp(l1);
+            tmp.push_back(l2);
+            list_pre.push_back(tmp);
+        }
+    }
+    if (list_1.empty())
+    {
+        for (auto& l2 : list_2)
+        {
+            vector<path> tmp;
+            tmp.push_back(l2);
+            list_pre.push_back(tmp);
+        }
+    }
+    
+    // 현재 위치의 리스트 추가
+    for (auto&v : list_pre)
+    {
+        list_return.push_back(v);
+    }
+    
+    // 자식 위치의 리스트 구하기
+    for (auto& d : get_folders(p))
+    {
+        // 자식 위치의 리스트 추가
+        for (auto& v : get_list(list_pre, d))
+        {
+            list_return.push_back(v);
+        }
+    }
+    
+    return list_return;
+}
 
 
 // 수정 함수
@@ -313,13 +374,6 @@ int                                 DSTree::selectable()
     if (get(pre).empty())   return 0;
     else                    return 1;
 }
-std::vector<std::filesystem::path>  DSTree::get()
-{
-    using namespace std;
-    using namespace std::filesystem;
-    
-    return get(pre);
-}
 void                                DSTree::reset()
 {
     using namespace std;
@@ -347,66 +401,20 @@ void                                DSTree::state(std::vector<std::filesystem::p
     if (available_state)    for (auto& p : list) grafting(p);   // 선택된 목록 활성화
     else                    for (auto& p : list) pruning(p);    // 선택된 목록 비활성화
 }
-std::vector<std::vector<std::filesystem::path>> DSTree::get_list(const std::vector<std::vector<std::filesystem::path>>& list, std::filesystem::path p)
+std::vector<std::filesystem::path>              DSTree::get()
 {
     using namespace std;
     using namespace std::filesystem;
     
-    // 변수들
-    vector<vector<path>>    list_1 = list;          // 부모 위치의 리스트
-    vector<path>            list_2 = get_files(p);  // 현재 위치의 파일들
-    vector<vector<path>>    list_pre;               // 현재 위치의 리스트
-    vector<vector<path>>    list_return;            // list_return = 현재 위치의 리스트 + 자식 위치의 리스트
+    return get(pre);
+}
+std::vector<std::vector<std::filesystem::path>> DSTree::get_list()
+{
+    using namespace std;
+    using namespace std::filesystem;
     
-    // 현재 위치의 리스트 계산 방법
-    //
-    // list_total      list_pre    list_return
-    //
-    // hello world 0   a b         hello world 0 a
-    // hello world 1               hello world 0 b
-    // hello world 2               hello world 1 a
-    // hello world 3               hello world 1 b
-    //                             hello world 2 a
-    //                             hello world 2 b
-    //                             hello world 3 a
-    //                             hello world 3 b
-    // 현재 위치 리스트 구하기
-    for (auto& l1 : list_1)
-    {
-        for (auto& l2 : list_2)
-        {
-            vector<path> tmp(l1);
-            tmp.push_back(l2);
-            list_pre.push_back(tmp);
-        }
-    }
-    if (list_1.empty())
-    {
-        for (auto& l2 : list_2)
-        {
-            vector<path> tmp;
-            tmp.push_back(l2);
-            list_pre.push_back(tmp);
-        }
-    }
-    
-    // 현재 위치의 리스트 추가
-    for (auto&v : list_pre)
-    {
-        list_return.push_back(v);
-    }
-    
-    // 자식 위치의 리스트 구하기
-    for (auto& d : get_folders(p))
-    {
-        // 자식 위치의 리스트 추가
-        for (auto& v : get_list(list_pre, d))
-        {
-            list_return.push_back(v);
-        }
-    }
-    
-    return list_return;
+    vector<vector<path>> start;
+    return get_list(start, pre);
 }
 
 

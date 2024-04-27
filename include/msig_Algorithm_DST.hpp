@@ -63,7 +63,11 @@ public:
     std::vector<std::filesystem::path>  get_files(std::filesystem::path dir);       // 선택 가능 파일 구하기
     std::vector<std::filesystem::path>  get_folders(std::filesystem::path dir);     // 선택 가능 디렉토리 구하기
     std::vector<std::filesystem::path>  get(std::filesystem::path dir);             // 선택 가능한 파일들 구하기
-
+    
+private:
+    // 목록 구하기 함수
+    std::vector<std::vector<std::filesystem::path>> get_list(const std::vector<std::vector<std::filesystem::path>>& list, std::filesystem::path p); // 모든 조합 재귀적으로 구하기
+    
 private:
     // 수정 함수
     void pruning(std::filesystem::path dir);    // 가지치기
@@ -72,12 +76,13 @@ private:
     
 public:
     // 사용자
-    int                                 select(std::filesystem::path dir);  // 파일 선택
-    int                                 selectable();                       // 파일 선택 가능한지 확인
-    std::vector<std::filesystem::path>  get();                              // 현재 선택 가능한 파일 목록 구하기
-    void                                reset();                            // 선택 초기화
-    void                                state(std::vector<std::filesystem::path> list, bool available_state); // list에 명시된 것들만 available 또는 disavailable 시킴
-    std::vector<std::vector<std::filesystem::path>> get_list(const std::vector<std::vector<std::filesystem::path>>& list, std::filesystem::path p); // 가능한 모든 조합을 반환
+    int  select(std::filesystem::path dir);      // 파일 선택
+    int  selectable();                           // 파일 선택 가능한지 확인
+    void reset();                                // 파일 선택 초기화
+    void state(std::vector<std::filesystem::path> list, bool available_state);  // 특정 악상기호 활성화, 비활성화
+    std::vector<std::filesystem::path>              get();                      // 현재 선택 가능한 파일 목록 구하기
+    std::vector<std::vector<std::filesystem::path>> get_list();                 // 가능한 모든 조합 재귀적으로 구하기
+    
 };
 
 
