@@ -50,7 +50,7 @@ int main(void)
     start_program();
     
     // *. 악상기호 config 데이터 조정
-    //edit_musical_symbol_image_config(dataset_dir);
+    //edit_musical_symbol_image_config(dataset_dir.string());
     
     return 0;
 }
