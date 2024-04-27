@@ -67,20 +67,21 @@ void    Canvas::locationing(MSPA& mspa, MusicalSymbol& ms)
      octave-up-start-8.png                  : up
      octave-up-start-15.png                 : up
      */
-    vector<string> f_fixed  = {};
-    vector<string> f_top    = {
+    vector<path> f_fixed  = {};
+    vector<path> f_top    = {
         path("octave-up-end.png"),
         path("octave-up-middle.png"),
         path("octave-up-start-8.png"),
-        path("octave-up-start-15.png"),};
-    vector<string> f_bottom = {
+        path("octave-up-start-15.png")
+    };
+    vector<path> f_bottom = {
         path("octave-down-end.png"),
         path("octave-down-middle.png"),
         path("octave-down-start-8.png"),
-        path("octave-down-start-15.png"),
+        path("octave-down-start-15.png")
     };
-    vector<string> f_left   = {};
-    vector<string> f_right  = {};
+    vector<path> f_left   = {};
+    vector<path> f_right  = {};
     
     // 폴더
     /*
@@ -119,7 +120,7 @@ void    Canvas::locationing(MSPA& mspa, MusicalSymbol& ms)
         dir_ds/path("complete")/path("line-@")/path("note-up-@"),
         dir_ds/path("complete")/path("line-@")/path("repetition-@"),
         dir_ds/path("complete")/path("line-@")/path("rest-@"),
-        dir_ds/path("complete")/path("line-@")/path("time-@"),
+        dir_ds/path("complete")/path("line-@")/path("time-@")
     };
     vector<path> d_top      = {
         dir_ds/path("complete")/path("edge-@")/path("measure-@")/path("repetition-@"),
@@ -127,16 +128,16 @@ void    Canvas::locationing(MSPA& mspa, MusicalSymbol& ms)
         dir_ds/path("complete")/path("line-@")/path("note-down-@")/path("ornament-#"),
         dir_ds/path("complete")/path("line-@")/path("note-down-@")/path("repetition-#"),
         dir_ds/path("complete")/path("line-@")/path("note-up-@")/path("ornament-#"),
-        dir_ds/path("complete")/path("line-@")/path("note-up-@")/path("repetition-#"),
+        dir_ds/path("complete")/path("line-@")/path("note-up-@")/path("repetition-#")
     };
     vector<path> d_bottom   = {
         dir_ds/path("complete")/path("line-@")/path("note-down-@")/path("dynamic-#"),
         dir_ds/path("complete")/path("line-@")/path("note-up-@")/path("articulation-#"),
-        dir_ds/path("complete")/path("line-@")/path("note-up-@")/path("dynamic-#"),
+        dir_ds/path("complete")/path("line-@")/path("note-up-@")/path("dynamic-#")
     };
     vector<path> d_left     = {
         dir_ds/path("complete")/path("line-@")/path("note-down-@")/path("accidental-#"),
-        dir_ds/path("complete")/path("line-@")/path("note-up-@")/path("accidental-#"),
+        dir_ds/path("complete")/path("line-@")/path("note-up-@")/path("accidental-#")
     };
     vector<path> d_right    = {};
     
