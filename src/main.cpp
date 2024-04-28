@@ -131,8 +131,6 @@ void start_program(void)
         path("new-symbol-dataset") / path("complete") / path("edge-left-@"),
         path("new-symbol-dataset") / path("complete") / path("edge-right-@"),
         path("new-symbol-dataset") / path("complete") / path("line-fixed-@"),
-        path("new-symbol-dataset") / path("complete") / path("line-@") / path("note-up-@") / path("dynamic-#"),
-        path("new-symbol-dataset") / path("complete") / path("line-@") / path("note-down-@") / path("dynamic-#"),
     };
     
     // 악상기호 제외(비활성화)하기
