@@ -1,5 +1,6 @@
 // c++17
 #include <iostream>
+#include <string>
 #include <opencv2/opencv.hpp>
 
 // 나의 라이브러리
@@ -11,7 +12,7 @@ using namespace cv;
 
 
 // 프로그램 버전
-#define MSIG_VERSION "1.0"
+#define MSIG_VERSION (std::to_string(MSIG_VERSION_MAJOR) + "."+ std::to_string(MSIG_VERSION_MINOR) + "." + std::to_string(MSIG_VERSION_PATCH))
 
 
 // 데이터셋 주소
