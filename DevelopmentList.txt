@@ -91,27 +91,34 @@
 * 그리고 이러한 관계를 나타낸 데이터셋들은 다음과 같은 파일 시스템 형태를 가지고 있음.
 
 complete(완성형, 종속형)
-├── edge-@
-│   ├── measure-@
-│   │   ├── octave-@
-│   │   └── repetition-@
-└── line-@
+├── edge-left-@
+│   └── measure-@
+│       ├── octave-@
+│       └── repetition-@
+├── edge-right-@
+│   └── measure-@
+│       ├── octave-@
+│       └── repetition-@
+├── line-@
+│   ├── note-down-@
+│   │   ├── accidental-#
+│   │   ├── articulation-#
+│   │   ├── dynamic-#
+│   │   ├── octave-#
+│   │   ├── ornament-#
+│   │   └── repetition-#
+│   └── note-up-@
+│   	├── accidental-#
+│   	├── articulation-#
+│   	├── dynamic-#
+│	    ├── octave-#
+│   	├── ornament-#
+│   	└── repetition-#
+└── line-fixed-@
     ├── clef-@
     ├── key-@
-    ├── note-down-@
-    │   ├── accidental-#
-    │   ├── articulation-#
-    │   ├── dynamic-#
-    │   ├── octave-#
-    │   ├── ornament-#
-    │   └── repetition-#
+	├── measure-@
     ├── note-up-@
-    │   ├── accidental-#
-    │   ├── articulation-#
-    │   ├── dynamic-#
-    │   ├── octave-#
-    │   ├── ornament-#
-    │   └── repetition-#
     ├── repetition-@
     ├── rest-@
     └── time-@
