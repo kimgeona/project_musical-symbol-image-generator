@@ -43,7 +43,11 @@ void    Canvas::locationing(MSPA& mspa, MusicalSymbol& ms)
     
     // 파일
     /*
-     edge-@ measure-@       octave-@        : --
+     edge-left-@    measure-@  octave-@     : --
+     octave-down-middle.png                 : bottom
+     octave-up-middle.png                   : top
+
+     edge-right-@   measure-@  octave-@     : --
      octave-down-middle.png                 : bottom
      octave-up-middle.png                   : top
      
@@ -85,13 +89,17 @@ void    Canvas::locationing(MSPA& mspa, MusicalSymbol& ms)
     
     // 폴더
     /*
-     edge-@                                 : fixed
-     edge-@ measure-@                       : fixed
-     edge-@ measure-@       octave-@        : --
-     edge-@ measure-@       repetition-@    : top
+     edge-left-@                            : fixed
+     edge-left-@    measure-@               : fixed
+     edge-left-@    measure-@  octave-@     : --
+     edge-left-@    measure-@  repetition-@ : top
+
+     edge-right-@                           : fixed
+     edge-right-@   measure-@               : fixed
+     edge-right-@   measure-@  octave-@     : --
+     edge-right-@   measure-@  repetition-@ : top
+
      line-@                                 : fixed
-     line-@ clef-@                          : fixed
-     line-@ key-@                           : fixed
      line-@ note-down-@                     : fixed
      line-@ note-down-@     accidental-#    : left
      line-@ note-down-@     articulation-#  : top
@@ -106,24 +114,34 @@ void    Canvas::locationing(MSPA& mspa, MusicalSymbol& ms)
      line-@ note-up-@       octave-#        : --
      line-@ note-up-@       ornament-#      : top
      line-@ note-up-@       repetition-#    : top
-     line-@ repetition-@                    : fixed
-     line-@ rest-@                          : fixed
-     line-@ time-@                          : fixed
+
+     line-fixed-@                           : fixed
+     line-fixed-@   clef-@                  : fixed
+     line-fixed-@   key-@                   : fixed
+     line-fixed-@   measure-@               : fixed
+     line-fixed-@   repetition-@            : fixed
+     line-fixed-@   rest-@                  : fixed
+     line-fixed-@   time-@                  : fixed
      */
     vector<path> d_fixed    = {
-        dir_ds/path("complete")/path("edge-@"),
-        dir_ds/path("complete")/path("edge-@")/path("measure-@"),
+        dir_ds/path("complete")/path("edge-left-@"),
+        dir_ds/path("complete")/path("edge-left-@")/path("measure-@"),
+        dir_ds/path("complete")/ path("edge-right-@"),
+        dir_ds/path("complete")/ path("edge-right-@")/ path("measure-@"),
         dir_ds/path("complete")/path("line-@"),
-        dir_ds/path("complete")/path("line-@")/path("clef-@"),
-        dir_ds/path("complete")/path("line-@")/path("key-@"),
         dir_ds/path("complete")/path("line-@")/path("note-down-@"),
         dir_ds/path("complete")/path("line-@")/path("note-up-@"),
-        dir_ds/path("complete")/path("line-@")/path("repetition-@"),
-        dir_ds/path("complete")/path("line-@")/path("rest-@"),
-        dir_ds/path("complete")/path("line-@")/path("time-@")
+        dir_ds/path("complete")/path("line-fixed-@"),
+        dir_ds/path("complete")/path("line-fixed-@")/path("clef-@"),
+        dir_ds/path("complete")/path("line-fixed-@")/path("key-@"),
+        dir_ds/path("complete")/path("line-fixed-@")/path("measure-@"),
+        dir_ds/path("complete")/path("line-fixed-@")/path("repetition-@"),
+        dir_ds/path("complete")/path("line-fixed-@")/path("rest-@"),
+        dir_ds/path("complete")/path("line-fixed-@")/path("time-@")
     };
     vector<path> d_top      = {
-        dir_ds/path("complete")/path("edge-@")/path("measure-@")/path("repetition-@"),
+        dir_ds/path("complete")/path("edge-left-@")/path("measure-@")/path("repetition-@"),
+        dir_ds/path("complete")/path("edge-right-@")/path("measure-@")/path("repetition-@"),
         dir_ds/path("complete")/path("line-@")/path("note-down-@")/path("articulation-#"),
         dir_ds/path("complete")/path("line-@")/path("note-down-@")/path("ornament-#"),
         dir_ds/path("complete")/path("line-@")/path("note-down-@")/path("repetition-#"),
