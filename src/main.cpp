@@ -10,16 +10,22 @@ using namespace std::filesystem;
 using namespace cv;
 
 
+// 프로그램 버전
+#define MSIG_VERSION "1.0"
+
+
 // 데이터셋 주소
 path dataset_dir = path("new-symbol-dataset");
 path dataset_config_dir = dataset_dir / path("symbol_dataset_config.txt");
-path dataset_create_dir;
+path dataset_create_dir = path(string("MusicalSymbol-v.") + MSIG_VERSION);
+
 
 // 의존적 선택 알고리즘
 msig::DSTree selector;
 
 // 악상기호 조합 클래스
 msig::Canvas canvas;
+
 
 // 함수 원형들
 void prepare_platform(void);
@@ -29,6 +35,7 @@ void prepare_Canvas(void);
 void start_program(void);
 void edit_musical_symbol_image_config(string image_dir, string image_config_dir);
 void edit_musical_symbol_image_config(string ds_dir);
+std::string naming(const std::vector<std::filesystem::path>& v);
 
 
 // 프로그램
@@ -118,23 +125,30 @@ void start_program(void)
 {
     // 제외할 악상기호 리스트
     vector<path> list_except = {
-        "new-symbol-dataset/complete/edge-@",
+        path("new-symbol-dataset") / path("complete") / path("edge-@"),
     };
     
     // 악상기호 제외(비활성화)하기
     selector.state(list_except, false);
     
     // 가능한 모든 조합의 경우의수 구하기
-    vector<vector<path>> all_combination = selector.get_list();
+    vector<vector<path>> all_combination = selector.combination_list();
     
     // 이미지 생성 후 저장
-    for (auto& v : selector.get_list())
+    for (auto& v : all_combination)
     {
         // 벡터 안에 있는 path 순차적으로 canvas에 select
         for (auto& p : v) canvas.select(p);
         
-        // 보여주기 (나중에 사진 저장으로 대체하기)
-        canvas.show();
+        // 폴더 존재하는지 확인
+        if (!exists(dataset_create_dir)) create_directory(dataset_create_dir);
+        
+        // 이미지 이름 생성
+        path image_name = dataset_create_dir / path(naming(v));
+        
+        // 이미지 저장
+        canvas.save(image_name.string());
+        cout << image_name << endl;
         
         // canvas 선택 초기화
         canvas.select_celar();
@@ -167,4 +181,25 @@ void edit_musical_symbol_image_config(string ds_dir)
             else ms.edit_config();
         }
     }
+}
+
+
+// *. 악상기호 이미지 이름 생성
+std::string naming(const std::vector<std::filesystem::path>& v)
+{
+    // 변수
+    string name;
+    
+    // 파일 이름 연결
+    for (auto&p : v)
+        name = name + msig::my_split(p.filename().string(), ".")[0] + "_";
+    
+    // 마지막 문자 "_" 제거
+    if (!name.empty())
+        name.erase(name.end()-1);
+    
+    // 이미지 확장자 추가
+    name = name + ".png";
+    
+    return name;
 }
