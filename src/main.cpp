@@ -124,9 +124,12 @@ void prepare_Canvas(void)
 // 4. 악상기호 생성 프로그램 실행
 void start_program(void)
 {
+    cout << endl << "4. 악상기호 이미지를 생성합니다." << endl;
+    
     // 제외할 악상기호 리스트
     vector<path> list_except = {
-        path("new-symbol-dataset") / path("complete") / path("edge-@"),
+        path("new-symbol-dataset") / path("complete") / path("edge-left-@"),
+        path("new-symbol-dataset") / path("complete") / path("edge-right-@"),
         path("new-symbol-dataset") / path("complete") / path("line-fixed-@"),
     };
     
@@ -148,13 +151,24 @@ void start_program(void)
         // 이미지 이름 생성
         path image_name = dataset_create_dir / path(naming(v));
         
-        // 이미지 저장
-        canvas.save(image_name.string());
-        cout << image_name << endl;
+        // 이미 존재하는 이미지는 건너뛰기
+        if (exists(image_name))
+        {
+            // 건너뛰기
+            cout << "pass : " << image_name << endl;
+        }
+        else
+        {
+            // 이미지 저장
+            canvas.save(image_name.string());
+            cout << "save : " << image_name << endl;
+        }
         
         // canvas 선택 초기화
         canvas.select_celar();
     }
+    
+    cout << "----완료." << endl;
 }
 
 
