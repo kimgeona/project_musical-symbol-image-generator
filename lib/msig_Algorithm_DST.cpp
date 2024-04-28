@@ -326,7 +326,7 @@ void                                DSTree::pre_refresh()
 }
 
 
-// 사용자
+// 사용자 : 사용
 int                                 DSTree::select(std::filesystem::path dir)
 {
     using namespace std;
@@ -388,6 +388,8 @@ void                                DSTree::reset()
         pair.second.available = true;
     }
 }
+
+// 사용자 : 설정
 void                                DSTree::state(std::vector<std::filesystem::path> list, bool available_state)
 {
     using namespace std;
@@ -401,6 +403,8 @@ void                                DSTree::state(std::vector<std::filesystem::p
     if (available_state)    for (auto& p : list) grafting(p);   // 선택된 목록 활성화
     else                    for (auto& p : list) pruning(p);    // 선택된 목록 비활성화
 }
+
+// 사용자 : 정보
 std::vector<std::filesystem::path>              DSTree::get()
 {
     using namespace std;
@@ -408,13 +412,30 @@ std::vector<std::filesystem::path>              DSTree::get()
     
     return get(pre);
 }
-std::vector<std::vector<std::filesystem::path>> DSTree::get_list()
+std::vector<std::vector<std::filesystem::path>> DSTree::combination_list()
 {
     using namespace std;
     using namespace std::filesystem;
     
     vector<vector<path>> start;
     return get_list(start, pre);
+}
+std::map<std::filesystem::path, std::string>    DSTree::naming_list()
+{
+    using namespace std;
+    using namespace std::filesystem;
+    
+    // 변수
+    map<path, string> dic;
+    
+    /*
+     현재 DSTree가 관리하는 모든 폴더와 모든 파일들을 구분하는 id(숫자 또는 문자)를 생성하면 됨.
+     폴더와 파일을 구분하는 id는 추후 머신러닝에 사용될 이미지 라벨링에 사용될 예정.
+     
+     각 폴더와 파일을 구분하는 id는 <디렉토리, id> 형태로 map 컨테이너에 저장하고 이를 리턴하는 코드를 작성하면 됨.
+     */
+    
+    return dic;
 }
 
 

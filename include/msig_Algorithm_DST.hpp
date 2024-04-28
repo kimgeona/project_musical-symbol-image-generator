@@ -75,13 +75,18 @@ private:
     void pre_refresh();                         // pre 위치 계산
     
 public:
-    // 사용자
+    // 사용자 : 사용
     int  select(std::filesystem::path dir);      // 파일 선택
     int  selectable();                           // 파일 선택 가능한지 확인
     void reset();                                // 파일 선택 초기화
+    
+    // 사용자 : 설정
     void state(std::vector<std::filesystem::path> list, bool available_state);  // 특정 악상기호 활성화, 비활성화
-    std::vector<std::filesystem::path>              get();                      // 현재 선택 가능한 파일 목록 구하기
-    std::vector<std::vector<std::filesystem::path>> get_list();                 // 가능한 모든 조합 재귀적으로 구하기
+    
+    // 사용자 : 정보
+    std::vector<std::filesystem::path>              get();              // 현재 선택 가능한 파일 목록 구하기
+    std::vector<std::vector<std::filesystem::path>> combination_list(); // 가능한 모든 조합 재귀적으로 구하기
+    std::map<std::filesystem::path, std::string>    naming_list();      // 각 폴더와 파일마다 숫자로 라벨링한 목록 반환
     
 };
 
