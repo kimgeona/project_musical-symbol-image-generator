@@ -127,6 +127,7 @@ void start_program(void)
     // 제외할 악상기호 리스트
     vector<path> list_except = {
         path("new-symbol-dataset") / path("complete") / path("edge-@"),
+        path("new-symbol-dataset") / path("complete") / path("line-fixed-@"),
     };
     
     // 악상기호 제외(비활성화)하기
