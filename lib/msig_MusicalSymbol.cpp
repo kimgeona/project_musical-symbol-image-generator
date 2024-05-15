@@ -92,6 +92,13 @@ MusicalSymbol&   MusicalSymbol::operator+=(const MusicalSymbol& other) {
     using namespace cv;
     using namespace std::filesystem;
     
+    // 빈 객체와 연산시
+    if (*this==MusicalSymbol())
+    {
+        *this = other;
+        return *this;
+    }
+    
     // 이미지 복사 및 편집 1
     MusicalSymbol ms1(*this);
     ms1.set_default();
