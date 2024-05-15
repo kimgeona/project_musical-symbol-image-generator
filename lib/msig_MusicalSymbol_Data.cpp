@@ -6,7 +6,7 @@ namespace msig
 
 
 // config 데이터 생성
-int MusicalSymbol::make_config      (){
+int     MusicalSymbol::make_config(){
     using namespace std;
     using namespace cv;
     using namespace std::filesystem;
@@ -105,7 +105,7 @@ int MusicalSymbol::make_config      (){
 
 
 // config 데이터 수정
-int MusicalSymbol::edit_config      (){
+int     MusicalSymbol::edit_config(){
     using namespace std;
     using namespace cv;
     using namespace std::filesystem;
@@ -219,7 +219,7 @@ int MusicalSymbol::edit_config      (){
 
 
 // config 저장하기
-int MusicalSymbol::save_config     (){
+int     MusicalSymbol::save_config(){
     using namespace std;
     using namespace cv;
     using namespace std::filesystem;
@@ -239,6 +239,19 @@ int MusicalSymbol::save_config     (){
     my_attach(this->dir_config, key + "=" + value);     // config 맨 뒤에 추가
     
     return 0;
+}
+
+
+// 현재 rotate, scale 상태를 이미지에 적용하고 각각 기본값 저장.
+void    MusicalSymbol::set_default()
+{
+    // rotate, sclae 값 이미지에 적용
+    this->img = mat_rotate(img, rotate, x, y);
+    this->img = mat_scale(img, scale, x, y);
+    
+    // rotate, sclae 에 기본값 저장
+    rotate = 0.0;
+    scale = 1.0;
 }
 
 

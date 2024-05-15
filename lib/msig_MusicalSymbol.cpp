@@ -94,13 +94,11 @@ MusicalSymbol&   MusicalSymbol::operator+=(const MusicalSymbol& other) {
     
     // 이미지 복사 및 편집 1
     MusicalSymbol ms1(*this);
-    ms1.img = mat_rotate(ms1.img, ms1.rotate, ms1.x, ms1.y);
-    ms1.img = mat_scale(ms1.img, ms1.scale, ms1.x, ms1.y);
+    ms1.set_default();
     
     // 이미지 복사 및 편집 2
     MusicalSymbol ms2(other);
-    ms2.img = mat_rotate(ms2.img, ms2.rotate, ms2.x, ms2.y);
-    ms2.img = mat_scale(ms2.img, ms2.scale, ms2.x, ms2.y);
+    ms2.set_default();
     
     // 두 이미지를 포함하는 영역 계산
     int ms1_t = (ms1.y);
@@ -175,13 +173,11 @@ bool            MusicalSymbol::operator&(const MusicalSymbol& other){
     
     // 이미지 복사 및 편집 1
     MusicalSymbol ms1(*this);
-    ms1.img = mat_rotate(ms1.img, ms1.rotate, ms1.x, ms1.y);
-    ms1.img = mat_scale(ms1.img, ms1.scale, ms1.x, ms1.y);
+    ms1.set_default();
     
     // 이미지 복사 및 편집 2
     MusicalSymbol ms2(other);
-    ms2.img = mat_rotate(ms2.img, ms2.rotate, ms2.x, ms2.y);
-    ms2.img = mat_scale(ms2.img, ms2.scale, ms2.x, ms2.y);
+    ms2.set_default();
     
     // 두 이미지를 포함하는 영역 계산
     int ms1_t = (ms1.y);

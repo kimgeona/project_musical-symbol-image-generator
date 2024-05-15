@@ -34,21 +34,24 @@ public:
     double                  rotate;         // 회전
     double                  scale;          // 확대, 축소
     
-    // msig_MusicalSymbol_Init.cpp
+    // 초기화 관련
     int init_dir        (std::filesystem::path dir);    // dir 초기화
     int init_dir_config (std::filesystem::path dir);    // dir_config 초기화
     int init_img        ();                             // image 초기화
     int init_config     ();                             // config 초기화
     
-    // msig_MusicalSymbol_Data.cpp
-    int make_config     ();                             // config 생성하기
-    int edit_config     ();                             // config 수정하기
-    int save_config     ();                             // config 저장하기
+    // 데이터 관련
+    int     make_config();  // config 생성하기
+    int     edit_config();  // config 수정하기
+    int     save_config();  // config 저장하기
+    void    set_default();  // 현재 rotate, scale 상태를 이미지에 적용하고 각각 기본값 저장.
     
-    // msig_MusicalSymbol.cpp
+    // 생성자
     MusicalSymbol();                                                                // 빈 생성자
     MusicalSymbol(std::filesystem::path dir, std::filesystem::path dir_config);     // 기본 생성자
     MusicalSymbol(const MusicalSymbol& other);                                      // 복사 생성자
+    
+    // 연산자 함수
     MusicalSymbol&  operator=(const MusicalSymbol& other);                          // 복사(대입) 연산자
     bool            operator==(const MusicalSymbol& other) const;                   // 비교 연산자
     MusicalSymbol&  operator+=(const MusicalSymbol& other);                         // 덧셈 대입 연산자
