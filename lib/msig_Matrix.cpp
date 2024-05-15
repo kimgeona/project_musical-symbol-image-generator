@@ -122,7 +122,6 @@ cv::Mat mat_rotate      (const cv::Mat& img, double degree, int& cx, int& cy){
     }
     x_min = -x_min;
     y_min = -y_min;
-    cout << "degree : " << degree << "  cx : " << cx << "  cy : " << cy << "  x_min : " <<  x_min << " y_min : " <<  y_min << endl;
     
     // 이미지 준비
     Mat img_new = Mat(new_height, new_width, img.type());
