@@ -44,7 +44,6 @@ class Canvas
     
     // 그리기 함수
     cv::Mat draw();                                         // 그리기
-    void    locationing(MSPA& mspa, MusicalSymbol& ms);     // 그리기 위치 조정
     cv::Mat draw_symbols(const cv::Mat& img, const MusicalSymbol& ms, bool auxiliary_line=false);
     
 public:
