@@ -73,10 +73,10 @@ void MSPA::add(const MusicalSymbol& ms, MSPA_POSITION_TYPE position)
         }
         
         // 오선지 밖(out) 위치 계산
-        out[0] = edge[0] + 1;
-        out[1] = edge[1] + 1;
-        out[2] = edge[2] + 1;
-        out[3] = edge[3] + 1;
+        out[0] = edge[0];
+        out[1] = edge[1];
+        out[2] = edge[2];
+        out[3] = edge[3];
         
         // 저장
         ms_inputs.push_back(ms_copy);
@@ -319,11 +319,11 @@ MusicalSymbol MSPA::get(void)
             // 바깥쪽 배치
             else
             {
-                ms.y += ms.pad * ++out[0];
+                ms.y += ms.pad * out[0]++;
                 ms.y += pad[0];
                 
-                if (pitch % 2 == 0)
-                    ms.y += ms.pad / 2.0;
+                if (pitch % 2 == 0) ms.y += ms.pad / 2.0;
+                else                ms.y += ms.pad;
                 
                 if (ms_result & ms)
                 {
@@ -351,11 +351,11 @@ MusicalSymbol MSPA::get(void)
             // 바깥쪽 배치
             else
             {
-                ms.y -= ms.pad * ++out[1];
+                ms.y -= ms.pad * out[1]++;
                 ms.y -= pad[1];
                 
-                if (pitch % 2 == 0)
-                    ms.y -= ms.pad / 2.0;
+                if (pitch % 2 == 0) ms.y -= ms.pad / 2.0;
+                else                ms.y -= ms.pad;
                 
                 if (ms_result & ms)
                 {
@@ -401,8 +401,6 @@ MusicalSymbol MSPA::get(void)
         
         // 악상기호 합성
         ms_result += ms;
-        //imshow("test", ms_result.img);
-        //cv::waitKey();
     }
     return this->ms_result;
 }
