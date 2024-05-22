@@ -220,8 +220,8 @@ void MSPA::add(const MusicalSymbol& ms)
 ---- 끝 ----
      */
     vector<path> file_out_top       = {
-        path("new-symbol-dataset")/path("complete")/path("edge-left-@")/path("measure-@")/path("octave-up-middle.png"),
-        path("new-symbol-dataset")/path("complete")/path("edge-right-@")/path("measure-@")/path("octave-up-middle.png"),
+        path("new-symbol-dataset")/path("complete")/path("edge-left-@")/path("measure-@")/path("octave-@")/path("octave-up-middle.png"),
+        path("new-symbol-dataset")/path("complete")/path("edge-right-@")/path("measure-@")/path("octave-@")/path("octave-up-middle.png"),
         path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("articulation-#")/path("accent.png"),
         path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("articulation-#")/path("fermata-up.png"),
         path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("articulation-#")/path("marcato-up.png"),
@@ -237,8 +237,8 @@ void MSPA::add(const MusicalSymbol& ms)
         path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("octave-#")/path("octave-up-start-15.png"),
     };
     vector<path> file_out_bottom    = {
-        path("new-symbol-dataset")/path("complete")/path("edge-left-@")/path("measure-@")/path("octave-down-middle.png "),
-        path("new-symbol-dataset")/path("complete")/path("edge-right-@")/path("measure-@")/path("octave-down-middle.png"),
+        path("new-symbol-dataset")/path("complete")/path("edge-left-@")/path("measure-@")/path("octave-@")/path("octave-down-middle.png"),
+        path("new-symbol-dataset")/path("complete")/path("edge-right-@")/path("measure-@")/path("octave-@")/path("octave-down-middle.png"),
         path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("articulation-#")/path("accent.png"),
         path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("articulation-#")/path("fermata-down.png"),
         path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("articulation-#")/path("marcato-down.png"),
@@ -281,7 +281,7 @@ void MSPA::add(const MusicalSymbol& ms)
     // 매칭 되지 않은 악상기호들
     else
     {
-        cout << "MSPA::add() : 악상기호 " << ms.dir.filename().string() << "에 대한 설정이 없어 기본(fixed)으로 진행합니다." << endl;
+        cout << "MSPA::add() : 악상기호 " << ms.dir.string() << "에 대한 설정이 없어 기본(fixed)으로 진행합니다." << endl;
         add(ms, MSPA_FIXED);
     }
 }

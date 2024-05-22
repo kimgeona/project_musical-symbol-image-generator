@@ -88,7 +88,7 @@ void prepare_dataset(void)
             msig::MusicalSymbol ms(p, dataset_config_dir);
             // 악상 기호 상태 체크
             if (ms.status)  cout << "fail    : " << p << endl;
-            else            cout << "success : " << p << endl;
+            //else            cout << "success : " << p << endl;
         }
     }
     cout << "----완료." << endl;
@@ -128,9 +128,9 @@ void start_program(void)
     
     // 제외할 악상기호 리스트
     vector<path> list_except = {
-        path("new-symbol-dataset") / path("complete") / path("edge-left-@"),
-        path("new-symbol-dataset") / path("complete") / path("edge-right-@"),
-        path("new-symbol-dataset") / path("complete") / path("line-fixed-@"),
+        //path("new-symbol-dataset") / path("complete") / path("edge-left-@"),
+        //path("new-symbol-dataset") / path("complete") / path("edge-right-@"),
+        //path("new-symbol-dataset") / path("complete") / path("line-fixed-@"),
     };
     
     // 악상기호 제외(비활성화)하기
@@ -161,7 +161,7 @@ void start_program(void)
         {
             // 이미지 저장
             canvas.save(image_name.string());
-            cout << "save : " << image_name << endl;
+            //cout << "save : " << image_name << endl;
         }
         
         // canvas 선택 초기화
