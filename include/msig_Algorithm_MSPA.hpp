@@ -12,6 +12,17 @@
 #include <msig_MusicalSymbol.hpp>
 
 namespace msig {
+
+#define MSPA_POSITION_TYPE uint8_t
+#define MSPA_FIXED  0b00000000
+#define MSPA_TOP    0b00000001
+#define MSPA_BOTTOM 0b00000010
+#define MSPA_LEFT   0b00000100
+#define MSPA_RIGHT  0b00001000
+#define MSPA_STAFF  0b10000000
+#define MSPA_IN     0b00010000
+#define MSPA_OUT    0b00100000
+
 // Musical Symbol Positioning Algorithm
 class MSPA
 {
@@ -29,8 +40,8 @@ private:
     int pad [4];    // 부가적인 패딩값
     
     // 입력받은 악상기호들
-    std::vector<MusicalSymbol>  ms_inputs;      // 입력받은 악상기호들
-    std::vector<std::string>    ms_positions;   // 입력받은 배치정보들
+    std::vector<MusicalSymbol>      ms_inputs;      // 입력받은 악상기호들
+    std::vector<MSPA_POSITION_TYPE> ms_positions;   // 입력받은 배치정보들
     
     // 완성된 악상기호
     MusicalSymbol               ms_result;
@@ -39,11 +50,8 @@ public:
     // 생성자
     MSPA();
     
-    // 배치 함수
-    void add_staff(const MusicalSymbol& ms, std::string pitch, int top_ledger_number, int bottom_ledger_number);
-    void add_fixed(const MusicalSymbol& ms);
-    void add_in(const MusicalSymbol& ms, std::string direction);
-    void add_out(const MusicalSymbol& ms, std::string direction);
+    // 수동 배치 함수
+    void add(const MusicalSymbol& ms, MSPA_POSITION_TYPE position);
     
     // 자동 배치 함수
     void add(const MusicalSymbol& ms);
