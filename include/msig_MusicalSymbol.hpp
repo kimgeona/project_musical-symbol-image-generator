@@ -12,7 +12,10 @@
 #include <msig_Matrix.hpp>
 #include <msig_Util.hpp>
 
-namespace msig {
+namespace msig
+{
+
+
 class MusicalSymbol {
 public:
     // 상태 체크
@@ -57,6 +60,8 @@ public:
     MusicalSymbol&  operator+=(const MusicalSymbol& other);                         // 덧셈 대입 연산자
     bool            operator&(const MusicalSymbol& other);                          // 이미지 겹침 확인 연산자
 };
+
+
 }
 
 #endif /* msig_MusicalSymbol_hpp */

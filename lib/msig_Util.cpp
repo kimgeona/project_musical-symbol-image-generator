@@ -1,7 +1,7 @@
 #include <msig_Util.hpp>
 
-namespace msig {
-
+namespace msig
+{
 
 
 // 주소 변환

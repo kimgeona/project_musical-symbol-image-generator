@@ -16,7 +16,10 @@
 #include <msig_MusicalSymbol.hpp>
 #include <msig_Util.hpp>
 
-namespace msig {
+namespace msig
+{
+
+
 class Canvas
 {
     // 캔버스 크기

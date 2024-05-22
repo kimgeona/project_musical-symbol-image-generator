@@ -2,13 +2,15 @@
 #ifndef msig_Algorithm_DST_hpp
 #define msig_Algorithm_DST_hpp
 
+// c++17
 #include <iostream>
 #include <filesystem>
 #include <vector>
 #include <map>
 
 
-namespace msig {
+namespace msig
+{
 
 
 // Dependent Selection Node

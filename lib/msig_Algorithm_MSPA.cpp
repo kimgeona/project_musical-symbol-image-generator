@@ -1,6 +1,7 @@
 #include <msig_Algorithm_MSPA.hpp>
 
-namespace msig {
+namespace msig
+{
 
 
 // 생성자
@@ -403,13 +404,6 @@ MusicalSymbol MSPA::get(void)
         ms_result += ms;
     }
     return this->ms_result;
-}
-
-
-// 초기화
-void MSPA::reset()
-{
-    
 }
 
 

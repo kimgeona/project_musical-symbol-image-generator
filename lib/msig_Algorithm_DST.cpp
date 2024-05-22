@@ -1,6 +1,7 @@
 #include <msig_Algorithm_DST.hpp>
 
-namespace msig {
+namespace msig
+{
 
 
 // 생성자

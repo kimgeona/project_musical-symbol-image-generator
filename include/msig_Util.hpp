@@ -8,7 +8,8 @@
 #include <filesystem>   // 파일 시스템
 #include <vector>
 #include <string>
-namespace msig {
+namespace msig
+{
 
 
 // 주소 관련

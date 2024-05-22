@@ -11,7 +11,9 @@
 // 나의 라이브러리
 #include <msig_MusicalSymbol.hpp>
 
-namespace msig {
+namespace msig
+{
+
 
 #define MSPA_POSITION_TYPE uint8_t
 #define MSPA_FIXED  0b00000000
@@ -22,6 +24,7 @@ namespace msig {
 #define MSPA_STAFF  0b10000000
 #define MSPA_IN     0b00010000
 #define MSPA_OUT    0b00100000
+
 
 // Musical Symbol Positioning Algorithm
 class MSPA
@@ -61,9 +64,6 @@ public:
     
     // 배치 완료된 악상기호 구하기
     MusicalSymbol get();
-    
-    // 초기화
-    void reset();
 };
 }
 

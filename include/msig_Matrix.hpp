@@ -7,7 +7,8 @@
 #include <filesystem>           // 파일 시스템
 #include <vector>
 
-namespace msig {
+namespace msig
+{
 
 
 // 행렬 연산
