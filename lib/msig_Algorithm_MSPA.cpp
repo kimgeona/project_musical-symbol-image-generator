@@ -181,8 +181,8 @@ void MSPA::add(const MusicalSymbol& ms)
 
      line-@         note-down-@     articulation-#  : --
      |- accent.png                                  : out_top
-     |- fermata.png                                 : out_top
-     |- marcato.png                                 : out_top
+     |- fermata-up.png                              : out_top
+     |- marcato-up.png                              : out_top
      |- portato.png                                 : out_top
      |- staccatissimo.png                           : out_top
      |- staccato.png                                : in_top
@@ -190,8 +190,8 @@ void MSPA::add(const MusicalSymbol& ms)
      
      line-@         note-up-@       articulation-#  : --
      |- accent.png                                  : out_bottom
-     |- fermata.png                                 : out_bottom
-     |- marcato.png                                 : out_bottom
+     |- fermata-down.png                            : out_bottom
+     |- marcato-down.png                            : out_bottom
      |- portato.png                                 : out_bottom
      |- staccatissimo.png                           : out_bottom
      |- staccato.png                                : in_bottom
@@ -220,34 +220,56 @@ void MSPA::add(const MusicalSymbol& ms)
 ---- 끝 ----
      */
     vector<path> file_out_top       = {
-        path("octave-up-end.png"),
-        path("octave-up-middle.png"),
-        path("octave-up-start-8.png"),
-        path("octave-up-start-15.png"),
-        path("accent.png"),
-        path("fermata.png"),
-        path("marcato.png"),
-        path("portato.png"),
-        path("staccatissimo.png"),
+        path("new-symbol-dataset")/path("complete")/path("edge-left-@")/path("measure-@")/path("octave-up-middle.png"),
+        path("new-symbol-dataset")/path("complete")/path("edge-right-@")/path("measure-@")/path("octave-up-middle.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("articulation-#")/path("accent.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("articulation-#")/path("fermata-up.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("articulation-#")/path("marcato-up.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("articulation-#")/path("portato.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("articulation-#")/path("staccatissimo.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("octave-#")/path("octave-up-end.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("octave-#")/path("octave-up-middle.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("octave-#")/path("octave-up-start-8.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("octave-#")/path("octave-up-start-15.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("octave-#")/path("octave-up-end.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("octave-#")/path("octave-up-middle.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("octave-#")/path("octave-up-start-8.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("octave-#")/path("octave-up-start-15.png"),
     };
     vector<path> file_out_bottom    = {
-        path("octave-down-end.png"),
-        path("octave-down-middle.png"),
-        path("octave-down-start-8.png"),
-        path("octave-down-start-15.png"),
+        path("new-symbol-dataset")/path("complete")/path("edge-left-@")/path("measure-@")/path("octave-down-middle.png "),
+        path("new-symbol-dataset")/path("complete")/path("edge-right-@")/path("measure-@")/path("octave-down-middle.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("articulation-#")/path("accent.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("articulation-#")/path("fermata-down.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("articulation-#")/path("marcato-down.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("articulation-#")/path("portato.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("articulation-#")/path("staccatissimo.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("octave-#")/path("octave-down-end.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("octave-#")/path("octave-down-middle.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("octave-#")/path("octave-down-start-8.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("octave-#")/path("octave-down-start-15.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("octave-#")/path("octave-down-end.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("octave-#")/path("octave-down-middle.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("octave-#")/path("octave-down-start-8.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("octave-#")/path("octave-down-start-15.png"),
     };
     vector<path> file_in_top        = {
-        path("staccato.png"),
-        path("tenuto.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("articulation-#")/path("staccato.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("articulation-#")/path("tenuto.png"),
+    };
+    vector<path> file_in_bottom     = {
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("articulation-#")/path("staccato.png"),
+        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("articulation-#")/path("tenuto.png"),
     };
     
     // 악상기호 상태 확인
     if (ms.status==-1) throw std::runtime_error("MSPA::add() : 해당 악상기호는 비활성 상태이므로 배치할 수 없습니다.");
     
     // 파일 목록 일치하는것 찾기
-    else if (find(file_out_top.begin(),     file_out_top.end(),     ms.dir.filename()) != file_out_top.end())       add(ms, MSPA_TOP | MSPA_OUT);
-    else if (find(file_out_bottom.begin(),  file_out_bottom.end(),  ms.dir.filename()) != file_out_bottom.end())    add(ms, MSPA_BOTTOM | MSPA_OUT);
-    else if (find(file_in_top.begin(),      file_in_top.end(),      ms.dir.filename()) != file_in_top.end())        add(ms, MSPA_TOP | MSPA_IN);
+    else if (find(file_out_top.begin(),     file_out_top.end(),     ms.dir) != file_out_top.end())      add(ms, MSPA_TOP | MSPA_OUT);
+    else if (find(file_out_bottom.begin(),  file_out_bottom.end(),  ms.dir) != file_out_bottom.end())   add(ms, MSPA_BOTTOM | MSPA_OUT);
+    else if (find(file_in_top.begin(),      file_in_top.end(),      ms.dir) != file_in_top.end())       add(ms, MSPA_TOP | MSPA_IN);
+    else if (find(file_in_bottom.begin(),   file_in_bottom.end(),   ms.dir) != file_in_bottom.end())    add(ms, MSPA_BOTTOM | MSPA_IN);
     
     // 폴더 목록 일치하는것 찾기
     else if (find(folder_staff.begin(),         folder_staff.end(),         ms.dir.parent_path()) != folder_staff.end())      add(ms, MSPA_STAFF);
