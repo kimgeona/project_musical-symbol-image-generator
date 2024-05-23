@@ -51,7 +51,7 @@ void MSPA::add(const MusicalSymbol& ms, MSPA_POSITION_TYPE position)
         else        staff = true;
         
         // pitch, ledger 정보 추출
-        std::vector<std::string> staff_data = my_split(ms.dir.filename(), "-");
+        std::vector<std::string> staff_data = my_split(ms.dir.filename().string(), "-");
         
         // 숫자값으로 변환
         int p = this->pitch = pitch_to_number(staff_data[1]);
