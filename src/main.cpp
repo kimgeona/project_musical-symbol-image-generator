@@ -137,7 +137,7 @@ void start_program(void)
     selector.state(list_except, false);
     
     // 가능한 모든 조합의 경우의수 구하기
-    vector<vector<path>> all_combination = selector.combination_list();
+    vector<vector<path>> all_combination = selector.get_list();
     
     // 이미지 생성 후 저장
     for (auto& v : all_combination)

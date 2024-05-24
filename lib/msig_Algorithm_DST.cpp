@@ -102,7 +102,7 @@ inline int DSTree::check_directory(std::filesystem::path p, bool available_check
 
 
 // 목록 구하기 함수
-std::vector<std::filesystem::path>  DSTree::get_files(std::filesystem::path dir)
+std::vector<std::filesystem::path>              DSTree::get_files(std::filesystem::path dir)
 {
     using namespace std;
     using namespace std::filesystem;
@@ -126,7 +126,7 @@ std::vector<std::filesystem::path>  DSTree::get_files(std::filesystem::path dir)
     
     return list_file;
 }
-std::vector<std::filesystem::path>  DSTree::get_folders(std::filesystem::path dir)
+std::vector<std::filesystem::path>              DSTree::get_folders(std::filesystem::path dir)
 {
     using namespace std;
     using namespace std::filesystem;
@@ -150,7 +150,7 @@ std::vector<std::filesystem::path>  DSTree::get_folders(std::filesystem::path di
     
     return list_dir;
 }
-std::vector<std::filesystem::path>  DSTree::get(std::filesystem::path dir)
+std::vector<std::filesystem::path>              DSTree::get(std::filesystem::path dir)
 {
     using namespace std;
     using namespace std::filesystem;
@@ -169,66 +169,64 @@ std::vector<std::filesystem::path>  DSTree::get(std::filesystem::path dir)
     
     return list_file;
 }
-std::vector<std::vector<std::filesystem::path>> DSTree::get_list(const std::vector<std::vector<std::filesystem::path>>& list, std::filesystem::path p)
+std::vector<std::vector<std::filesystem::path>> DSTree::get_list(std::filesystem::path pre, std::vector<std::filesystem::path> exclude)
 {
     using namespace std;
     using namespace std::filesystem;
     
     // 변수들
-    vector<vector<path>>    list_1 = list;          // 부모 위치의 리스트
-    vector<path>            list_2 = get_files(p);  // 현재 위치의 파일들
-    vector<vector<path>>    list_pre;               // 현재 위치의 리스트
-    vector<vector<path>>    list_return;            // list_return = 현재 위치의 리스트 + 자식 위치의 리스트
+    vector<path>            files;          // 현재 pre 위치에서 사용 가능한 파일들
+    vector<path>            folders;        // 현재 pre 위치에서 사용 가능한 폴더들
+    vector<vector<path>>    list_pre;       // 현재 위치의 리스트
+    vector<vector<path>>    list_pre_next;  // 다음 위치의 리스트
+    vector<vector<path>>    list_sum;       // list_sum = list_pre + list_pre_next
     
-    // 현재 위치의 리스트 계산 방법
     //
-    // list_total      list_pre    list_return
-    //
-    // hello world 0   a b         hello world 0 a
-    // hello world 1               hello world 0 b
-    // hello world 2               hello world 1 a
-    // hello world 3               hello world 1 b
-    //                             hello world 2 a
-    //                             hello world 2 b
-    //                             hello world 3 a
-    //                             hello world 3 b
-    // 현재 위치 리스트 구하기
-    for (auto& l1 : list_1)
+    if (exclude.empty())    files = get_files(pre);             // 현재 pre 위치에서 사용 가능한 파일들 구하기
+    else                    files = get_files(exclude.back());  // exclude 위치에서 사용 가능한 파일들 구하기
+                            folders = get_folders(pre);         // 현재 pre 위치에서 사용 가능한 폴더들 구하기
+    
+    // 현재 위치의 파일들 리스트에 추가
+    for (auto& p : files)
     {
-        for (auto& l2 : list_2)
-        {
-            vector<path> tmp(l1);
-            tmp.push_back(l2);
-            list_pre.push_back(tmp);
-        }
-    }
-    if (list_1.empty())
-    {
-        for (auto& l2 : list_2)
-        {
-            vector<path> tmp;
-            tmp.push_back(l2);
-            list_pre.push_back(tmp);
-        }
+        vector<path> tmp;
+        tmp.push_back(p);
+        list_pre.push_back(tmp);
     }
     
-    // 현재 위치의 리스트 추가
-    for (auto&v : list_pre)
+    // 다음 위치의 파일들 구하기
+    if (!folders.empty()) for (auto& p : folders)
     {
-        list_return.push_back(v);
-    }
-    
-    // 자식 위치의 리스트 구하기
-    for (auto& d : get_folders(p))
-    {
-        // 자식 위치의 리스트 추가
-        for (auto& v : get_list(list_pre, d))
+        // exclude 제외하여 진행
+        if (find(exclude.begin(), exclude.end(), p)!=exclude.end()) continue;
+        
+        // # 폴더는
+        if (p.filename().string().find("-#")!=std::string::npos)
         {
-            list_return.push_back(v);
+            exclude.push_back(p);
+            for (auto& vp : get_list(pre, exclude)) list_pre_next.push_back(vp);
+        }
+        
+        // @ 폴더는
+        if (p.filename().string().find("-@")!=std::string::npos)
+        {
+            for (auto& vp : get_list(p, vector<path>())) list_pre_next.push_back(vp);
         }
     }
     
-    return list_return;
+    // 현재 리스트와 다음 리스트 합치기
+    if (!list_pre.empty() && !list_pre_next.empty()) for (auto& vp_pre : list_pre) for (auto& vp_pre_next : list_pre_next)
+    {
+        vector<path> sum;
+        sum.insert(sum.end(), vp_pre.begin(), vp_pre.end());
+        sum.insert(sum.end(), vp_pre_next.begin(), vp_pre_next.end());
+        list_sum.push_back(sum);
+    }
+    else if (!list_pre.empty() && list_pre_next.empty()) list_sum = list_pre;
+    else if (list_pre.empty() && !list_pre_next.empty()) list_sum = list_pre_next;
+    
+    // 완성된 리스트 반환
+    return list_sum;
 }
 
 
@@ -413,30 +411,12 @@ std::vector<std::filesystem::path>              DSTree::get()
     
     return get(pre);
 }
-std::vector<std::vector<std::filesystem::path>> DSTree::combination_list()
+std::vector<std::vector<std::filesystem::path>> DSTree::get_list()
 {
     using namespace std;
     using namespace std::filesystem;
     
-    vector<vector<path>> start;
-    return get_list(start, pre);
-}
-std::map<std::filesystem::path, std::string>    DSTree::naming_list()
-{
-    using namespace std;
-    using namespace std::filesystem;
-    
-    // 변수
-    map<path, string> dic;
-    
-    /*
-     현재 DSTree가 관리하는 모든 폴더와 모든 파일들을 구분하는 id(숫자 또는 문자)를 생성하면 됨.
-     폴더와 파일을 구분하는 id는 추후 머신러닝에 사용될 이미지 라벨링에 사용될 예정.
-     
-     각 폴더와 파일을 구분하는 id는 <디렉토리, id> 형태로 map 컨테이너에 저장하고 이를 리턴하는 코드를 작성하면 됨.
-     */
-    
-    return dic;
+    return get_list(pre, vector<path>());
 }
 
 
