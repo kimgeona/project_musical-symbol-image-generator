@@ -134,7 +134,7 @@ void start_program(void)
     }, false);
     
     // DST : "#" 폴더 최대 중복 선택 갯수 설정
-    selector.set_duplication(3);
+    selector.set_duplication(1);
     
     // DST : 모든 조합 구하기
     vector<vector<path>> all_combination = selector.get_list();
