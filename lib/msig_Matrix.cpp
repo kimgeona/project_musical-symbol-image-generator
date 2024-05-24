@@ -263,7 +263,7 @@ cv::Mat remove_padding(const cv::Mat& img, int& center_x, int& center_y) {
     }
 
     // 이미지에서 패딩 제거
-    Mat  padding_img = img(boundingBox).clone();
+    Mat padding_img = img(boundingBox).clone();
 
     // 부드럽게 만들어주는 알고리즘 처리 (Gaussian Blur 예시)
     GaussianBlur(padding_img, padding_img, Size(5, 5), 0);
