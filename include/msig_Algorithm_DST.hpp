@@ -49,6 +49,9 @@ class DSTree
     // 현재 위치
     std::filesystem::path pre;
     
+    // 생성 제어
+    int duplication;    // "#" 폴더 최대 중복 선택 갯수
+    
 public:
     // 생성자
     DSTree();                                                                   // 기본 생성자
@@ -80,7 +83,8 @@ public:
     void reset();                                // 파일 선택 초기화
     
     // 사용자 : 설정
-    void state(std::vector<std::filesystem::path> list, bool available_state);  // 특정 악상기호 활성화, 비활성화
+    void set_activation(std::vector<std::filesystem::path> list, bool available_state); // 특정 악상기호 활성화, 비활성화 설정
+    void set_duplication(int duplication);                                              // "#" 폴더 최대 중복 선택 갯수 설정
     
     // 사용자 : 정보
     std::vector<std::filesystem::path>              get();      // 현재 선택 가능한 파일 목록 구하기

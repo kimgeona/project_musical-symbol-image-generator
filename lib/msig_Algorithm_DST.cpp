@@ -42,6 +42,9 @@ DSTree::DSTree(std::string root_dir, std::vector<std::string> target_extension)
     
     // nodes 추가된 내용 확인
     if (nodes.empty()) throw std::runtime_error("DSTree::DSTree() : 해당 디렉토리에서 불러올 파일들이 없습니다.");
+    
+    // 데이터셋 생성 제어 변수 초기화
+    this->duplication = 1;
 }
 
 
@@ -51,7 +54,8 @@ bool DSTree::operator==(const DSTree& other) const
     return ((this->root_dir==other.root_dir) &&
             (this->target==other.target) &&
             (this->nodes==other.nodes) &&
-            (this->pre==other.pre));
+            (this->pre==other.pre) &&
+            (this->duplication==other.duplication));
 }
 
 
@@ -201,10 +205,13 @@ std::vector<std::vector<std::filesystem::path>> DSTree::get_list(std::filesystem
         if (find(exclude.begin(), exclude.end(), p)!=exclude.end()) continue;
         
         // # 폴더는
-        if (p.filename().string().find("-#")!=std::string::npos)
+        if (p.filename().string().find("-#")!=std::string::npos && exclude.size()<this->duplication)
         {
-            exclude.push_back(p);
-            for (auto& vp : get_list(pre, exclude)) list_pre_next.push_back(vp);
+            vector<path> tmp;
+            tmp.insert(tmp.end(), exclude.begin(), exclude.end());
+            tmp.push_back(p);
+            
+            for (auto& vp : get_list(pre, tmp)) list_pre_next.push_back(vp);
         }
         
         // @ 폴더는
@@ -389,7 +396,7 @@ void                                DSTree::reset()
 }
 
 // 사용자 : 설정
-void                                DSTree::state(std::vector<std::filesystem::path> list, bool available_state)
+void    DSTree::set_activation(std::vector<std::filesystem::path> list, bool available_state)
 {
     using namespace std;
     using namespace std::filesystem;
@@ -401,6 +408,11 @@ void                                DSTree::state(std::vector<std::filesystem::p
     // list에 명시된 파일이나 폴더 상태 설정
     if (available_state)    for (auto& p : list) grafting(p);   // 선택된 목록 활성화
     else                    for (auto& p : list) pruning(p);    // 선택된 목록 비활성화
+}
+void    DSTree::set_duplication(int duplication)
+{
+    if (duplication < 1)    throw std::runtime_error("msig::DSTree::set_duplication() : duplication은 1 이상으로 설정되어야 합니다.");
+    else                    this->duplication = duplication;
 }
 
 // 사용자 : 정보

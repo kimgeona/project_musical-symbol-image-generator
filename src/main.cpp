@@ -126,29 +126,29 @@ void start_program(void)
 {
     cout << endl << "4. 악상기호 이미지를 생성합니다." << endl;
     
-    // 제외할 악상기호 리스트
-    vector<path> list_except = {
-        //path("new-symbol-dataset") / path("complete") / path("edge-left-@"),
-        //path("new-symbol-dataset") / path("complete") / path("edge-right-@"),
-        //path("new-symbol-dataset") / path("complete") / path("line-fixed-@"),
-    };
+    // DST : 악상기호 제외(비활성화) 하기
+    selector.set_activation({
+        path("new-symbol-dataset") / path("complete") / path("edge-left-@"),
+        path("new-symbol-dataset") / path("complete") / path("edge-right-@"),
+        path("new-symbol-dataset") / path("complete") / path("line-fixed-@"),
+    }, false);
     
-    // 악상기호 제외(비활성화)하기
-    selector.state(list_except, false);
+    // DST : "#" 폴더 최대 중복 선택 갯수 설정
+    selector.set_duplication(3);
     
-    // 가능한 모든 조합의 경우의수 구하기
+    // DST : 모든 조합 구하기
     vector<vector<path>> all_combination = selector.get_list();
     
-    // 이미지 생성 후 저장
+    // Canvas : 이미지 생성 후 저장
     for (auto& v : all_combination)
     {
-        // 벡터 안에 있는 path 순차적으로 canvas에 select
+        // 조합 선택
         for (auto& p : v) canvas.select(p);
         
-        // 폴더 존재하는지 확인
+        // 폴더 존재 확인
         if (!exists(dataset_create_dir)) create_directory(dataset_create_dir);
         
-        // 이미지 이름 생성
+        // 생성할 이미지 이름 생성
         path image_name = dataset_create_dir / path(naming(v));
         
         // 이미 존재하는 이미지는 건너뛰기
@@ -161,10 +161,10 @@ void start_program(void)
         {
             // 이미지 저장
             canvas.save(image_name.string());
-            //cout << "save : " << image_name << endl;
+            cout << "save : " << image_name << endl;
         }
         
-        // canvas 선택 초기화
+        // 선택 초기화
         canvas.select_celar();
     }
     
