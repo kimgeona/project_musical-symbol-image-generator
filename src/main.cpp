@@ -112,7 +112,7 @@ void prepare_DSTree(void)
 void prepare_Canvas(void)
 {
     cout << endl << "3. 악상기호 조합 준비" << endl;
-    canvas = msig::Canvas(dataset_dir, 256, 512);
+    canvas = msig::Canvas(dataset_dir, 192, 512);
     if (canvas==msig::Canvas()){
         cout << "Canvas가 생성이 되지 않았습니다." << endl;
         exit(-1);
