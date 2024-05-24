@@ -223,6 +223,7 @@ cv::Mat remove_padding(const cv::Mat& img) {
     int x = 0, y = 0;
     return remove_padding(img, x, y);
 }
+/*
 cv::Mat remove_padding(const cv::Mat& img, int& center_x, int& center_y) {
     using namespace std;
     using namespace cv;
@@ -274,6 +275,62 @@ cv::Mat remove_padding(const cv::Mat& img, int& center_x, int& center_y) {
 
     return padding_img;
 }
+*/
+cv::Mat remove_padding(const cv::Mat& img, int& center_x, int& center_y) {
+    using namespace std;
+    using namespace cv;
 
+    // 이미지를 Grayscale로 변환 
+    Mat gray;
+    if (img.channels() > 1) {
+        cvtColor(img, gray, COLOR_BGR2GRAY);
+    }
+    else {
+        gray = img.clone();
+    }
+
+    // 이미지 색상을 반전
+    Mat inverted;
+    bitwise_not(gray, inverted);
+
+    // Threshold를 적용하여 220부터 흰색까지의 색상을 모두 검은색으로 변환
+    Mat binary;
+    threshold(inverted, binary, 220, 255, THRESH_BINARY);
+
+    // Contour를 찾아 가장 큰 영역의 바운딩 박스를 찾음
+    vector<vector<Point>> contours;
+    findContours(binary, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+
+    Rect boundingBox;
+    if (!contours.empty()) {// 윤곽선을 하나에 벡터에 모아서 바운딩박스 계산
+        vector<Point> allPoints;
+        for (auto& contour : contours) {
+            allPoints.insert(allPoints.end(), contour.begin(), contour.end());
+        }
+        boundingBox = boundingRect(allPoints);
+    }
+    else {// 패딩을 제거할 영역이 없으면 원본 이미지 반환
+        center_x = img.cols / 2;
+        center_y = img.rows / 2;
+        Mat result = img.clone();
+        
+        return result;
+    }
+
+    // 이미지에서 패딩 제거
+    Mat padding_img = img(boundingBox).clone();
+
+    // 부드럽게 만들어주는 알고리즘 처리 (Gaussian Blur 예시)
+    GaussianBlur(padding_img, padding_img, Size(5, 5), 0);
+
+    // 이미지 중심 좌표 다시 계산
+    center_x = boundingBox.x + boundingBox.width / 2;
+    center_y = boundingBox.y + boundingBox.height / 2;
+
+    // 원본 이미지에서 이전 및 새로운 중심 좌표를 표시
+    Mat result = img.clone();
+
+    return result;
+}
 
 }
