@@ -342,22 +342,35 @@ MusicalSymbol MSPA::get(void)
             // 바깥쪽 배치
             else
             {
+                // 기존 악상기호의 여백을 제거한 크기의 검은 이미지 생성
+                MusicalSymbol ms_copy(ms);
+                ms_copy.img = remove_padding(ms_copy.img, ms_copy.x, ms_copy.y);
+                ms_copy.img = cv::Mat(ms_copy.img.rows, ms_copy.img.cols, CV_8UC1, cv::Scalar(0));
+                
+                // 검은 이미지 좌표 이동
+                ms_copy.y += ms_copy.pad * out[0];
+                ms_copy.y += pad[0];
+                
+                if (pitch % 2 == 0) ms_copy.y += ms.pad / 2.0;
+                else                ms_copy.y += ms.pad;
+                
+                if (ms_result & ms_copy)
+                {
+                    while (ms_result & ms_copy){
+                        ms_copy.y += 1;
+                        pad[0] += 1;
+                    }
+                    
+                    ms_copy.y += ms.pad / 4.5;
+                    pad[0] += ms.pad / 4.5;
+                }
+                
+                // 악상기호 좌표 이동
                 ms.y += ms.pad * out[0]++;
                 ms.y += pad[0];
                 
                 if (pitch % 2 == 0) ms.y += ms.pad / 2.0;
                 else                ms.y += ms.pad;
-                
-                if (ms_result & ms)
-                {
-                    while (ms_result & ms){
-                        ms.y += 1;
-                        pad[0] += 1;
-                    }
-                    
-                    ms.y += ms.pad / 4.5;
-                    pad[0] += ms.pad / 4.5;
-                }
             }
         }
         else if (position & MSPA_BOTTOM)
@@ -374,22 +387,35 @@ MusicalSymbol MSPA::get(void)
             // 바깥쪽 배치
             else
             {
+                // 기존 악상기호의 여백을 제거한 크기의 검은 이미지 생성
+                MusicalSymbol ms_copy(ms);
+                ms_copy.img = remove_padding(ms_copy.img, ms_copy.x, ms_copy.y);
+                ms_copy.img = cv::Mat(ms_copy.img.rows, ms_copy.img.cols, CV_8UC1, cv::Scalar(0));
+                
+                // 검은 이미지 좌표 이동
+                ms_copy.y -= ms_copy.pad * out[1];
+                ms_copy.y -= pad[1];
+                
+                if (pitch % 2 == 0) ms_copy.y -= ms.pad / 2.0;
+                else                ms_copy.y -= ms.pad;
+                
+                if (ms_result & ms_copy)
+                {
+                    while (ms_result & ms_copy){
+                        ms_copy.y -= 1;
+                        pad[1] += 1;
+                    }
+                    
+                    ms_copy.y -= ms.pad / 4.5;
+                    pad[1] += ms.pad / 4.5;
+                }
+                
+                // 악상기호 좌표 이동
                 ms.y -= ms.pad * out[1]++;
                 ms.y -= pad[1];
                 
                 if (pitch % 2 == 0) ms.y -= ms.pad / 2.0;
                 else                ms.y -= ms.pad;
-                
-                if (ms_result & ms)
-                {
-                    while (ms_result & ms){
-                        ms.y -= 1;
-                        pad[1] += 1;
-                    }
-                    
-                    ms.y -= ms.pad / 4.5;
-                    pad[1] += ms.pad / 4.5;
-                }
             }
         }
         else if (position & MSPA_LEFT)
