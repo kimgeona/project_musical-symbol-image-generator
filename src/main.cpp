@@ -235,11 +235,7 @@ void processing(int canvas_number, queue<vector<path>>& data)
         {
             lock_guard<mutex> lock(mtx);
             // 남은 작업량 확인
-            if (data.empty())
-            {
-                mtx.unlock();
-                break;
-            }
+            if (data.empty()) break;
             
             // 작업할 내용 추출
             vp = data.front();
