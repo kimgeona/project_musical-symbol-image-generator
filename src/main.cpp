@@ -2,6 +2,9 @@
 #include <iostream>
 #include <string>
 #include <opencv2/opencv.hpp>
+#include <queue>
+#include <thread>
+#include <mutex>
 
 // 나의 라이브러리
 #include <msig.hpp>
@@ -24,8 +27,17 @@ path dataset_create_dir = path(string("MusicalSymbol-v.") + MSIG_VERSION);
 // 의존적 선택 알고리즘
 msig::DSTree selector;
 
-// 악상기호 조합 클래스
-msig::Canvas canvas;
+// 악상기호 조합 클래스 벡터
+std::vector<msig::Canvas> canvas;
+
+// 스레드 벡터
+std::vector<std::thread> threads;
+
+// 뮤텍스 (공유자원 관리)
+std::mutex mtx;
+
+// 사용 가능 스레드 갯수
+unsigned int number_of_thread;
 
 
 // 함수 원형들
@@ -37,6 +49,7 @@ void start_program(void);
 void edit_musical_symbol_image_config(string image_dir, string image_config_dir);
 void edit_musical_symbol_image_config(string ds_dir);
 std::string naming(const std::vector<std::filesystem::path>& v);
+void processing(int canvas_number, queue<vector<path>>& data);
 
 
 // 프로그램
@@ -112,11 +125,25 @@ void prepare_DSTree(void)
 void prepare_Canvas(void)
 {
     cout << endl << "3. 악상기호 조합 준비" << endl;
-    canvas = msig::Canvas(dataset_dir, 192, 512);
-    if (canvas==msig::Canvas()){
-        cout << "Canvas가 생성이 되지 않았습니다." << endl;
-        exit(-1);
+    
+    // thread : 사용가능한 코어 수 구하기
+    number_of_thread = std::thread::hardware_concurrency();
+    cout << "----thread : " << number_of_thread << "개" << endl;
+    
+    // Canvas : 객체 생성
+    if (number_of_thread==0) number_of_thread = 1;
+    for (unsigned int i=0; i<number_of_thread; i++)
+    {
+        canvas.emplace_back(dataset_dir, 192, 512);
+        
+        // Canvas : 객체 생성 확인
+        if (canvas.back()==msig::Canvas())
+        {
+            cout << "Canvas가 생성이 되지 않았습니다." << endl;
+            exit(-1);
+        }
     }
+    
     cout << "----완료." << endl;
 }
 
@@ -137,36 +164,12 @@ void start_program(void)
     selector.set_duplication(1);
     
     // DST : 모든 조합 구하기
-    vector<vector<path>> all_combination = selector.get_list();
+    queue<vector<path>> all_combination;
+    for (const auto& vp : selector.get_list()) all_combination.push(vp);
     
-    // Canvas : 이미지 생성 후 저장
-    for (auto& v : all_combination)
-    {
-        // 조합 선택
-        for (auto& p : v) canvas.select(p);
-        
-        // 폴더 존재 확인
-        if (!exists(dataset_create_dir)) create_directory(dataset_create_dir);
-        
-        // 생성할 이미지 이름 생성
-        path image_name = dataset_create_dir / path(naming(v));
-        
-        // 이미 존재하는 이미지는 건너뛰기
-        if (exists(image_name))
-        {
-            // 건너뛰기
-            cout << "pass : " << image_name << endl;
-        }
-        else
-        {
-            // 이미지 저장
-            canvas.save(image_name.string());
-            cout << "save : " << image_name << endl;
-        }
-        
-        // 선택 초기화
-        canvas.select_celar();
-    }
+    // thread : 이미지 생성 스레드 처리
+    for (unsigned int i=0; i<number_of_thread; i++) threads.emplace_back(processing, i, std::ref(all_combination));
+    for (unsigned int i=0; i<number_of_thread; i++) threads[i].join();
     
     cout << "----완료." << endl;
 }
@@ -218,4 +221,57 @@ std::string naming(const std::vector<std::filesystem::path>& v)
     name = name + ".png";
     
     return name;
+}
+
+
+// *. 스레드 프로세싱
+void processing(int canvas_number, queue<vector<path>>& data)
+{
+    while (true)
+    {
+        vector<path> vp;
+        
+        // 공유 자원 얻기
+        {
+            lock_guard<mutex> lock(mtx);
+            // 남은 작업량 확인
+            if (data.empty())
+            {
+                mtx.unlock();
+                break;
+            }
+            
+            // 작업할 내용 추출
+            vp = data.front();
+            data.pop();
+        }
+        
+        
+        // ---- 이미지 생성 작업 시작 ----
+        
+        // Canvas : 조합 선택
+        for (auto& p : vp) canvas[canvas_number].select(p);
+        
+        // 폴더 존재 확인
+        if (!exists(dataset_create_dir)) create_directory(dataset_create_dir);
+        
+        // 생성할 이미지 이름 생성
+        path image_name = dataset_create_dir / path(naming(vp));
+        
+        // 이미 존재하는 이미지는 건너뛰기
+        if (exists(image_name))
+        {
+            // 건너뛰기
+            printf("pass : %s\n", image_name.string().c_str());
+        }
+        else
+        {
+            // 이미지 저장
+            canvas[canvas_number].save(image_name.string());
+            printf("save : %s\n", image_name.string().c_str());
+        }
+        
+        // 선택 초기화
+        canvas[canvas_number].select_celar();
+    }
 }
