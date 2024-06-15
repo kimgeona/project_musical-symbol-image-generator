@@ -5,207 +5,33 @@
 #include <queue>
 #include <thread>
 #include <mutex>
+#include <chrono>
 
 // 나의 라이브러리
 #include <msig.hpp>
 
-using namespace std;
-using namespace std::filesystem;
-using namespace cv;
-
-
 // 프로그램 버전
 #define MSIG_VERSION (std::to_string(MSIG_VERSION_MAJOR) + "."+ std::to_string(MSIG_VERSION_MINOR) + "." + std::to_string(MSIG_VERSION_PATCH))
 
+// 전역 변수
+msig::DSTree selector; // 의존적 선택 알고리즘
+
+// 멀티 스레딩
+unsigned int                number_of_thread;   // 사용 가능 스레드 갯수
+std::vector<std::thread>    threads;            // 스레드 벡터
+std::mutex                  mtx;                // 뮤텍스
+std::vector<msig::Canvas>   canvas;             // 캔버스 벡터
 
 // 데이터셋 주소
-path dataset_dir = path("new-symbol-dataset");
-path dataset_config_dir = dataset_dir / path("symbol_dataset_config.txt");
-path dataset_create_dir = path(string("MusicalSymbol-v.") + MSIG_VERSION);
+std::filesystem::path dataset_dir = std::filesystem::path("new-symbol-dataset");
+std::filesystem::path dataset_config_dir = dataset_dir / std::filesystem::path("symbol_dataset_config.txt");
+std::filesystem::path dataset_create_dir = std::filesystem::path(std::string("MusicalSymbol-v.") + MSIG_VERSION);
 
-
-// 의존적 선택 알고리즘
-msig::DSTree selector;
-
-// 악상기호 조합 클래스 벡터
-std::vector<msig::Canvas> canvas;
-
-// 스레드 벡터
-std::vector<std::thread> threads;
-
-// 뮤텍스 (공유자원 관리)
-std::mutex mtx;
-
-// 사용 가능 스레드 갯수
-unsigned int number_of_thread;
-
-
-// 함수 원형들
-void prepare_platform(void);
-void prepare_dataset(void);
-void prepare_DSTree(void);
-void prepare_Canvas(void);
-void start_program(void);
-void edit_musical_symbol_image_config(string image_dir, string image_config_dir);
-void edit_musical_symbol_image_config(string ds_dir);
-std::string naming(const std::vector<std::filesystem::path>& v);
-void processing(int canvas_number, queue<vector<path>>& data);
-
-
-// 프로그램
-int main(void)
-{
-    // 0. 플랫폼 준비
-    prepare_platform();
-    
-    // 1. 데이터셋 준비
-    prepare_dataset();
-    
-    // 2. 의존적 선택 알고리즘 준비
-    prepare_DSTree();
-    
-    // 3. 악상기호 조합 준비
-    prepare_Canvas();
-    
-    // 4. 악상기호 생성 프로그램 실행
-    start_program();
-    
-    // *. 악상기호 config 데이터 조정
-    //edit_musical_symbol_image_config(dataset_dir.string());
-    
-    return 0;
-}
-
-
-// 0. 플랫폼 준비
-void prepare_platform(void)
-{
-#ifdef __MACH__
-    cout << "Platform : MacOS" << endl << endl;
-#endif
-#ifdef _WIN32
-    cout << "Platform : Windows" << endl << endl;
-    system("chcp 65001");
-#endif
-}
-
-
-// 1. 데이터셋 준비
-void prepare_dataset(void)
-{
-    cout << endl << "1. 데이터셋 준비" << endl;
-    for (auto& p : recursive_directory_iterator(dataset_dir)){
-        // (존재하는지, 파일인지, .png 확장자인지) 확인
-        if (exists(p.path()) && is_regular_file(p.path()) && p.path().extension()==".png"){
-            // 악상 기호 생성
-            msig::MusicalSymbol ms(p, dataset_config_dir);
-            // 악상 기호 상태 체크
-            if (ms.status)  cout << "fail    : " << p << endl;
-            //else            cout << "success : " << p << endl;
-        }
-    }
-    cout << "----완료." << endl;
-}
-
-
-// 2. 의존적 선택 알고리즘 준비
-void prepare_DSTree(void)
-{
-    cout << endl << "2. 의존적 선택 알고리즘 준비" << endl;
-    selector = msig::DSTree((dataset_dir/path("complete")).string(), {".png"});
-    if (selector==msig::DSTree()){
-        cout << "DSTree가 생성이 되지 않았습니다." << endl;
-        exit(-1);
-    }
-    cout << "----완료." << endl;
-}
-
-
-// 3. 악상기호 조합 준비
-void prepare_Canvas(void)
-{
-    cout << endl << "3. 악상기호 조합 준비" << endl;
-    
-    // thread : 사용가능한 코어 수 구하기
-    number_of_thread = std::thread::hardware_concurrency();
-    cout << "----thread : " << number_of_thread << "개" << endl;
-    
-    // Canvas : 객체 생성
-    if (number_of_thread==0) number_of_thread = 1;
-    for (unsigned int i=0; i<number_of_thread; i++)
-    {
-        canvas.emplace_back(dataset_dir, 192, 512);
-        
-        // Canvas : 객체 생성 확인
-        if (canvas.back()==msig::Canvas())
-        {
-            cout << "Canvas가 생성이 되지 않았습니다." << endl;
-            exit(-1);
-        }
-    }
-    
-    cout << "----완료." << endl;
-}
-
-
-// 4. 악상기호 생성 프로그램 실행
-void start_program(void)
-{
-    cout << endl << "4. 악상기호 이미지를 생성합니다." << endl;
-    
-    // DST : 악상기호 제외(비활성화) 하기
-    selector.set_activation({
-        path("new-symbol-dataset") / path("complete") / path("edge-left-@"),
-        path("new-symbol-dataset") / path("complete") / path("edge-right-@"),
-        path("new-symbol-dataset") / path("complete") / path("line-fixed-@"),
-    }, false);
-    
-    // DST : "#" 폴더 최대 중복 선택 갯수 설정
-    selector.set_duplication(1);
-    
-    // DST : 모든 조합 구하기
-    queue<vector<path>> all_combination;
-    for (const auto& vp : selector.get_list()) all_combination.push(vp);
-    
-    // thread : 이미지 생성 스레드 처리
-    for (unsigned int i=0; i<number_of_thread; i++) threads.emplace_back(processing, i, std::ref(all_combination));
-    for (unsigned int i=0; i<number_of_thread; i++) threads[i].join();
-    
-    cout << "----완료." << endl;
-}
-
-
-// *. 악상 기호 편집
-void edit_musical_symbol_image_config(string image_dir, string image_config_dir)
-{
-    path dir(image_dir);
-    path config_dir(image_config_dir);
-    
-    msig::MusicalSymbol ms(dir, config_dir);
-    
-    if (ms.status) return;
-    else ms.edit_config();
-}
-void edit_musical_symbol_image_config(string ds_dir)
-{
-    path ds(ds_dir);
-    path ds_config = ds / path("symbol_dataset_config.txt");
-    
-    for (auto& p : std::filesystem::recursive_directory_iterator(ds))
-    {
-        if (exists(p.path()) && is_regular_file(p.path()) && p.path().extension() == ".png")
-        {
-            msig::MusicalSymbol ms(p, ds_config);
-            if (ms.status) continue;
-            else ms.edit_config();
-        }
-    }
-}
-
-
-// *. 악상기호 이미지 이름 생성
+// 악상기호 이미지 이름 생성
 std::string naming(const std::vector<std::filesystem::path>& v)
 {
+    using namespace std;
+    
     // 변수
     string name;
     
@@ -223,10 +49,12 @@ std::string naming(const std::vector<std::filesystem::path>& v)
     return name;
 }
 
-
-// *. 스레드 프로세싱
-void processing(int canvas_number, queue<vector<path>>& data)
+// 스레드 프로세싱 함수
+void processing(int canvas_number, std::queue<std::vector<std::filesystem::path>>& data)
 {
+    using namespace std;
+    using namespace std::filesystem;
+    
     while (true)
     {
         vector<path> vp;
@@ -271,3 +99,186 @@ void processing(int canvas_number, queue<vector<path>>& data)
         canvas[canvas_number].select_celar();
     }
 }
+
+int main(int argc, char* argv[])
+{
+    using namespace std;
+    using namespace std::filesystem;
+    using namespace cv;
+    
+    // 0. 플랫폼 준비
+    {
+    #ifdef __MACH__
+        cout << "Platform : MacOS" << endl << endl;
+    #endif
+    #ifdef _WIN32
+        cout << "Platform : Windows" << endl << endl;
+        system("chcp 65001");
+    #endif
+    }
+    
+    // 1. 기본 데이터셋 이미지들 확인
+    {
+        cout << endl << "1. 기본 데이터셋 이미지들 확인" << endl;
+        
+        // 주소 출력
+        cout << "----기본 데이터셋 주소 : " << dataset_dir << endl;
+        cout << "----기본 데이터셋 config 파일 : " << dataset_config_dir << endl;
+        cout << "----악상기호 데이터셋 생성 주소 : " << dataset_create_dir << endl;
+        
+        // dataset_dir 에서 악상기호 이미지 리스트 구하기
+        for (auto& p : recursive_directory_iterator(dataset_dir))
+        {
+            // 이미지(png) 파일 확인
+            if (exists(p.path()) && is_regular_file(p.path()) && p.path().extension()==".png")
+            {
+                // 악상 기호 생성
+                msig::MusicalSymbol ms(p, dataset_config_dir);
+                
+                // 악상 기호 상태 체크
+                if (ms.status)  cout << "fail    : " << p << endl;
+                //else            cout << "success : " << p << endl;
+            }
+        }
+        cout << "----완료." << endl;
+    }
+    
+    // 2. 의존적 선택 알고리즘 준비
+    {
+        cout << endl << "2. 의존적 선택 알고리즘 준비" << endl;
+        
+        // 의존적 선택 트리 준비 : "dataset_dir/complete" 안에 있는 이미지들에 대해
+        selector = msig::DSTree((dataset_dir/path("complete")).string(), {".png"});
+        
+        // 의존적 선택 트리 준비 확인
+        if (selector==msig::DSTree())
+        {
+            cout << "DSTree가 생성이 되지 않습니다." << endl;
+            return -1;
+        }
+        cout << "----완료." << endl;
+    }
+    
+    // 3. 악상기호 조합 준비
+    {
+        cout << endl << "3. 악상기호 조합 준비" << endl;
+        
+        // 사용가능한 코어 수 구하기
+        number_of_thread = std::thread::hardware_concurrency();
+        
+        // 사용가능한 코어 수 확인
+        if (number_of_thread)   cout << "----thread : " << number_of_thread << endl;
+        else                    cout << "----thread : " << ++number_of_thread << endl;
+        
+        // 사용가능한 코어 수 만큼 캔버스 생성
+        for (unsigned int i=0; i<number_of_thread; i++)
+        {
+            // 캔버스 생성
+            canvas.emplace_back(dataset_dir, 192, 512); // (데이터셋 주소, 이미지 크기)
+            
+            // 캔버스 생성 확인
+            if (canvas.back()==msig::Canvas())
+            {
+                cout << "Canvas가 생성이 되지 않았습니다." << endl;
+                return -1;
+            }
+        }
+        cout << "----완료." << endl;
+    }
+    
+    // 4. 악상기호 생성 프로그램 실행
+    {
+        cout << endl << "4. 악상기호 이미지 생성" << endl;
+        
+        /*
+        // 특정 악상기호 그리기에서 제외
+        selector.set_activation({
+            path("new-symbol-dataset") / path("complete") / path("edge-left-@"),
+            path("new-symbol-dataset") / path("complete") / path("edge-right-@"),
+            path("new-symbol-dataset") / path("complete") / path("line-fixed-@"),
+        }, false);
+        */
+        
+        // 중복 선택 갯수 입력 받기
+        int n = 0;
+        while (true)
+        {
+            cout << "----중복 허용 갯수 : ";
+            cin >> n;
+            cin.ignore(100, '\n');
+            
+            if (n > 0) break;
+            
+            cout << "----중복 허용 갯수는 0보다 커야 합니다." << endl;
+        }
+        
+        // # 악상기호 최대 중복 선택 갯수 설정
+        selector.set_duplication(n);
+        
+        // 악상기호 조합 구하기
+        cout << "----가능한 악상기호 조합들을 계산합니다. ";
+        queue<vector<path>> all_combination;
+        for (const auto& vp : selector.get_list()) all_combination.push(vp);
+        cout << "총 " << all_combination.size() << "개" << endl;
+        
+        // 진행 확인
+        while (true)
+        {
+            char c;
+            cout << "----진행 하시겠습니까? (y/n) : ";
+            cin >> c;
+            cin.ignore(100, '\n');
+            if      (c == 'y')  break;
+            else if (c == 'n')  return 0;
+            else                continue;
+        }
+
+        // thread : 이미지 생성 스레드 처리
+        cout << "----악상기호 이미지 생성을 시작합니다. ";
+        for (int i=5; i>=0; i--) {
+            cout << i << " ";
+            std::this_thread::sleep_for(chrono::seconds(1));
+        }
+        cout << endl;
+        
+        for (unsigned int i=0; i<number_of_thread; i++) threads.emplace_back(processing, i, std::ref(all_combination));
+        for (unsigned int i=0; i<number_of_thread; i++) threads[i].join();
+        
+        cout << "----완료." << endl;
+    }
+    
+    // *. 악상기호 config 데이터 조정
+    //edit_musical_symbol_image_config(dataset_dir.string());
+    
+    return 0;
+}
+
+// *. 악상 기호 편집
+void edit_musical_symbol_image_config(std::string image_dir, std::string image_config_dir)
+{
+    std::filesystem::path dir(image_dir);
+    std::filesystem::path config_dir(image_config_dir);
+    
+    msig::MusicalSymbol ms(dir, config_dir);
+    
+    if (ms.status) return;
+    else ms.edit_config();
+}
+void edit_musical_symbol_image_config(std::string ds_dir)
+{
+    std::filesystem::path ds(ds_dir);
+    std::filesystem::path ds_config = ds / std::filesystem::path("symbol_dataset_config.txt");
+    
+    for (auto& p : std::filesystem::recursive_directory_iterator(ds))
+    {
+        if (exists(p.path()) && is_regular_file(p.path()) && p.path().extension() == ".png")
+        {
+            msig::MusicalSymbol ms(p, ds_config);
+            if (ms.status) continue;
+            else ms.edit_config();
+        }
+    }
+}
+
+
+
