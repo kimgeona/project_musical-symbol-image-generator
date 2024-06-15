@@ -144,6 +144,35 @@ int Canvas::load_dataset_piece()
         // 악상 기호 추가
         this->ds_piece[p] = ms;
     }
+    
+    // 조합형 악상기호로 완성형 악상기호 만들기
+    return make_piece_to_complete();
+}
+
+
+// 조합형 악상기호로 완성형 악상기호 만들기
+int Canvas::make_piece_to_complete()
+{
+    using namespace std;
+    using namespace cv;
+    using namespace std::filesystem;
+    
+    /*
+     this->ds_complete는 map<path, MusicalSymbol> 컨테이너 클래스임.
+     this->ds_piece는    map<path, MusicalSymbol> 컨테이너 클래스임.
+     
+     여기서 path는 파일시스템의 주소체계를 나타내는 클래스이고, MusicalSymbol는 악상기호를 관리하는 클래스임.
+     
+     make_piece_to_complete()의 목표는 ds_piece 안에 있는 악상기호 이미지들을 조합하여 완성형 악상기호를 만들어내고,
+     ds_complete 안에다 해당 완성형 악상기호를 저장하는 것임.
+     */
+    
+    //for (auto& pair : this->ds_piece) cout << "key : " << pair.first << endl;
+    
+    // 1. ds_piece안에 있는 조합형 악상기호(MusicalSymbol)들을 조합하여 완성형 악상기호(MusicalSymbol)로 만들기.
+    // 2. 완성형 악상기호를 ds_complete에 저장하기.
+    
+    // 조합형 악상기호 만들기에 성공하면 0, 실패하면 1 리턴.
     return 0;
 }
 

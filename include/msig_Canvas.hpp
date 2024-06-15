@@ -44,6 +44,7 @@ class Canvas
     int set_dataset_dirs(std::filesystem::path dir);    // 데이터셋 주소를 설정
     int load_dataset_complete();                        // 완성형 데이터셋 불러오기
     int load_dataset_piece();                           // 조합형 데이터셋 불러오기
+    int make_piece_to_complete();                       // 조합형 데이터셋으로 완성형 악상기호 만들기
     
     // 그리기 함수
     cv::Mat draw();                                         // 그리기
