@@ -109,7 +109,7 @@ public:
     void set_false(std::vector<std::filesystem::path> vp_folders);
     
     // 가능한 모든 조합 구하기
-    std::queue<std::vector<std::filesystem::path>> list(int depth, double rate);
+    std::queue<std::vector<std::filesystem::path>> list(std::vector<double> rate);
 };
 
 

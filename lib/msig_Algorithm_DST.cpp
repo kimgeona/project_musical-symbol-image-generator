@@ -355,7 +355,7 @@ void DST::set_false(std::vector<std::filesystem::path> vp_folders)
 }
 
 // 가능한 모든 조합 구하기
-std::queue<std::vector<std::filesystem::path>> DST::list(int depth, double rate)
+std::queue<std::vector<std::filesystem::path>> DST::list(std::vector<double> rate)
 {
     using namespace std;
     using namespace std::filesystem;
@@ -366,6 +366,12 @@ std::queue<std::vector<std::filesystem::path>> DST::list(int depth, double rate)
     // 조합
     vector<path> vp;
     
+    // 비율값 확인
+    if (rate == std::vector<double>()) rate = std::vector<double>({1.0});
+    
+    // 비율 값
+    double r = 1.0;
+    
     while (true)
     {
         // 선택 하나 뽑기
@@ -374,8 +380,12 @@ std::queue<std::vector<std::filesystem::path>> DST::list(int depth, double rate)
         // 뽑힌 것이 없다면 종료
         if (vp.empty()) break;
         
+        // 건너뛸 비율 선택하기
+        if (vp.size() > rate.size()) r = rate[rate.size()-1];
+        else                         r = rate[vp.size()-1];
+        
         // 건너뛸 확률 뽑기
-        if (vp.size() > depth && dis(gen) > rate) continue;
+        if (dis(gen) > r) continue;
         
         // 거꾸로 뒤집기(재귀적으로 목록을 구했기에 뒤집어져 있음)
         std::reverse(vp.begin(), vp.end());
