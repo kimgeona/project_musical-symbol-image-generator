@@ -105,8 +105,17 @@ int main(int argc, char* argv[])
     using namespace std::filesystem;
     using namespace cv;
     
+    // 플랫폼 설정
+#ifdef __MACH__
+#endif
+#ifdef _WIN32
+    system("chcp 65001");
+#endif
+
+
     // 프로그램 정보 출력
     std::cout << R"(
+MMMMMMMMMMMMMM MMMMMMMMMMM MMMM MMMMMMMMMMM
 M"""""`'"""`YM MP""""""`MM M""M MM'"""""`MM
 M  mm.  mm.  M M  mmmmm..M M  M M' .mmm. `M
 M  MMM  MMM  M M.      `YM M  M M  MMMMMMMM
@@ -118,17 +127,15 @@ MMMMMMMMMMMMMM MMMMMMMMMMM MMMM MMMMMMMMMMM
     std::cout << "  Musical Symbol Image Generator(" << MSIG_VERSION << ")" << std::endl << std::endl;
     std::cout << "  - Version: " << MSIG_VERSION << std::endl;
     
-    
+
     // 플랫폼 출력
 #ifdef __MACH__
     std::cout << "  - Platform: MacOS" << std::endl << std::endl << std::endl;
 #endif
 #ifdef _WIN32
-    std::cout << "  - Platform: Windows" << std::endl;
-    system("  - Character Set: chcp 65001");
-    std::cout << std::endl;
+    std::cout << "  - Platform: Windows" << std::endl << std::endl << std::endl;
 #endif
-    
+
     
     // 기본 데이터셋 이미지들 확인
     std::cout << "  기본 데이터셋의 이미지들을 확인합니다." << std::endl;
@@ -160,7 +167,7 @@ MMMMMMMMMMMMMM MMMMMMMMMMM MMMM MMMMMMMMMMM
 
     // 이미지들을 생성하기 위한 준비
     std::cout << "  이미지 생성을 위한 준비를 합니다." << std::endl;
-    msig::DST dst(dataset_dir / path("complete"));
+    msig::DST dst((dataset_dir / path("complete")).string());
     std::cout << "  - DST 준비 완료." << std::endl;
     number_of_thread = std::thread::hardware_concurrency();                                     // 사용 가능한 코어 수 구하기
     if (number_of_thread)   std::cout << "  - Thread: " << number_of_thread << std::endl;    // 사용 가능한 코어 수 확인
