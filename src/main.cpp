@@ -13,9 +13,6 @@
 // 프로그램 버전
 #define MSIG_VERSION (std::to_string(MSIG_VERSION_MAJOR) + "."+ std::to_string(MSIG_VERSION_MINOR) + "." + std::to_string(MSIG_VERSION_PATCH))
 
-// 전역 변수
-msig::DSTree selector; // 의존적 선택 알고리즘
-
 // 멀티 스레딩
 unsigned int                number_of_thread;   // 사용 가능 스레드 갯수
 std::vector<std::thread>    threads;            // 스레드 벡터
@@ -144,20 +141,9 @@ int main(int argc, char* argv[])
     }
     
     // 2. 의존적 선택 알고리즘 준비
-    {
-        cout << endl << "2. 의존적 선택 알고리즘 준비" << endl;
-        
-        // 의존적 선택 트리 준비 : "dataset_dir/complete" 안에 있는 이미지들에 대해
-        selector = msig::DSTree((dataset_dir/path("complete")).string(), {".png"});
-        
-        // 의존적 선택 트리 준비 확인
-        if (selector==msig::DSTree())
-        {
-            cout << "DSTree가 생성이 되지 않습니다." << endl;
-            return -1;
-        }
-        cout << "----완료." << endl;
-    }
+    cout << endl << "2. 의존적 선택 알고리즘 준비" << endl;
+    msig::DST dst(dataset_dir / path("complete"));  // 의존적 선택 트리 생성
+    cout << "----완료." << endl;
     
     // 3. 악상기호 조합 준비
     {
@@ -199,26 +185,35 @@ int main(int argc, char* argv[])
         }, false);
         */
         
-        // 중복 선택 갯수 입력 받기
-        int n = 0;
+        //
+        int depth = 0;
         while (true)
         {
-            cout << "----중복 허용 갯수 : ";
-            cin >> n;
+            cout << "----악상기호 중첩 수 : ";
+            cin >> depth;
             cin.ignore(100, '\n');
             
-            if (n > 0) break;
+            if (depth > 0) break;
             
-            cout << "----중복 허용 갯수는 0보다 커야 합니다." << endl;
+            cout << "----중첩 수는 0보다 커야 합니다." << endl;
         }
         
-        // # 악상기호 최대 중복 선택 갯수 설정
-        selector.set_duplication(n);
+        //
+        double rate = 0.0;
+        while (true)
+        {
+            cout << "----중첩 수 이상 조합 건너뛸 비율 : ";
+            cin >> rate;
+            cin.ignore(100, '\n');
+            
+            if (rate > 0.0) break;
+            
+            cout << "----비율 값은 0.0보다 커야 합니다." << endl;
+        }
         
         // 악상기호 조합 구하기
         cout << "----가능한 악상기호 조합들을 계산합니다. ";
-        queue<vector<path>> all_combination;
-        for (const auto& vp : selector.get_list()) all_combination.push(vp);
+        queue<vector<path>> all_combination = dst.list(depth, rate);
         cout << "총 " << all_combination.size() << "개" << endl;
         
         // 진행 확인
