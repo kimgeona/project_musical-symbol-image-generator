@@ -241,7 +241,7 @@ MMMMMMMMMMMMMM MMMMMMMMMMM MMMM MMMMMMMMMMM
     
     
     // 악상 기호 데이터셋 생성 시작
-    std::cout << "  악상 기호 이미지 데이터셋을 생성합니다. " << std::endl;
+    std::cout << "  악상 기호 이미지 데이터셋을 생성합니다. ";
     for (int i=5; i>=0; i--)
     {
         cout << i << " ";
