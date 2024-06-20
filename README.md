@@ -1,4 +1,4 @@
-# Musical-Symbol-Image-Generator (v.1.1.2)
+# Musical-Symbol-Image-Generator (v.1.1.3)
 
 "MSIG(Musical-Symbol-Image-Generator)"는 머신러닝 학습을 위한 악상 기호 데이터셋 생성기입니다. 해당 프로그램은 악상기호를 표현 가능한 모든 경우의 이미지를 생성하는 것을 목표로 하고 있습니다.
 
