@@ -49,7 +49,7 @@ std::string naming(const std::vector<std::filesystem::path>& v)
 }
 
 // 스레드 프로세싱 함수
-void processing(int canvas_number, std::queue<std::vector<std::filesystem::path>>& data)
+void processing(int canvas_number, std::queue<std::vector<std::filesystem::path>>& data, const long data_size)
 {
     using namespace std;
     using namespace std::filesystem;
@@ -81,17 +81,26 @@ void processing(int canvas_number, std::queue<std::vector<std::filesystem::path>
         // 생성할 이미지 이름 생성
         path image_name = dataset_create_dir / path(naming(vp));
         
+        // 공유 자원 얻기
+        int pre=0;
+        {
+            lock_guard<mutex> lock(mtx);
+            
+            // 진행정도 계산
+            pre = (int)(((double)(data_size - data.size()) / (double)data_size) * 100.0);
+        }
+        
         // 이미 존재하는 이미지는 건너뛰기
         if (exists(image_name))
         {
             // 건너뛰기
-            printf("pass : %s\n", image_name.string().c_str());
+            printf("(%d%%) pass : %s\n", pre, image_name.string().c_str());
         }
         else
         {
             // 이미지 저장
             canvas[canvas_number].save(image_name.string());
-            printf("save : %s\n", image_name.string().c_str());
+            printf("(%d%%) save : %s\n", pre, image_name.string().c_str());
         }
         
         // 선택 초기화
@@ -193,7 +202,7 @@ MMMMMMMMMMMMMM MMMMMMMMMMM MMMM MMMMMMMMMMM
     while (true)
     {
         string input;
-        std::cout << "  - 각 깊이별로 생성할 이미지의 비율 입력(종료는 exit) <-- ";
+        std::cout << "  - 각 깊이별로 생성할 이미지의 비율 입력(종료는 exit): ";
         std::getline(std::cin, input);
         
         // 종료 조건 확인
@@ -247,7 +256,7 @@ MMMMMMMMMMMMMM MMMMMMMMMMM MMMM MMMMMMMMMMM
         std::this_thread::sleep_for(chrono::seconds(1));
     }
     cout << endl;
-    for (unsigned int i=0; i<number_of_thread; i++) threads.emplace_back(processing, i, std::ref(all_combination));
+    for (unsigned int i=0; i<number_of_thread; i++) threads.emplace_back(processing, i, std::ref(all_combination), all_combination.size());
     for (unsigned int i=0; i<number_of_thread; i++) threads[i].join();
     std::cout << "  - 생성 완료." << std::endl << std::endl;
     

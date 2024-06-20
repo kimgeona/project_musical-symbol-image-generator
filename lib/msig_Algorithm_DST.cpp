@@ -405,7 +405,7 @@ std::queue<std::vector<std::filesystem::path>> DST::list(std::vector<double> rat
     }
     
     // 선택된 갯수 / 전체 갯수 출력
-    std::cout << "--> 전체 " << count << "개 중 " << qvp.size() << "개 선택됨." << std::endl;
+    std::cout << "전체 " << count << "개 중 " << qvp.size() << "개 선택됨." << std::endl;
     
     return qvp;
 }
