@@ -208,8 +208,11 @@ void DSTFolder::set_duplication_count()
         
         if (count == 0) std::runtime_error("msig::DSTFolder::set_duplication_count() : \"" + folder.dir.string() + "\" 폴더 안에 이미지들이 없습니다.");
         
-        duplication_count *= (count + 1); // 선택 안함의 경우의 수를 +1을 이용하여 추가
+        duplication_count *= (count+1); // 선택 안함의 경우의 수를 +1을 이용하여 추가
     }
+    
+    // 아무것도 선택 안하게되는 (맨 처음과 중복인 맨 마지막), (아무것도 선택 안함) 제거
+    duplication_count -= 2;
 }
 
 // 정보 가져오기
@@ -263,7 +266,7 @@ std::vector<std::filesystem::path> DSTFolder::pick()
     for (auto& file : files) if (file)
     {
         // 하위 폴더에서 받아온게 없다면
-        if (vp.empty() && duplication_count==-1)
+        if (vp.empty() && duplication_count < 0)
         {
             // 파일 뽑아서 뒤에 추가
             vp.push_back(file.get_dir());
@@ -305,6 +308,9 @@ std::vector<std::filesystem::path> DSTFolder::pick(long n)
     {
         // folder에 저장되어있는 files에 접근할 인덱스 계산
         long index = n % (folder.files.size() + 1);
+        
+        // 다음 인덱스 계산을 위한 나눗셈
+        n /= (folder.files.size() + 1);
         
         // 파일 선택 안함 인덱스라면 넘어가기
         if (index == folder.files.size()) continue;
