@@ -193,7 +193,7 @@ MMMMMMMMMMMMMM MMMMMMMMMMM MMMM MMMMMMMMMMM
     while (true)
     {
         string input;
-        std::cout << "  - 각 깊이별로 생성할 이미지의 비율 입력(종료는 exit): ";
+        std::cout << "  - 각 깊이별로 생성할 이미지의 비율 입력(종료는 exit) <-- ";
         std::getline(std::cin, input);
         
         // 종료 조건 확인
@@ -226,7 +226,6 @@ MMMMMMMMMMMMMM MMMMMMMMMMM MMMM MMMMMMMMMMM
     }
     std::cout << "  - 생성되는 이미지 개수를 계산합니다. ";
     queue<vector<path>> all_combination = dst.list(rate);
-    std::cout << "총 " << all_combination.size() << "개." << std::endl;
     while (true)
     {
         char c;

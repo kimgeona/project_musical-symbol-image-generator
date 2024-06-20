@@ -378,10 +378,14 @@ std::queue<std::vector<std::filesystem::path>> DST::list(std::vector<double> rat
     // 비율 값
     double r = 1.0;
     
+    // 총 뽑은 갯수
+    long count=0;
+    
     while (true)
     {
         // 선택 하나 뽑기
         vp = root.pick();
+        count++;
         
         // 뽑힌 것이 없다면 종료
         if (vp.empty()) break;
@@ -399,6 +403,9 @@ std::queue<std::vector<std::filesystem::path>> DST::list(std::vector<double> rat
         // 리스트에 추가
         qvp.push(vp);
     }
+    
+    // 선택된 갯수 / 전체 갯수 출력
+    std::cout << "--> 전체 " << count << "개 중 " << qvp.size() << "개 선택됨." << std::endl;
     
     return qvp;
 }
