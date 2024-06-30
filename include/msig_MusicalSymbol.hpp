@@ -49,6 +49,9 @@ public:
     int     save_config();  // config 저장하기
     void    set_default();  // 현재 rotate, scale 상태를 이미지에 적용하고 각각 기본값 저장.
     
+    // 미리보기
+    void show();
+    
     // 생성자
     MusicalSymbol();                                                                // 빈 생성자
     MusicalSymbol(std::filesystem::path dir, std::filesystem::path dir_config);     // 기본 생성자

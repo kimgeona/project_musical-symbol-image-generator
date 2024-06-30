@@ -10,6 +10,7 @@
 
 // 나의 라이브러리
 #include <msig_MusicalSymbol.hpp>
+#include <msig_Util.hpp>
 
 namespace msig
 {

@@ -254,5 +254,36 @@ void    MusicalSymbol::set_default()
     scale = 1.0;
 }
 
+// 미리보기
+void MusicalSymbol::show()
+{
+    using namespace std;
+    using namespace cv;
+    
+    // 흰 이미지 생성
+    Mat img1 = Mat(img_h, img_w, CV_8UC1, Scalar(255));
+    
+    // 악상 기호 이미지 준비
+    Mat img2 = img.clone();
+    int cx = x;
+    int cy = y;
+    
+    // 이미지 편집(회전, 확대 및 축소, 대칭)
+    img2 = mat_rotate(img2, rotate, cx, cy);     // 이미지 회전
+    img2 = mat_scale(img2, scale, cx, cy);       // 이미지 확대
+    
+    // 이미지 합성 좌표 계산
+    int nx = (img1.cols)/2.0 - cx;   // 이미지 중심 - sub 이미지 중심 + config 값
+    int ny = (img1.rows)/2.0 - cy;
+    
+    // 이미지 합성
+    img1 = mat_attach(img1, img2, nx, ny);
+    
+    // 이미지 미리보기
+    cv::imshow("MusicalSymbol::show()", img1);
+    cv::waitKey();
+    cv::destroyWindow("MusicalSymbol::show()");
+}
+
 
 }

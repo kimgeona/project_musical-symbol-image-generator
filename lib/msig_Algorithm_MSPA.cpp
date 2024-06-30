@@ -51,7 +51,7 @@ void MSPA::add(const MusicalSymbol& ms, MSPA_POSITION_TYPE position)
         else        staff = true;
         
         // pitch, ledger 정보 추출
-        std::vector<std::string> staff_data = my_split(ms.dir.filename().string(), "-");
+        std::vector<std::string> staff_data = my_split(my_split(ms.dir.filename().string(), "~")[0], "-");
         
         // 숫자값으로 변환
         int p = this->pitch = pitch_to_number(staff_data[1]);
@@ -94,196 +94,36 @@ void MSPA::add(const MusicalSymbol& ms)
     using namespace cv;
     using namespace std::filesystem;
     
-    /*
----- 폴더 ----
-     
-     edge-left-@                                    : fixed
-     edge-left-@    measure-@                       : fixed
-     edge-left-@    measure-@       octave-@        : --
-     edge-left-@    measure-@       repetition-@    : out_top
-
-     edge-right-@                                   : fixed
-     edge-right-@   measure-@                       : fixed
-     edge-right-@   measure-@       octave-@        : --
-     edge-right-@   measure-@       repetition-@    : out_top
-
-     line-@                                         : staff
-     line-@         note-down-@                     : fixed
-     line-@         note-down-@     accidental-#    : in_left
-     line-@         note-down-@     articulation-#  : --
-     line-@         note-down-@     dynamic-#       : out_bottom
-     line-@         note-down-@     octave-#        : --
-     line-@         note-down-@     ornament-#      : out_top
-     line-@         note-down-@     repetition-#    : out_top
-     line-@         note-up-@                       : fixed
-     line-@         note-up-@       accidental-#    : in_left
-     line-@         note-up-@       articulation-#  : --
-     line-@         note-up-@       dynamic-#       : out_bottom
-     line-@         note-up-@       octave-#        : --
-     line-@         note-up-@       ornament-#      : out_top
-     line-@         note-up-@       repetition-#    : out_top
-
-     line-fixed-@                                   : fixed
-     line-fixed-@   clef-@                          : fixed
-     line-fixed-@   key-@                           : fixed
-     line-fixed-@   measure-@                       : fixed
-     line-fixed-@   repetition-@                    : fixed
-     line-fixed-@   rest-@                          : fixed
-     line-fixed-@   time-@                          : fixed
-     
----- 끝 ----
-     */
-    vector<path> folder_staff       = {
-        path("new-symbol-dataset")/path("complete")/path("line-@")
-    };
-    vector<path> folder_fixed       = {
-        path("new-symbol-dataset")/path("complete")/path("edge-left-@"),
-        path("new-symbol-dataset")/path("complete")/path("edge-left-@")/path("measure-@"),
-        path("new-symbol-dataset")/path("complete")/path("edge-right-@"),
-        path("new-symbol-dataset")/path("complete")/path("edge-right-@")/path("measure-@"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@"),
-        path("new-symbol-dataset")/path("complete")/path("line-fixed-@"),
-        path("new-symbol-dataset")/path("complete")/path("line-fixed-@")/path("clef-@"),
-        path("new-symbol-dataset")/path("complete")/path("line-fixed-@")/path("key-@"),
-        path("new-symbol-dataset")/path("complete")/path("line-fixed-@")/path("measure-@"),
-        path("new-symbol-dataset")/path("complete")/path("line-fixed-@")/path("repetition-@"),
-        path("new-symbol-dataset")/path("complete")/path("line-fixed-@")/path("rest-@"),
-        path("new-symbol-dataset")/path("complete")/path("line-fixed-@")/path("time-@")
-    };
-    vector<path> folder_out_top     = {
-        path("new-symbol-dataset")/path("complete")/path("edge-left-@")/path("measure-@")/path("repetition-@"),
-        path("new-symbol-dataset")/path("complete")/path("edge-right-@")/path("measure-@")/path("repetition-@"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("ornament-#"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("repetition-#"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("ornament-#"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("repetition-#")
-    };
-    vector<path> folder_out_bottom  = {
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("dynamic-#"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("dynamic-#")
-    };
-    vector<path> folder_in_left     = {
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("accidental-#"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("accidental-#")
-    };
-    
-    /*
----- 파일 ----
-  
-     edge-left-@    measure-@       octave-@        : --
-     |- octave-down-middle.png                      : out_bottom
-     |- octave-up-middle.png                        : out_top
-
-     edge-right-@   measure-@       octave-@        : --
-     |- octave-down-middle.png                      : out_bottom
-     |- octave-up-middle.png                        : out_top
-
-     line-@         note-down-@     articulation-#  : --
-     |- accent.png                                  : out_top
-     |- fermata-up.png                              : out_top
-     |- marcato-up.png                              : out_top
-     |- portato.png                                 : out_top
-     |- staccatissimo.png                           : out_top
-     |- staccato.png                                : in_top
-     |- tenuto.png                                  : in_top
-     
-     line-@         note-up-@       articulation-#  : --
-     |- accent.png                                  : out_bottom
-     |- fermata-down.png                            : out_bottom
-     |- marcato-down.png                            : out_bottom
-     |- portato.png                                 : out_bottom
-     |- staccatissimo.png                           : out_bottom
-     |- staccato.png                                : in_bottom
-     |- tenuto.png                                  : in_bottom
-
-     line-@         note-down-@     octave-#        : --
-     |- octave-down-end.png                         : out_bottom
-     |- octave-down-middle.png                      : out_bottom
-     |- octave-down-start-8.png                     : out_bottom
-     |- octave-down-start-15.png                    : out_bottom
-     |- octave-up-end.png                           : out_top
-     |- octave-up-middle.png                        : out_top
-     |- octave-up-start-8.png                       : out_top
-     |- octave-up-start-15.png                      : out_top
-
-     line-@         note-up-@       octave-#        : --
-     |- octave-down-end.png                         : out_bottom
-     |- octave-down-middle.png                      : out_bottom
-     |- octave-down-start-8.png                     : out_bottom
-     |- octave-down-start-15.png                    : out_bottom
-     |- octave-up-end.png                           : out_top
-     |- octave-up-middle.png                        : out_top
-     |- octave-up-start-8.png                       : out_top
-     |- octave-up-start-15.png                      : out_top
-     
----- 끝 ----
-     */
-    vector<path> file_out_top       = {
-        path("new-symbol-dataset")/path("complete")/path("edge-left-@")/path("measure-@")/path("octave-@")/path("octave-up-middle.png"),
-        path("new-symbol-dataset")/path("complete")/path("edge-right-@")/path("measure-@")/path("octave-@")/path("octave-up-middle.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("articulation-#")/path("accent.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("articulation-#")/path("fermata-up.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("articulation-#")/path("marcato-up.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("articulation-#")/path("portato.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("articulation-#")/path("staccatissimo.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("octave-#")/path("octave-up-end.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("octave-#")/path("octave-up-middle.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("octave-#")/path("octave-up-start-8.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("octave-#")/path("octave-up-start-15.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("octave-#")/path("octave-up-end.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("octave-#")/path("octave-up-middle.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("octave-#")/path("octave-up-start-8.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("octave-#")/path("octave-up-start-15.png"),
-    };
-    vector<path> file_out_bottom    = {
-        path("new-symbol-dataset")/path("complete")/path("edge-left-@")/path("measure-@")/path("octave-@")/path("octave-down-middle.png"),
-        path("new-symbol-dataset")/path("complete")/path("edge-right-@")/path("measure-@")/path("octave-@")/path("octave-down-middle.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("articulation-#")/path("accent.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("articulation-#")/path("fermata-down.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("articulation-#")/path("marcato-down.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("articulation-#")/path("portato.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("articulation-#")/path("staccatissimo.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("octave-#")/path("octave-down-end.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("octave-#")/path("octave-down-middle.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("octave-#")/path("octave-down-start-8.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("octave-#")/path("octave-down-start-15.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("octave-#")/path("octave-down-end.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("octave-#")/path("octave-down-middle.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("octave-#")/path("octave-down-start-8.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("octave-#")/path("octave-down-start-15.png"),
-    };
-    vector<path> file_in_top        = {
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("articulation-#")/path("staccato.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-down-@")/path("articulation-#")/path("tenuto.png"),
-    };
-    vector<path> file_in_bottom     = {
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("articulation-#")/path("staccato.png"),
-        path("new-symbol-dataset")/path("complete")/path("line-@")/path("note-up-@")/path("articulation-#")/path("tenuto.png"),
-    };
-    
-    // 악상기호 상태 확인
+    // 악상 기호 상태 확인
     if (ms.status==-1) throw std::runtime_error("MSPA::add() : 해당 악상기호는 비활성 상태이므로 배치할 수 없습니다.");
     
-    // 파일 목록 일치하는것 찾기
-    else if (find(file_out_top.begin(),     file_out_top.end(),     ms.dir) != file_out_top.end())      add(ms, MSPA_TOP | MSPA_OUT);
-    else if (find(file_out_bottom.begin(),  file_out_bottom.end(),  ms.dir) != file_out_bottom.end())   add(ms, MSPA_BOTTOM | MSPA_OUT);
-    else if (find(file_in_top.begin(),      file_in_top.end(),      ms.dir) != file_in_top.end())       add(ms, MSPA_TOP | MSPA_IN);
-    else if (find(file_in_bottom.begin(),   file_in_bottom.end(),   ms.dir) != file_in_bottom.end())    add(ms, MSPA_BOTTOM | MSPA_IN);
+    // 악상 기호 배치 정보
+    MSPA_POSITION_TYPE position = 0b00000000;
     
-    // 폴더 목록 일치하는것 찾기
-    else if (find(folder_staff.begin(),         folder_staff.end(),         ms.dir.parent_path()) != folder_staff.end())      add(ms, MSPA_STAFF);
-    else if (find(folder_fixed.begin(),         folder_fixed.end(),         ms.dir.parent_path()) != folder_fixed.end())      add(ms, MSPA_FIXED);
-    else if (find(folder_out_top.begin(),       folder_out_top.end(),       ms.dir.parent_path()) != folder_out_top.end())    add(ms, MSPA_TOP | MSPA_OUT);
-    else if (find(folder_out_bottom.begin(),    folder_out_bottom.end(),    ms.dir.parent_path()) != folder_out_bottom.end()) add(ms, MSPA_BOTTOM | MSPA_OUT);
-    else if (find(folder_in_left.begin(),       folder_in_left.end(),       ms.dir.parent_path()) != folder_in_left.end())    add(ms, MSPA_LEFT | MSPA_IN);
-    
-    // 매칭 되지 않은 악상기호들
-    else
+    // 악상 기호 배치 정보 추출
+    vector<string> position_data = my_split(ms.dir.filename().string(), "~");
+    int count = 0;
+    for (auto& s : position_data)
     {
-        cout << "MSPA::add() : 악상기호 " << ms.dir.string() << "에 대한 설정이 없어 기본(fixed)으로 진행합니다." << endl;
-        add(ms, MSPA_FIXED);
+        if (count++)
+        {
+            // 소문자 변환
+            for (auto& c : s) c = std::tolower(c);
+            
+            // 종류 감지
+            if      (s.find("fixed")    !=std::string::npos) position |= MSPA_FIXED;
+            else if (s.find("top")      !=std::string::npos) position |= MSPA_TOP;
+            else if (s.find("bottom")   !=std::string::npos) position |= MSPA_BOTTOM;
+            else if (s.find("left")     !=std::string::npos) position |= MSPA_LEFT;
+            else if (s.find("right")    !=std::string::npos) position |= MSPA_RIGHT;
+            else if (s.find("staff")    !=std::string::npos) position |= MSPA_STAFF;
+            else if (s.find("in")       !=std::string::npos) position |= MSPA_IN;
+            else if (s.find("out")      !=std::string::npos) position |= MSPA_OUT;
+        }
     }
+    
+    // 악상 기호 배치
+    add(ms, position);
 }
 
 

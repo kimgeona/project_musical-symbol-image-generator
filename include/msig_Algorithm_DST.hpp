@@ -103,9 +103,11 @@ public:
     void reset();
     
     // 특정 악상기호 활성화
+    void set_true(bool recursive);
     void set_true(std::vector<std::filesystem::path> vp_folders);
     
     // 특정 악상기호 비활성화
+    void set_false(bool recursive);
     void set_false(std::vector<std::filesystem::path> vp_folders);
     
     // 가능한 모든 조합 구하기
