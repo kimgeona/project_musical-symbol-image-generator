@@ -14,7 +14,7 @@
 #define MSIG_VERSION (std::to_string(MSIG_VERSION_MAJOR) + "."+ std::to_string(MSIG_VERSION_MINOR) + "." + std::to_string(MSIG_VERSION_PATCH))
 
 // 데이터셋 주소
-std::filesystem::path dataset_dir = std::filesystem::path("new-symbol-dataset");
+std::filesystem::path dataset_dir = std::filesystem::path("symbol-dataset");
 std::filesystem::path dataset_config_dir = dataset_dir / std::filesystem::path("symbol_dataset_config.txt");
 std::filesystem::path dataset_create_dir = std::filesystem::path(std::string("MusicalSymbol-v.") + MSIG_VERSION);
 
