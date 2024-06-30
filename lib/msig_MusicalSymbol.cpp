@@ -32,15 +32,7 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path dir, std::filesystem::path di
         init_img()                  ||
         init_config())
     {
-        cout << "MusicalSymbol: " << dir.filename().string() << " 을(를) 생성하는 과정에서 문제가 있습니다." << endl;
-        this->status        = -1;
-        this->dir           = std::filesystem::path();
-        this->dir_config    = std::filesystem::path();
-        this->img           = cv::Mat();
-        this->x             = 0;
-        this->y             = 0;
-        this->scale         = 1.0;
-        this->rotate        = 0.0;
+        std::runtime_error("msig::MusicalSymbol::MusicalSymbol() : 악상 기호 객체를 생성하는 과정에서 문제가 있습니다.");
     }
 }
 

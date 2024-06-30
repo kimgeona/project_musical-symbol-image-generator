@@ -28,6 +28,7 @@ private:
     
 public:
     // 생성자
+    DSTFile(){};
     DSTFile(const std::string& dir);
     DSTFile(const std::filesystem::path& dir);
     
@@ -61,6 +62,7 @@ private:
     
 public:
     // 생성자
+    DSTFolder(){}
     DSTFolder(const std::string& dir, const std::vector<std::string>& folder_types, const std::vector<std::string>& file_types);
     DSTFolder(const std::filesystem::path& dir, const std::vector<std::string>& folder_types, const std::vector<std::string>& file_types);
     
@@ -97,6 +99,7 @@ private:
     
 public:
     // 생성자
+    DST(){}
     DST(const std::string& dataset_dir);
     
     // 처음 상태로 돌림

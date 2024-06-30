@@ -32,16 +32,7 @@ Canvas::Canvas(std::filesystem::path dataset_dir, int width, int height){
     if (set_size(width, height) ||
         set_dataset_dirs(dataset_dir))
     {
-        cout << "Note: " << dataset_dir.string() << " 을(를) 통하여 초기화하는 과정에서 문제가 있습니다." << endl;
-        this->width             = 0;
-        this->height            = 0;
-        this->dir_ds            = path();
-        this->dir_ds_config     = path();
-        this->dir_ds_complete   = path();
-        this->dir_ds_piece      = path();
-        this->ds_complete       = map<path, MusicalSymbol>();
-        this->ds_piece          = map<path, MusicalSymbol>();
-        this->draw_list         = vector<MusicalSymbol>();
+        std::runtime_error("msig::Canvas::Canvas() : 캔버스를 생성하는 과정에서 문제가 있습니다.");
     }
 }
 
