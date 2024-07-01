@@ -13,24 +13,14 @@
 
 int main(int argc, char* argv[])
 {
-    // MSIG 생성
+    // Musical Symbol Image Generator 생성
     msig::MSIG my_msig;
     
-    while (true)
-    {
-        // 준비
-        if (my_msig.prepare_default_dataset())  break;
-        if (my_msig.prepare_DST())              break;
-        if (my_msig.prepare_Canvas())           break;
-        
-        // 설정
-        int ready = my_msig.preference_setting();
-        
-        // 데이터셋 생성
-        if (ready) my_msig.making_dataset();
-        
-        break;
-    }
+    // 프로그램 실행
+    my_msig.prepare_default_dataset()   ||  // 데이터셋 준비
+    my_msig.prepare_DST()               ||  // DST 알고리즘 준비
+    my_msig.prepare_Canvas()            ||  // Canvas 준비
+    my_msig.making_dataset();               // 데이터셋 생성
     
     // 프로그램 종료
     std::cout << "  - 프로그램을 종료합니다." << std::endl;
