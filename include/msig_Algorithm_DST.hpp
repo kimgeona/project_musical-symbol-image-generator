@@ -9,8 +9,11 @@
 #include <queue>
 #include <random>
 #include <map>
+#include <set>
 #include <algorithm>
 
+// 나의 라이브러리
+#include <msig_Util.hpp>
 
 namespace msig
 {
@@ -81,6 +84,9 @@ public:
     int  get_files_count();
     int  get_folders_count();
     
+    // 파일 이름 레이블 생성
+    std::set<std::string> get_labels(bool recursive = false);
+    
     // 파일 하나 뽑기
     std::vector<std::filesystem::path> pick();
     std::vector<std::filesystem::path> pick(long n);
@@ -112,6 +118,9 @@ public:
     // 특정 악상기호 비활성화
     void set_false(bool recursive);
     void set_false(std::vector<std::filesystem::path> vp_folders);
+    
+    // 파일 이름들 레이블 가져오기
+    std::vector<std::string> get_labels();
     
     // 가능한 모든 조합 구하기
     std::queue<std::vector<std::filesystem::path>> list(std::vector<double> rate);

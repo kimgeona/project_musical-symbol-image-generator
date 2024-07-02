@@ -229,6 +229,44 @@ int  DSTFolder::get_folders_count()
     return (int)folders.size();
 }
 
+// 파일 이름 레이블 생성
+std::set<std::string> DSTFolder::get_labels(bool recursive)
+{
+    // 레이블 집합
+    std::set<std::string> labels;
+    
+    // 하위 폴더 레이블 조사
+    if (recursive)
+    {
+        for (auto& folder : folders)
+        {
+            // 하위 폴더 레이블들
+            std::set<std::string> pre_labels = folder.get_labels(recursive);
+            
+            // 현재 레이블 집합에 추가
+            labels.insert(pre_labels.begin(), pre_labels.end());
+        }
+    }
+    
+    // 현재 폴더 레이블 조사
+    for (auto& file : files)
+    {
+        // 파일 이름
+        std::string label = file.get_filename().stem().string();
+        
+        // 파일 배치 정보 제거
+        label = my_split(label, "~")[0];
+        
+        // 파일 추가 정보 제거
+        //label = my_split(label, "-")[0];
+        
+        // 레이블 집합에 추가
+        labels.insert(label);
+    }
+    
+    return labels;
+}
+
 // 파일 하나 뽑기
 std::vector<std::filesystem::path> DSTFolder::pick()
 {
@@ -358,6 +396,16 @@ void DST::set_false(std::vector<std::filesystem::path> vp_folders)
 {
     // 입력받은 파일 또는 폴더를 사용 불가능한 상태로 만들기.
     for (auto& p : vp_folders) root.set_false(p);
+}
+
+// 파일 이름들 레이블 가져오기
+std::vector<std::string> DST::get_labels()
+{
+    // 파일 이름 레이블 생성
+    std::set<std::string> labels = root.get_labels(true);
+    
+    // 파일 이름 레이블 벡터 반환
+    return std::vector<std::string>(labels.begin(), labels.end());
 }
 
 // 가능한 모든 조합 구하기
