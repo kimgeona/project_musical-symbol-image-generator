@@ -6,26 +6,31 @@ namespace msig
 
 MSIG::MSIG(std::filesystem::path default_dataset_dir, std::filesystem::path new_dataset_dir)
 {
-    // 데이터셋 주소 저장
-    dataset_dir = default_dataset_dir;
-    dataset_config_dir = dataset_dir / std::filesystem::path("symbol_dataset_config.txt");
-    dataset_create_dir = new_dataset_dir;
+    // 플랫폼 설정
+#ifdef _WIN32
+    system("chcp 65001");
+#endif
     
-    set_plaform();
+    // 데이터셋 주소 저장
+    dir_dataset         = default_dataset_dir;
+    dir_dataset_config  = dir_dataset / std::filesystem::path("symbol_dataset_config.txt");
+    dir_new_dataset     = new_dataset_dir;
+    dir_new_dataset_csv = dir_new_dataset / std::filesystem::path("label.csv");
+    
+    // 초기화
+    count_csv = -1;
+    
+    // 정보 출력
     print_info();
     print_platform();
 }
 
-
-void MSIG::set_plaform()
+MSIG::~MSIG()
 {
-    // 플랫폼 설정
-#ifdef __MACH__
-#endif
-#ifdef _WIN32
-    system("chcp 65001");
-#endif
+    // CSV 파일 닫기
+    if (csv.is_open()) csv.close();
 }
+
 
 void MSIG::print_info()
 {
@@ -64,21 +69,21 @@ int  MSIG::prepare_default_dataset()
     std::cout << "  기본 데이터셋의 이미지들을 확인합니다." << std::endl;
     
     // 기본 데이터셋 폴더 확인
-    if (!exists(dataset_dir) || !is_directory(dataset_dir))
+    if (!exists(dir_dataset) || !is_directory(dir_dataset))
     {
-        std::cout << "  ! 기본 데이터셋 폴더 " << dataset_dir << "가 존재하지 않습니다." << std::endl;
+        std::cout << "  ! 기본 데이터셋 폴더 " << dir_dataset << "가 존재하지 않습니다." << std::endl;
         return -1;
     }
     
     // 기본 데이터셋 폴더의 config 파일 확인
-    if (!exists(dataset_config_dir) || !is_regular_file(dataset_config_dir))
+    if (!exists(dir_dataset_config) || !is_regular_file(dir_dataset_config))
     {
-        std::cout << "  ! 기본 데이터셋 폴더의 config 파일 " << dataset_config_dir.filename() << "이 존재하지 않아 새로 생성합니다." << std::endl;
-        std::fstream(dataset_config_dir.string(), std::ios::out|std::ios::app).close();
+        std::cout << "  ! 기본 데이터셋 폴더의 config 파일 " << dir_dataset_config.filename() << "이 존재하지 않아 새로 생성합니다." << std::endl;
+        std::fstream(dir_dataset_config.string(), std::ios::out|std::ios::app).close();
     }
     
     // 악상 기호 제대로 생성되는지 확인
-    for (auto& p : recursive_directory_iterator(dataset_dir))
+    for (auto& p : recursive_directory_iterator(dir_dataset))
     {
         // dataset_dir에서 확인되는 이미지 파일들만
         if (exists(p.path()) && is_regular_file(p.path()) && p.path().extension()==".png")
@@ -86,7 +91,7 @@ int  MSIG::prepare_default_dataset()
             try
             {
                 // 악상 기호 생성
-                msig::MusicalSymbol ms(p, dataset_config_dir);
+                msig::MusicalSymbol ms(p, dir_dataset_config);
             }
             catch (const std::runtime_error& e)
             {
@@ -112,22 +117,22 @@ int  MSIG::prepare_DST()
     std::cout << "  DST 알고리즘을 준비합니다." << std::endl;
     
     // 기본 데이터셋 폴더 확인
-    if (!exists(dataset_dir) || !is_directory(dataset_dir))
+    if (!exists(dir_dataset) || !is_directory(dir_dataset))
     {
-        std::cout << "  ! 기본 데이터셋 폴더 " << dataset_dir << "가 존재하지 않습니다." << std::endl;
+        std::cout << "  ! 기본 데이터셋 폴더 " << dir_dataset << "가 존재하지 않습니다." << std::endl;
         return -1;
     }
     
     // DST 생성
     try
     {
-        dst = msig::DST((dataset_dir / path("complete")).string());
+        dst = msig::DST((dir_dataset / path("complete")).string());
     }
     catch (const std::runtime_error& e)
     {
         if (e.what() == std::string("msig::DSTFolder::DSTFolder() : 비어있는 경로이거나 존재하지 않는 폴더로 DSTFolder 객체를 생성할 수 없습니다."))
         {
-            std::cout << "  ! 기본 데이터셋 폴더 " << dataset_dir << "를 이용하여 DST를 생성할 수 없습니다." << std::endl;
+            std::cout << "  ! 기본 데이터셋 폴더 " << dir_dataset << "를 이용하여 DST를 생성할 수 없습니다." << std::endl;
             return -1;
         }
         else throw;
@@ -152,16 +157,16 @@ int  MSIG::prepare_Canvas()
     for (unsigned int i=0; i<number_of_thread; i++) // 사용 가능한 코어 수 만큼 캔버스 생성
     {
         // 기본 데이터셋 폴더 확인
-        if (!exists(dataset_dir) || !is_directory(dataset_dir))
+        if (!exists(dir_dataset) || !is_directory(dir_dataset))
         {
-            std::cout << "  ! 기본 데이터셋 폴더 " << dataset_dir << "가 존재하지 않습니다." << std::endl;
+            std::cout << "  ! 기본 데이터셋 폴더 " << dir_dataset << "가 존재하지 않습니다." << std::endl;
             return -1;
         }
         
         // 캔버스 생성
         try
         {
-            canvases.emplace_back(dataset_dir, 192, 512); // (데이터셋 주소, 이미지 크기)
+            canvases.emplace_back(dir_dataset, 192, 512); // (데이터셋 주소, 이미지 크기)
         }
         catch (const std::runtime_error& e)
         {
@@ -175,6 +180,80 @@ int  MSIG::prepare_Canvas()
     
     std::cout << std::endl;
     return 0;
+}
+
+int  MSIG::prepare_csv()
+{
+    using namespace std::filesystem;
+    
+    // 공유 자원 잠금
+    std::lock_guard<std::mutex> lock(mtx_io);
+    
+    // 이미 CSV 파일이 열려있다면 건너뛰기
+    if (csv.is_open()) return 1;
+    
+    // 레이블 생성
+    labels = dst.get_labels();
+    
+    // 폴더 존재 확인
+    if (!exists(dir_new_dataset)) create_directory(dir_new_dataset);
+    
+    // CSV 파일 존재 여부에 따라 다르게 준비
+    if (exists(dir_new_dataset_csv))
+    {
+        // CSV 파일 열기
+        csv = std::fstream(dir_new_dataset_csv.string(), std::ios::in);
+        if (!csv)
+        {
+            std::runtime_error("  ! CSV 파일을 열 수 없습니다.");
+        }
+        
+        // CSV 파일 읽기(라인 수 세기)
+        std::string line;
+        while (getline(csv, line)) if (!line.empty()) count_csv++;
+        count_csv--;
+        csv.close();
+        
+        // CSV 파일 열기
+        csv = std::fstream(dir_new_dataset_csv.string(), std::ios::out);
+        if (!csv.is_open())
+        {
+            std::runtime_error("  ! CSV 파일을 생성할 수 없습니다.");
+        }
+        
+        // 헤더가 존재하지 않는다면
+        if (count_csv < 0)
+        {
+            // CSV 헤더 생성
+            std::string csv_header = "name";
+            for (auto& s : labels) csv_header += ", " + s;
+            
+            // CSV 헤더 저장
+            csv << csv_header;
+            
+            // CSV 카운트 초기화
+            count_csv = 0;
+        }
+    }
+    else
+    {
+        // CSV 파일 생성
+        csv = std::fstream(dir_new_dataset_csv.string(), std::ios::out);
+        if (!csv.is_open())
+        {
+            std::runtime_error("  ! CSV 파일을 생성할 수 없습니다.");
+        }
+        
+        // CSV 헤더 생성
+        std::string csv_header = "name";
+        for (auto& s : labels) csv_header += ", " + s;
+        
+        // CSV 헤더 저장
+        csv << csv_header;
+        
+        // CSV 카운트 초기화
+        count_csv = 0;
+    }
 }
 
 
@@ -246,6 +325,9 @@ int MSIG::making_dataset()
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
     std::cout << std::endl;
+
+    // CSV 파일 생성
+    prepare_csv();
     
     // 스레딩 시작
     for (unsigned int i=0; i<number_of_thread; i++) threads.emplace_back(&MSIG::thread_processing, this, i, all_combination.size());
@@ -260,6 +342,19 @@ int MSIG::making_dataset()
 }
 
 
+int  MSIG::append_to_csv(std::string data)
+{
+    // 공유 자원 잠금
+    std::lock_guard<std::mutex> lock(mtx_io);
+    
+    // 이미 CSV 파일이 열려있다면 건너뛰기
+    if (!csv.is_open()) return -1;
+    
+    // CSV 데이터 뒤에 추가
+    csv << std::endl << data;
+}
+
+
 void MSIG::thread_processing(int canvas_number, const long data_size)
 {
     using namespace std;
@@ -267,10 +362,11 @@ void MSIG::thread_processing(int canvas_number, const long data_size)
     
     while (true)
     {
+        // 악상 기호 조합 정보
         vector<path> vp;
         
-        // 공유 자원 얻기
         {
+            // 공유 자원 잠금
             lock_guard<mutex> lock(mtx_data);
             
             // 남은 작업량 확인
@@ -281,17 +377,15 @@ void MSIG::thread_processing(int canvas_number, const long data_size)
             all_combination.pop();
         }
         
-        
-        // ---- 이미지 생성 작업 시작 ----
-        
-        // Canvas : 조합 선택
+        // 캔버스에 그리기
         for (auto& p : vp) canvases[canvas_number].select(p);
         
-        // 폴더 존재 확인
-        if (!exists(dataset_create_dir)) create_directory(dataset_create_dir);
+        // 데이터셋 폴더 확인
+        if (!exists(dir_new_dataset)) create_directory(dir_new_dataset);
         
-        // 생성할 이미지 이름 생성
-        path image_name = dataset_create_dir / path(naming(vp));
+        // 정보 생성
+        std::filesystem::path   image_dir = naming();                               // 이미지 이름
+        std::string             image_label = labeling(image_dir.filename(), vp);   // 이미지 레이블
         
         // 공유 자원 얻기
         int pre=0;
@@ -303,16 +397,19 @@ void MSIG::thread_processing(int canvas_number, const long data_size)
         }
         
         // 이미 존재하는 이미지는 건너뛰기
-        if (exists(image_name))
+        if (exists(image_dir))
         {
             // 건너뛰기
-            printf("(%d%%) pass : %s\n", pre, image_name.string().c_str());
+            printf("(%d%%) pass : %s\n", pre, image_dir.string().c_str());
         }
         else
         {
             // 이미지 저장
-            canvases[canvas_number].save(image_name.string());
-            printf("(%d%%) save : %s\n", pre, image_name.string().c_str());
+            canvases[canvas_number].save(image_dir.string());
+            printf("(%d%%) save : %s\n", pre, image_dir.string().c_str());
+            
+            // CSV 데이터 저장
+            append_to_csv(image_label);
         }
         
         // 선택 초기화
@@ -320,24 +417,43 @@ void MSIG::thread_processing(int canvas_number, const long data_size)
     }
 }
 
-std::string MSIG::naming(const std::vector<std::filesystem::path>& v)
+std::filesystem::path   MSIG::naming()
+{
+    // 공유 자원 잠금
+    std::lock_guard<std::mutex> lock(mtx_count);
+    
+    // 갯수
+    static int count = 0;
+    
+    // 현재 갯수 리턴
+    return dir_new_dataset / std::filesystem::path(std::to_string(++count) + ".png");
+}
+
+std::string             MSIG::labeling(std::string name, const std::vector<std::filesystem::path>& v)
 {
     using namespace std;
     
-    // 변수
-    string name;
+    // 레이블 목록 복사
+    std::vector<std::string> vs = labels;
     
-    // 파일 이름 연결
-    for (auto&p : v)
-        name = name + msig::my_split(p.filename().string(), ".")[0] + "_";
+    // 레이블 목록에서 일치하는 것 찾기
+    for (auto& p : v)
+    {
+        // 레이블 목록(vs)에 조합(p)이 존재하는지 찾기
+        auto iter = find(vs.begin(), vs.end(), my_split(p.filename().stem().string(), "~")[0]);
+        
+        // 찾았다면
+        if (iter != vs.end()) *iter = "";
+    }
     
-    // 마지막 문자 "_" 제거
-    if (!name.empty())
-        name.erase(name.end()-1);
+    // 찾은 것들은 1로, 못찾은 것들은 0로 csv 데이터 생성
+    for (auto& v : vs)
+    {
+        if (v == "")    name += ", 1";  // 찾음
+        else            name += ", 0";  // 못찾음
+    }
     
-    // 이미지 확장자 추가
-    name = name + ".png";
-    
+    // 생성된 csv 데이터 반환
     return name;
 }
 
