@@ -254,6 +254,8 @@ int  MSIG::prepare_csv()
         // CSV 카운트 초기화
         count_csv = 0;
     }
+
+    return 0;
 }
 
 
@@ -352,6 +354,8 @@ int  MSIG::append_to_csv(std::string data)
     
     // CSV 데이터 뒤에 추가
     csv << std::endl << data;
+
+    return 0;
 }
 
 
@@ -384,8 +388,8 @@ void MSIG::thread_processing(int canvas_number, const long data_size)
         if (!exists(dir_new_dataset)) create_directory(dir_new_dataset);
         
         // 정보 생성
-        std::filesystem::path   image_dir = naming();                               // 이미지 이름
-        std::string             image_label = labeling(image_dir.filename(), vp);   // 이미지 레이블
+        std::filesystem::path   image_dir = naming();                                       // 이미지 이름
+        std::string             image_label = labeling(image_dir.filename().string(), vp);  // 이미지 레이블
         
         // 공유 자원 얻기
         int pre=0;
