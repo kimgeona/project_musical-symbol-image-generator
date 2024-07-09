@@ -226,7 +226,7 @@ int  MSIG::prepare_csv()
         {
             // CSV 헤더 생성
             std::string csv_header = "name";
-            for (auto& s : labels) csv_header += ", " + s;
+            for (auto& s : labels) csv_header += "," + s;
             
             // CSV 헤더 저장
             csv << csv_header;
@@ -246,7 +246,7 @@ int  MSIG::prepare_csv()
         
         // CSV 헤더 생성
         std::string csv_header = "name";
-        for (auto& s : labels) csv_header += ", " + s;
+        for (auto& s : labels) csv_header += "," + s;
         
         // CSV 헤더 저장
         csv << csv_header;
@@ -449,8 +449,8 @@ std::string             MSIG::labeling(std::string name, const std::vector<std::
     // 찾은 것들은 1로, 못찾은 것들은 0로 csv 데이터 생성
     for (auto& v : vs)
     {
-        if (v == "")    name += ", 1";  // 찾음
-        else            name += ", 0";  // 못찾음
+        if (v == "")    name += ",1";  // 찾음
+        else            name += ",0";  // 못찾음
     }
     
     // 생성된 csv 데이터 반환
