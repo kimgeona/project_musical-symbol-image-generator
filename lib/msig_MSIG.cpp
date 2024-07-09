@@ -426,7 +426,7 @@ std::filesystem::path   MSIG::naming()
     static int count = 0;
     
     // 현재 갯수 리턴
-    return dir_new_dataset / std::filesystem::path(std::to_string(++count) + ".png");
+    return dir_new_dataset / std::filesystem::path(std::to_string(count++) + ".png");
 }
 
 std::string             MSIG::labeling(std::string name, const std::vector<std::filesystem::path>& v)
