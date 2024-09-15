@@ -18,19 +18,12 @@
 #ifndef msig_hpp
 #define msig_hpp
 
+// 프로그램 버전
+#define MSIG_VERSION (std::to_string(MSIG_VERSION_MAJOR) + "."+ std::to_string(MSIG_VERSION_MINOR) + "." + std::to_string(MSIG_VERSION_PATCH))
+
 #include <msig_Algorithm.hpp>
 #include <msig_Processing.hpp>
 #include <msig_Utility.hpp>
 #include <msig_Rendering.hpp>
-
-// TODO: 나중에 문서 정리가 완료되면 지우기. 여기서부터,
-#include <msig_Algorithm_DST.hpp>
-#include <msig_Algorithm_MSPA.hpp>
-#include <msig_Canvas.hpp>
-#include <msig_MSIG.hpp>
-#include <msig_Matrix.hpp>
-#include <msig_MusicalSymbol.hpp>
-#include <msig_Util.hpp>
-// TODO: 여기까지 지우기. 해당 헤더 파일도 지우기.
 
 #endif
