@@ -32,13 +32,16 @@ int main(int argc, char* argv[])
     std::cout << "  > 생성될 데이터셋 경로 : " << std::endl;;
     //std::cin >> newDatasetDirectory;
     std::cout << std::endl;
+    
+    // MusicalSymbol 생성
+    MSIG::Algorithm::MusicalSymbol ms("./ms-datasets/note-recognition/staff-a4-0-0.png", true);
 
     // DependentSelectionTree 생성
     MSIG::Algorithm::DependentSelectionTree dst("./ms-datasets/note-recognition");
 
     // 이미지 조합 생성
     std::vector<std::vector<std::filesystem::path>> vvp;
-    dst.pick(vvp, true);
+    dst.pick_thread(vvp, true);
     
     return 0;
 }
