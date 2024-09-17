@@ -4,14 +4,17 @@
 // 나의 라이브러리
 #include <msig.hpp>
 
-int main(int argc, char* argv[])
+void clear()
 {
-    // 플랫폼 설정
 #ifdef _WIN32
-    system("chcp 65001");
+    system("cls");
 #endif
-    
-    // 프로그램 정보 출력
+#ifdef __MACH__
+    system("clear");
+#endif
+}
+void signboard()
+{
     std::string MSIGLOGO;
     MSIGLOGO += std::string(R"(MMMMMMMMMMMMMM MMMMMMMMMMM MMMM MMMMMMMMMMM)") + "\n";
     MSIGLOGO += std::string(R"(M"""""`'"""`YM MP""""""`MM M""M MM'"""""`MM)") + "\n";
@@ -23,25 +26,50 @@ int main(int argc, char* argv[])
     MSIGLOGO += std::string(R"(MMMMMMMMMMMMMM MMMMMMMMMMM MMMM MMMMMMMMMMM)");
     std::cout << MSIGLOGO << std::endl << std::endl;
     std::cout << "  Musical Symbol Image Generator" << "(ver." << MSIG_VERSION << ")" << std::endl << std::endl;
-    
-    // 정보 입력받기
-    std::string datasetDirectory;
-    std::cout << "  > 기본 데이터셋 경로 : " << std::endl;;
-    //std::cin >> datasetDirectory;
-    std::string newDatasetDirectory;
-    std::cout << "  > 생성될 데이터셋 경로 : " << std::endl;;
-    //std::cin >> newDatasetDirectory;
-    std::cout << std::endl;
-    
-    // MusicalSymbol 생성
-    MSIG::Algorithm::MusicalSymbol ms("./ms-datasets/note-recognition/staff-a4-0-0.png", true);
+}
 
-    // DependentSelectionTree 생성
-    MSIG::Algorithm::DependentSelectionTree dst("./ms-datasets/note-recognition");
-
-    // 이미지 조합 생성
-    std::vector<std::vector<std::filesystem::path>> vvp;
-    dst.pick_thread(vvp, true);
+int main(int argc, char* argv[]) {
+    // 플랫폼 설정
+#ifdef _WIN32
+    system("chcp 65001");
+#endif
     
+    std::vector<MSIG::Algorithm::MusicalSymbol> mss;
+    mss.emplace_back("./ms-datasets/test3/staff-a4-0-0.png", true);
+    mss.emplace_back("./ms-datasets/test3/staff-b4-0-0.png", true);
+    mss.emplace_back("./ms-datasets/test3/staff-c5-0-0.png", true);
+    mss.emplace_back("./ms-datasets/test3/note-up-4.png", true);
+    mss.emplace_back("./ms-datasets/test3/note-up-32.png", true);
+    mss.emplace_back("./ms-datasets/test3/accidental-flat.png", true);
+    mss.emplace_back("./ms-datasets/test3/accidental-natural.png", true);
+    mss.emplace_back("./ms-datasets/test3/articulation-staccato.png", true);
+    mss.emplace_back("./ms-datasets/test3/articulation-tenuto.png", true);
+    mss.emplace_back("./ms-datasets/test3/dynamic-crescendo.png", true);
+    mss.emplace_back("./ms-datasets/test3/dynamic-fortepiano.png", true);
+    mss.emplace_back("./ms-datasets/test3/octave-down-end.png", true);
+    
+    MSIG::Algorithm::MusicalSymbol ms = mss[1] + mss[3] + mss[7] + mss[8] + mss[11] + mss[7] + mss[8] + mss[6] + mss[6];
+    ms.show();
+    
+    /*
+    // 1. 프로그램 간판 출력
+    clear();
+    signboard();
+    
+    // 2. 작업 선택
+    std::cout << "  작업을 선택하세요." << std::endl;
+    std::cout << "  -----------------" << std::endl;
+    std::cout << "  1. 기본 데이터셋 관리" << std::endl;
+    std::cout << "  2. 데이터셋 생성" << std::endl;
+    std::cout << "  0. 종료" << std::endl;
+    std::cout << "  -----------------" << std::endl;
+    std::cout << "  >> ";
+    
+    // 3. 작업 입력 받기
+    int select;
+    std::cin >> select;
+    std::cin.clear();
+    std::cin.ignore(1000, '\n');
+    */
     return 0;
 }

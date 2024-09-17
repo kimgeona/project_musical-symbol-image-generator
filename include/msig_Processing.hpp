@@ -130,7 +130,7 @@ public:
             return img3;
         }
     }
-    static cv::Mat mat_rotate   (const cv::Mat& img, double degree, int& cx, int& cy)                       // 회전
+    static cv::Mat mat_rotate   (const cv::Mat& img, double& degree, int& cx, int& cy)                       // 회전
     {
         using namespace std;
         using namespace cv;
@@ -194,9 +194,12 @@ public:
         cx = cx + x_min;
         cy = cy + y_min;
         
+        // 회전 값 초기화
+        degree = 0.0;
+        
         return img_new;
     }
-    static cv::Mat mat_scale    (const cv::Mat& img, double scale, int& cx, int& cy)                        // 확대
+    static cv::Mat mat_scale    (const cv::Mat& img, double& scale, int& cx, int& cy)                        // 확대
     {
         using namespace std;
         using namespace cv;
@@ -215,6 +218,9 @@ public:
         // 중심점 계산
         cx = (int)(cx * scale);
         cy = (int)(cy * scale);
+        
+        // 배율값 초기화
+        scale = 1.0;
         
         return img1;
     }
