@@ -1,0 +1,7 @@
+
+# group
+
+# rule
+measure-bar-double.png=~
+measure-bar.png=~
+measure-bar-dotted.png=~

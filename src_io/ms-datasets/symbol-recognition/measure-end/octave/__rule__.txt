@@ -1,0 +1,6 @@
+
+# group
+
+# rule
+octave-down-middle.png=~
+octave-up-middle.png=~

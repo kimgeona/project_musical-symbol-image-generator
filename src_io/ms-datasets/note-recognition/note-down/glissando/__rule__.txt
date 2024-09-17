@@ -1,0 +1,14 @@
+
+# group
+
+# rule
+glissando-start-2.png=~
+glissando-start-3.png=~
+glissando-start-1.png=~
+glissando-start-4.png=~
+glissando-start-5.png=~
+glissando-end-1.png=~
+glissando-end-2.png=~
+glissando-end-3.png=~
+glissando-end-4.png=~
+glissando-end-5.png=~

@@ -1,0 +1,18 @@
+
+# group
+
+# rule
+key-flat-7.png=~
+key-flat-6.png=~
+key-flat-4.png=~
+key-flat-5.png=~
+key-flat-1.png=~
+key-flat-2.png=~
+key-flat-3.png=~
+key-sharp-5.png=~
+key-sharp-4.png=~
+key-sharp-6.png=~
+key-sharp-7.png=~
+key-sharp-3.png=~
+key-sharp-2.png=~
+key-sharp-1.png=~

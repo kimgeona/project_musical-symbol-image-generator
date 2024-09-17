@@ -1,0 +1,14 @@
+
+# group
+
+# rule
+tie-start-1.png=~
+tie-start-3.png=~
+tie-start-2.png=~
+tie-start-5.png=~
+tie-start-4.png=~
+tie-end-5.png=~
+tie-end-4.png=~
+tie-end-3.png=~
+tie-end-2.png=~
+tie-end-1.png=~

@@ -1,0 +1,6 @@
+
+# group
+
+# rule
+measure-bar.png=~
+measure-repeat-start.png=~

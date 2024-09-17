@@ -1,0 +1,26 @@
+
+# group
+
+# rule
+note-up-16.png=~
+note-down-64.png=~
+note-down-4.png=~
+note-down-16.png=~
+beam-up-2.png=~
+beam-up-3.png=~
+beam-up-1.png=~
+note-up-64.png=~
+note-down-2.png=~
+beam-up-4.png=~
+note-down-1.png=~
+note-up-8.png=~
+note-up-4.png=~
+note-up-2.png=~
+note-down-32.png=~
+note-down-8.png=~
+note-up-1.png=~
+beam-down-4.png=~
+note-up-32.png=~
+beam-down-1.png=~
+beam-down-2.png=~
+beam-down-3.png=~

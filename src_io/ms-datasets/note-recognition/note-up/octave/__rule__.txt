@@ -1,0 +1,12 @@
+
+# group
+
+# rule
+octave-down-middle.png=~
+octave-down-start-15.png=~
+octave-down-start-8.png=~
+octave-up-end.png=~
+octave-up-middle.png=~
+octave-up-start-15.png=~
+octave-down-end.png=~
+octave-up-start-8.png=~

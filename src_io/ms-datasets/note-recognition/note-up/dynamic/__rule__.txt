@@ -1,0 +1,22 @@
+
+# group
+
+# rule
+dynamic-decrescendo-end.png=~
+dynamic-crescendo-start.png=~
+dynamic-decrescendo.png=~
+dynamic-crescendo-middle.png=~
+dynamic-mezzo-piano.png=~
+dynamic-pianississimo.png=~
+dynamic-forte.png=~
+dynamic-crescendo-end.png=~
+dynamic-sforzando.png=~
+dynamic-fortississimo.png=~
+dynamic-fortissimo.png=~
+dynamic-decrescendo-middle.png=~
+dynamic-piano.png=~
+dynamic-fortepiano.png=~
+dynamic-decrescendo-start.png=~
+dynamic-crescendo.png=~
+dynamic-mezzo-forte.png=~
+dynamic-pianissimo.png=~

@@ -1,0 +1,15 @@
+
+# group
+
+# rule
+staff-a4-0-0.png=~
+staff-f5-0-0.png=~
+staff-g5-0-0.png=~
+staff-g4-0-0.png=~
+staff-f4-0-0.png=~
+staff-c5-0-0.png=~
+staff-b4-0-0.png=~
+staff-d4-0-0.png=~
+staff-e4-0-0.png=~
+staff-e5-0-0.png=~
+staff-d5-0-0.png=~

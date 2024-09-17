@@ -1,0 +1,11 @@
+
+# group
+
+# rule
+articulation-accent.png=~
+articulation-staccato.png=~
+articulation-tenuto.png=~
+articulation-fermata-down.png=~
+articulation-portato.png=~
+articulation-staccatissimo.png=~
+articulation-marcato-down.png=~

@@ -1,0 +1,7 @@
+
+# group
+
+# rule
+staff-start.png=~
+staff-end.png=~
+staff.png=~

@@ -1,0 +1,13 @@
+
+# group
+
+# rule
+clef-c-alto.png=~
+clef-g-minus-8.png=~
+clef-c-tenor.png=~
+clef-g-double.png=~
+clef-g-minus-15.png=~
+clef-g.png=~
+clef-f.png=~
+clef-g-plus-8.png=~
+clef-g-plus-15.png=~
