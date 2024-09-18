@@ -212,7 +212,7 @@ public:
     std::vector<Folder>   folders;
     std::vector<Image>    images;
 public:
-    Folder(const std::filesystem::path& folderPath)
+    Folder(const std::filesystem::path& folderPath, double declineRate=1.0)
     {
         namespace fs = std::filesystem;
         
@@ -221,8 +221,10 @@ public:
         this->stretched = false;
         
         // 1. folderPath가 올바른 경로인지 확인
-        if (!fs::exists(folderPath) || !fs::is_directory(folderPath)) {
-            std::string errorMessage = "MSIG::Algorithm::Folder.Folder() : \"" + folderPath.string() + "\"은 존재하지 않는 폴더입니다.";
+        if (!fs::exists(folderPath) || 
+            !fs::is_directory(folderPath))
+        {
+            std::string errorMessage = "MSIG::Algorithm::Folder.Folder() : \"" + folderPath.string() + "\"는 올바르지 않은 폴더 경로 입니다.";
             throw std::runtime_error(errorMessage);
         }
         
@@ -257,11 +259,13 @@ public:
         // 7. 존재하는 이미지의 실행 확률 계산
         std::map<std::string, double> groupCount;
         for (auto& image : images) {
+            // 그룹이 지정된 이미지들만 갯수 카운트
             if (!image.groupName.empty())
+                // FIXME: 부동 소수점 끼리의 연산은 정확하지 않을 수 있음. (ex: 1.0 + 1.0 -> 2.000000000000001)
                 groupCount[image.groupName] += 1.0;
         }
         for (auto& [groupName, count] : groupCount) {
-            count = 1.0 / count;
+            count = 1.0 / count * declineRate;
         }
         for (auto& image : images) {
             if (!image.groupName.empty())
@@ -715,14 +719,14 @@ private:
         }
     }
 public:
-    void reconstruction(std::queue<Folder>& reconstructionFolders)
+    void reconstruction(std::deque<Folder>& reconstructionFolders)
     {
         namespace fs = std::filesystem;
         
         // 1. 논리적 분할 -> 논리적 재구성 -> 반환
         for (auto& splitedFolder : this->__split())
         for (auto& stretchedFolder : splitedFolder.__stretch()) {
-            reconstructionFolders.push(stretchedFolder);
+            reconstructionFolders.push_back(stretchedFolder);
         }
     }
 public:
@@ -810,27 +814,19 @@ public:
             }
         }
     }
-    void make_config(bool recursive=true)
+    void get_all_images_name(std::set<std::string>& allImagesNames)
     {
-        // *. 추상화된 폴더는 해당 작업을 진행하면 안됨.
-        if (this->splited | this->stretched)
-        {
-            std::string errorMessage = "MSIG::Algorithm::Folder.modify_config() : 논리적 재구성이 이루어진 폴더는 해당 작업을 수행할 수 없습니다.";
-            throw std::runtime_error(errorMessage);
+        namespace fs = std::filesystem;
+        
+        // 현재 폴더의 모든 이미지 이름 삽입
+        for (auto& image : images) {
+            allImagesNames.insert(image.path.filename().stem().string());
         }
         
-        // TODO: MusicalSymbol 클래스를 이용하여 이미지 데이터를 생성하는 코드 작성.
-    }
-    void modify_config(bool recursive=true)
-    {
-        // *. 추상화된 폴더는 해당 작업을 진행하면 안됨.
-        if (this->splited | this->stretched)
-        {
-            std::string errorMessage = "MSIG::Algorithm::Folder.modify_config() : 논리적 재구성이 이루어진 폴더는 해당 작업을 수행할 수 없습니다.";
-            throw std::runtime_error(errorMessage);
+        // 하위 폴더의 모든 이미지 이름 조사
+        for (auto& folder : folders) {
+            folder.get_all_images_name(allImagesNames);
         }
-        
-        // TODO: MusicalSymbol 클래스를 이용하여 이미지 데이터를 수정하는 코드 작성.
     }
 };
 

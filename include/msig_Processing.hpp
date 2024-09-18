@@ -321,6 +321,7 @@ public:
  - 이미지 잡음 추가
  - 이미지 흔들림
  - 이미지 흐림
+ - 이미지 그림자
  - 이미지 자르기
  - 이미지 워터마킹
  - 이미지 크기 확대 및 축소
@@ -341,6 +342,7 @@ class Brush
     static void noising(cv::Mat& image);
     static void wobble(cv::Mat& image);
     static void blur(cv::Mat& image);
+    static void shadow(cv::Mat& image);
     static void cut(cv::Mat& image);
     static void watermark(cv::Mat& image);
     static void size(cv::Mat& image);

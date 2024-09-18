@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 #ifdef _WIN32
     system("chcp 65001");
 #endif
-    MSIG::Algorithm::DependentSelectionTree("./ms-datasets/symbol-recognition");
+    
     // 프로그램 이름 출력
     signboard();
     

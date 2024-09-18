@@ -21,7 +21,7 @@
 // c++17
 #include <iostream>
 #include <filesystem>
-#include <queue>
+#include <deque>
 #include <vector>
 #include <string>
 #include <random>
@@ -79,7 +79,7 @@ class DependentSelectionTree
 {
 private:
     Structure::Folder              originaFolder;
-    std::queue<Structure::Folder>  reconstructedFolders;
+    std::deque<Structure::Folder>  reconstructedFolders;
 private:
     std::mt19937                           generator;
     std::uniform_real_distribution<double> distribution;
@@ -89,10 +89,10 @@ private:
     std::mutex mutex_vF;
     std::mutex mutex_vvp;
 public:
-    DependentSelectionTree(const std::filesystem::path& defaultDatasetDirectory) :
+    DependentSelectionTree(const std::filesystem::path& defaultDatasetDirectory, double selectionProbabilityControl=1.0) :
     generator(std::random_device()()),
     distribution(0.0, 1.0),
-    originaFolder(defaultDatasetDirectory)
+    originaFolder(defaultDatasetDirectory, selectionProbabilityControl)
     {
         // 1. 폴더 논리적 재구성 실행
         originaFolder.reconstruction(reconstructedFolders);
@@ -109,7 +109,7 @@ private:
         return distribution(generator);
     }
 public:
-    void pick_thread(std::vector<std::vector<std::filesystem::path>>& vvp, bool printStatus=false, bool randomPick=true, int numThreads=-1)
+    void pick_thread(std::deque<std::vector<std::filesystem::path>>& vvp, bool printStatus=false, bool randomPick=true, int numThreads=-1)
     {
         /*
          NOTE: 현재 CPU 갯수만큼 쓰레딩 처리를 하였지만 조합 계산에 있어 유의미한 차이를 보이지 않는다.
@@ -149,7 +149,7 @@ public:
            std::cout << "  - 악상기호 조합 생성을 완료하였습니다. 총 " << vvp.size() << "개." << std::endl << std::endl;
        }
     }
-    void pick(std::vector<std::vector<std::filesystem::path>>& vvp, bool printStatus=false, bool randomPick=true)
+    void pick(std::deque<std::vector<std::filesystem::path>>& vvp, bool printStatus=false, bool randomPick=true)
     {
         // NOTE: 현재 그냥 단일 쓰레드로 처리할 예정이기에 공유자원 잠금 코드를 주석처리함.
         //       혹시 해당 작업을 멀티 쓰레딩으로 처리하고자 한다면, 공유자원 잠금 주석을 전부 지우길 바람.
@@ -178,7 +178,7 @@ public:
             
             // 남은 작업 불러오기
             Structure::Folder folder = reconstructedFolders.front();
-            reconstructedFolders.pop();
+            reconstructedFolders.pop_front();
 
             // 공유자원 잠금 해제
             if (mainThreadID != thisThreadID)
@@ -263,6 +263,16 @@ public:
         if (printStatus && (mainThreadID == thisThreadID)) {
             std::cout << "  - 악상기호 조합 생성을 완료하였습니다. 총 " << vvp.size() << "개." << std::endl << std::endl;
         }
+    }
+    void get_all_images_name(std::vector<std::string>& imagesNames)
+    {
+        // 모든 이미지 이름 구하기
+        std::set<std::string> allImagesNames;
+        originaFolder.get_all_images_name(allImagesNames);
+        
+        // 벡터로 변환 및 정렬
+        imagesNames = std::vector<std::string>(allImagesNames.begin(), allImagesNames.end());
+        std::sort(imagesNames.begin(), imagesNames.end());
     }
 };
 
@@ -823,12 +833,12 @@ public:
         return mainImage & subImage;
     }
 private:
-    cv::Mat __rendering(int x, int y, double degree, double scale, bool auxiliaryStaff, bool auxiliaryCenter)
+    cv::Mat __rendering(int x, int y, double degree, double scale, bool extensionSize, bool auxiliaryStaff, bool auxiliaryCenter)
     {
         namespace fs = std::filesystem;
         
         //
-        cv::Mat newImage(diagonal, diagonal, CV_8UC1, cv::Scalar(255));
+        cv::Mat newImage((extensionSize ? diagonal : width), (extensionSize ? diagonal : height), CV_8UC1, cv::Scalar(255));
         cv::Mat musicalSymbolImage = this->image.clone();
         
         // 이미지 편집
@@ -986,7 +996,7 @@ public:
         while (true)
         {
             // 현재 이미지 그리기
-            cv::imshow(imageName, __rendering(x, y, degree, scale, true, true));
+            cv::imshow(imageName, __rendering(x, y, degree, scale, true, true, true));
             
             // 키보드 입력
             int key = cv::waitKey(1000/30);
@@ -1050,12 +1060,16 @@ public:
     void    show()
     {
         //
-        cv::Mat previewImage = __rendering(x, y, degree, scale, false, false);
+        cv::Mat previewImage = __rendering(x, y, degree, scale, true, false, false);
         
         //
         cv::imshow("MusicalSymbol preview", previewImage);
         cv::waitKey();
         cv::destroyWindow("MusicalSymbol preview");
+    }
+    cv::Mat rendering(bool extensionSize, bool auxiliaryStaff, bool auxiliaryCenter)
+    {
+        return __rendering(x, y, degree, scale, extensionSize, auxiliaryStaff, auxiliaryCenter);
     }
 public:
     MusicalSymbol copy() const
