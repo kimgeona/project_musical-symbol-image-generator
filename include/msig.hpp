@@ -18,9 +18,6 @@
 #ifndef msig_hpp
 #define msig_hpp
 
-// 프로그램 버전
-#define MSIG_VERSION (std::to_string(MSIG_VERSION_MAJOR) + "."+ std::to_string(MSIG_VERSION_MINOR) + "." + std::to_string(MSIG_VERSION_PATCH))
-
 #include <msig_Structure.hpp>
 #include <msig_Algorithm.hpp>
 #include <msig_Processing.hpp>

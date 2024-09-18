@@ -1,11 +1,13 @@
-#include <msig_Matrix.hpp>
 
-namespace msig
+#include <msig_Processing.hpp>
+
+namespace MSIG
+{
+namespace Processing
 {
 
-
-// 행렬 합성
-cv::Mat mat_attach      (const cv::Mat& img, const cv::Mat& img_sub, int x, int y, bool trim){
+cv::Mat Matrix::mat_attach   (const cv::Mat& img, const cv::Mat& img_sub, int x, int y, bool trim)  // 합성
+{
     using namespace std;
     using namespace cv;
     
@@ -82,10 +84,8 @@ cv::Mat mat_attach      (const cv::Mat& img, const cv::Mat& img_sub, int x, int 
         return img3;
     }
 }
-
-
-// 행렬 회전
-cv::Mat mat_rotate      (const cv::Mat& img, double degree, int& cx, int& cy){
+cv::Mat Matrix::mat_rotate   (const cv::Mat& img, double& degree, int& cx, int& cy)                 // 회전
+{
     using namespace std;
     using namespace cv;
     
@@ -148,12 +148,13 @@ cv::Mat mat_rotate      (const cv::Mat& img, double degree, int& cx, int& cy){
     cx = cx + x_min;
     cy = cy + y_min;
     
+    // 회전 값 초기화
+    degree = 0.0;
+    
     return img_new;
 }
-
-
-// 행렬 확대
-cv::Mat mat_scale       (const cv::Mat& img, double scale, int& cx, int& cy){
+cv::Mat Matrix::mat_scale    (const cv::Mat& img, double& scale, int& cx, int& cy)                  // 확대
+{
     using namespace std;
     using namespace cv;
     
@@ -172,12 +173,13 @@ cv::Mat mat_scale       (const cv::Mat& img, double scale, int& cx, int& cy){
     cx = (int)(cx * scale);
     cy = (int)(cy * scale);
     
+    // 배율값 초기화
+    scale = 1.0;
+    
     return img1;
 }
-
-
-// 행렬 대칭
-cv::Mat mat_symmetry    (const cv::Mat& img, std::string symmetry){
+cv::Mat Matrix::mat_symmetry (const cv::Mat& img, std::string symmetry)                             // 대칭
+{
     using namespace std;
     using namespace cv;
     
@@ -196,91 +198,12 @@ cv::Mat mat_symmetry    (const cv::Mat& img, std::string symmetry){
     // 완성된 이미지 리턴
     return img1;
 }
-
-
-// 이미지 재생성(이미지 복구)
-void    restore_img(std::filesystem::path dir){
-    using namespace std;
-    using namespace cv;
-    using namespace std::filesystem;
-    
-    // 이미지 존재 여부 확인
-    if (exists(dir) && is_regular_file(dir) && dir.extension().string()==".png"){
-       
-        Mat img = imread(dir.string(), IMREAD_GRAYSCALE);   // 흑백 영상으로 이미지 불러오기
-        CV_Assert(img.data);                                // 잘 불러와졌는지 확인
-        imwrite(dir.string(), img);                         // 불러온 이미지 저장
-    }
-    else return;
-}
-
-
-// 흑백 영상 패딩 제거
-cv::Mat remove_padding(const cv::Mat& img) {
-    using namespace std;
-    using namespace cv;
-    
-    int x = 0, y = 0;
-    return remove_padding(img, x, y);
-}
-/*
-cv::Mat remove_padding(const cv::Mat& img, int& center_x, int& center_y) {
+cv::Mat Matrix::remove_padding(const cv::Mat& img, int& center_x, int& center_y)                    // 배경 제거
+{
     using namespace std;
     using namespace cv;
 
-    // 이미지를 Grayscale로 변환 
-    Mat gray;
-    if (img.channels() > 1) {
-        cvtColor(img, gray, COLOR_BGR2GRAY);
-    }
-    else {
-        gray = img.clone();
-    }
-
-    // 이미지 색상을 반전
-    Mat inverted;
-    bitwise_not(gray, inverted);
-
-    // Threshold를 적용하여 220부터 흰색까지의 색상을 모두 검은색으로 변환
-    Mat binary;
-    threshold(inverted, binary, 220, 255, THRESH_BINARY);
-
-    // Contour를 찾아 가장 큰 영역의 바운딩 박스를 찾음
-    vector<vector<Point>> contours;//윤곽선을 나타내는 점들의 집합
-    findContours(binary, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-
-    Rect boundingBox;// 윤곽선을 하나에 벡터에 모아서 바운딩박스 계산
-    if (!contours.empty()) {
-        vector<Point> allPoints;
-        for (auto& contour : contours) {
-            allPoints.insert(allPoints.end(), contour.begin(), contour.end());
-        }
-        boundingBox = boundingRect(allPoints);
-    }
-    else {// 패딩을 제거할 영역이 없으면 원본 이미지 반환
-        center_x = img.cols / 2;
-        center_y = img.rows / 2;
-        return img.clone();
-    }
-
-    // 이미지에서 패딩 제거
-    Mat padding_img = img(boundingBox).clone();
-
-    // 부드럽게 만들어주는 알고리즘 처리 (Gaussian Blur 예시)
-    GaussianBlur(padding_img, padding_img, Size(5, 5), 0);
-
-    // 이미지 중심 좌표 다시 계산
-    center_x = boundingBox.x + boundingBox.width / 2;
-    center_y = boundingBox.y + boundingBox.height / 2;
-
-    return padding_img;
-}
-*/
-cv::Mat remove_padding(const cv::Mat& img, int& center_x, int& center_y) {
-    using namespace std;
-    using namespace cv;
-
-    // 이미지를 Grayscale로 변환 
+    // 이미지를 Grayscale로 변환
     Mat gray;
     if (img.channels() > 1) {
         cvtColor(img, gray, COLOR_BGR2GRAY);
@@ -333,4 +256,5 @@ cv::Mat remove_padding(const cv::Mat& img, int& center_x, int& center_y) {
     return result;
 }
 
+}
 }
