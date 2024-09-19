@@ -38,11 +38,20 @@ void        Canvas::__making_csv(std::filesystem::path csvPath, const std::deque
     namespace fs = std::filesystem;
     
     // 파일 열기
+    if (!fs::exists(csvPath.parent_path())) {
+        fs::create_directories(csvPath.parent_path());
+    }
     std::fstream csv(csvPath.string(), std::ios::out);
     if (!csv)
     {
         throw std::runtime_error("MSIG::Rendering::Canvas::__making_csv() : CSV 파일을 쓸 수 없습니다.");
     }
+    
+    // csv 헤더 생성
+    csv << "name";
+    for (auto& s : this->imageNames)
+        csv << "," << s;
+    csv << std::endl;
     
     // csv 데이터 쓰기
     for (size_t i=0; i<selectionList.size(); i++)
@@ -116,6 +125,32 @@ std::string Canvas::__labeling(std::string name, const std::vector<std::filesyst
     return name;
 }
 
+void        Canvas::pick_thread(int numThreads)
+{
+    namespace fs = std::filesystem;
+    
+    // 1. train 데이터셋
+    dstTrain.pick_thread(selectionListTrain, false, true, numThreads);
+    
+    // 2. validation 데이터셋
+    dstValidation.pick_thread(selectionListValidation, false, true, numThreads);
+    
+    // 3. test 데이터셋
+    dstTest.pick_thread(selectionListTest, false, true, numThreads);
+}
+void        Canvas::pick()
+{
+    namespace fs = std::filesystem;
+    
+    // 1. train 데이터셋
+    dstTrain.pick(selectionListTrain);
+    
+    // 2. validation 데이터셋
+    dstValidation.pick(selectionListValidation);
+    
+    // 3. test 데이터셋
+    dstTest.pick(selectionListTest);
+}
 void        Canvas::draw_thread(int numThreads)
 {
     
@@ -132,17 +167,14 @@ void        Canvas::draw()
     }
     
     // 1. train 데이터셋
-    dstTrain.pick(selectionListTrain);                                                          // 악상기호 조합 생성
     __making_csv(newDatasetPath/fs::path("train")/fs::path("label.csv"), selectionListTrain);   // 악상기호 데이터셋 레이블 생성
     __making_image(newDatasetPath/fs::path("train"), selectionListTrain);                       // 악상기호 이미지 생성 시작
     
     // 2. validation 데이터셋
-    dstValidation.pick(selectionListValidation);
     __making_csv(newDatasetPath/fs::path("validation")/fs::path("label.csv"), selectionListValidation);
     __making_image(newDatasetPath/fs::path("validation"), selectionListValidation);
     
     // 3. test 데이터셋
-    dstValidation.pick(selectionListTest);
     __making_csv(newDatasetPath/fs::path("test")/fs::path("label.csv"), selectionListTest);
     __making_image(newDatasetPath/fs::path("test"), selectionListTest);
 }

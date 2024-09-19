@@ -48,7 +48,7 @@ void    DependentSelectionTree::pick_thread(std::deque<std::vector<std::filesyst
     
     // 2. 조합 상황 출력
     if (printStatus) {
-        std::cout << "  - 악상기호 조합을 생성합니다." << std::endl;
+        std::cout << std::endl << "  - 악상기호 조합을 생성합니다." << std::endl;
     }
     
     // 3. 쓰레딩 시작
