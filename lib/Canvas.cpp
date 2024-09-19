@@ -1,10 +1,8 @@
 
 #include <msig_Rendering.hpp>
 
-namespace MSIG
-{
-namespace Rendering
-{
+namespace MSIG {
+namespace Rendering {
 
 Canvas::Canvas(std::filesystem::path defaultDataset, double trainRate, double validationRate, double testRate, bool brushing, int imageWidth, int imageHeight) :
 dstTrain(defaultDataset, trainRate),
@@ -36,8 +34,8 @@ dstTest(defaultDataset, testRate)
     mainThreadID = std::this_thread::get_id();
 }
 
-void        Canvas::__making_csv(std::filesystem::path csvPath, const std::deque<std::vector<std::filesystem::path>>& selectionList)
-{
+void
+Canvas::__making_csv(std::filesystem::path csvPath, const std::deque<std::vector<std::filesystem::path>>& selectionList) {
     namespace fs = std::filesystem;
     
     // 파일 열기
@@ -63,8 +61,9 @@ void        Canvas::__making_csv(std::filesystem::path csvPath, const std::deque
     }
     csv.close();
 }
-void        Canvas::__making_image_thread(std::filesystem::path imagePath, std::deque<std::vector<std::filesystem::path>> &selectionList, int numThreads)
-{
+
+void
+Canvas::__making_image_thread(std::filesystem::path imagePath, std::deque<std::vector<std::filesystem::path>> &selectionList, int numThreads) {
     namespace fs = std::filesystem;
     
     // 1. 현재 컴퓨터의 CPU 갯수 구하기
@@ -85,8 +84,9 @@ void        Canvas::__making_image_thread(std::filesystem::path imagePath, std::
         threads[i].join();
     }
 }
-void        Canvas::__making_image(std::filesystem::path imagePath, std::deque<std::vector<std::filesystem::path>>& selectionList)
-{
+
+void
+Canvas::__making_image(std::filesystem::path imagePath, std::deque<std::vector<std::filesystem::path>>& selectionList) {
     namespace fs = std::filesystem;
     
     // FIXME: 나중에 dynamic programming을 적용시켜서 더 빠르게 처리해 보자.
@@ -144,8 +144,9 @@ void        Canvas::__making_image(std::filesystem::path imagePath, std::deque<s
         cv::imwrite(imagePath.string()+std::to_string(thisCount)+".png", resultImage);
     }
 }
-std::string Canvas::__labeling(std::string name, const std::vector<std::filesystem::path>& vp)
-{
+
+std::string
+Canvas::__labeling(std::string name, const std::vector<std::filesystem::path>& vp) {
     // 이미지 이름들 복사본
     std::vector<std::string> imageNamesCopy = this->imageNames;
     
@@ -170,8 +171,8 @@ std::string Canvas::__labeling(std::string name, const std::vector<std::filesyst
     return name;
 }
 
-void        Canvas::pick_thread(int numThreads)
-{
+void
+Canvas::pick_thread(int numThreads) {
     namespace fs = std::filesystem;
     
     // 1. train 데이터셋
@@ -183,8 +184,9 @@ void        Canvas::pick_thread(int numThreads)
     // 3. test 데이터셋
     dstTest.pick_thread(selectionListTest, false, true, numThreads);
 }
-void        Canvas::pick()
-{
+
+void
+Canvas::pick() {
     namespace fs = std::filesystem;
     
     // 1. train 데이터셋
@@ -196,12 +198,33 @@ void        Canvas::pick()
     // 3. test 데이터셋
     dstTest.pick(selectionListTest);
 }
-void        Canvas::draw_thread(int numThreads)
-{
+
+void
+Canvas::draw_thread(int numThreads) {
+    namespace fs = std::filesystem;
     
+    // *. 기존 데이터셋 지우기
+    if (!fs::exists(this->newDatasetPath))
+    {
+        std::cout << "  - 존재하는 데이터셋 폴더 \"" << this->newDatasetPath << "\"를 지웁니다." << std::endl;
+        fs::remove(this->newDatasetPath);
+    }
+    
+    // 1. train 데이터셋
+    __making_csv(newDatasetPath/fs::path("train")/fs::path("label.csv"), selectionListTrain);   // 악상기호 데이터셋 레이블 생성
+    __making_image_thread(newDatasetPath/fs::path("train"), selectionListTrain);                // 악상기호 이미지 생성 시작
+    
+    // 2. validation 데이터셋
+    __making_csv(newDatasetPath/fs::path("validation")/fs::path("label.csv"), selectionListValidation);
+    __making_image_thread(newDatasetPath/fs::path("validation"), selectionListValidation);
+    
+    // 3. test 데이터셋
+    __making_csv(newDatasetPath/fs::path("test")/fs::path("label.csv"), selectionListTest);
+    __making_image_thread(newDatasetPath/fs::path("test"), selectionListTest);
 }
-void        Canvas::draw()
-{
+
+void
+Canvas::draw() {
     namespace fs = std::filesystem;
     
     // *. 기존 데이터셋 지우기
