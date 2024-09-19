@@ -1,10 +1,8 @@
 
 #include <msig_Algorithm.hpp>
 
-namespace MSIG
-{
-namespace Algorithm
-{
+namespace MSIG {
+namespace Algorithm {
 
 MusicalSymbol::MusicalSymbol(std::filesystem::path imagePath, bool makingConfigData, int width, int height, int staffPadding)
 {
@@ -173,7 +171,7 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path imagePath, bool makingConfigD
     __save_config();
 }
 
-                MusicalSymbol::operator bool() const
+MusicalSymbol::operator bool() const
 {
     // 1. 현재 이미지에 검은색 픽셀이 존재하는지 확인. (임계값=128)
     // 현재 이미지 복사
@@ -191,8 +189,9 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path imagePath, bool makingConfigD
     if (minVal > 0) return false;
     else            return true;
 }
-MusicalSymbol   MusicalSymbol::operator& (const MusicalSymbol& other) const
-{
+
+MusicalSymbol
+MusicalSymbol::operator& (const MusicalSymbol& other) const {
     // 합성하려는 두 이미지의 같은 픽셀 위치에서 가장 작은(어두운) 값이 선택됨.
     // 256 & 256 -> 256
     // 256 & 194 -> 194
@@ -261,8 +260,9 @@ MusicalSymbol   MusicalSymbol::operator& (const MusicalSymbol& other) const
     // 8. 반환
     return thisImage;
 }
-MusicalSymbol   MusicalSymbol::operator| (const MusicalSymbol& other) const
-{
+
+MusicalSymbol
+MusicalSymbol::operator| (const MusicalSymbol& other) const {
     // 합성하려는 두 이미지의 같은 픽셀 위치에서 가장 큰(밝은) 값이 선택됨.
     // 256 | 256 -> 256
     // 256 | 194 -> 256
@@ -331,8 +331,9 @@ MusicalSymbol   MusicalSymbol::operator| (const MusicalSymbol& other) const
     // 8. 반환
     return thisImage;
 }
-MusicalSymbol   MusicalSymbol::operator+ (const MusicalSymbol& other) const
-{
+
+MusicalSymbol
+MusicalSymbol::operator+ (const MusicalSymbol& other) const {
     // 현재 이미지에 다른 이미지를 적절한 위치에 배치 붙여넣기
     
     // 1. 두 이미지 준비
@@ -487,8 +488,8 @@ MusicalSymbol   MusicalSymbol::operator+ (const MusicalSymbol& other) const
     return mainImage & subImage;
 }
 
-cv::Mat MusicalSymbol::__rendering(int x, int y, double degree, double scale, bool extensionSize, bool auxiliaryStaff, bool auxiliaryCenter)
-{
+cv::Mat
+MusicalSymbol::__rendering(int x, int y, double degree, double scale, bool extensionSize, bool auxiliaryStaff, bool auxiliaryCenter) {
     namespace fs = std::filesystem;
     
     //
@@ -525,8 +526,9 @@ cv::Mat MusicalSymbol::__rendering(int x, int y, double degree, double scale, bo
     // 완성된 이미지 반환
     return newImage;
 }
-void    MusicalSymbol::__save_config()
-{
+
+void
+MusicalSymbol::__save_config() {
     namespace fs = std::filesystem;
     
     // *. 만약 MusicalSymbol가 원본이면 저장 불가능
@@ -594,8 +596,9 @@ void    MusicalSymbol::__save_config()
     }
     newFile.close();
 }
-void    MusicalSymbol::__as_default()
-{
+
+void
+MusicalSymbol::__as_default() {
     namespace fs = std::filesystem;
     
     //
@@ -606,8 +609,9 @@ void    MusicalSymbol::__as_default()
     image = Processing::Matrix::mat_rotate(image, degree, x, y);
     image = Processing::Matrix::mat_scale(image, scale, x, y);
 }
-int     MusicalSymbol::__pitch_to_number(const std::string& pitch)
-{
+
+int
+MusicalSymbol::__pitch_to_number(const std::string& pitch) {
     // 음정(p)과 옥타브(o)값 추출
     char p = pitch[0];
     int  o = pitch[1] - 48;
@@ -630,8 +634,8 @@ int     MusicalSymbol::__pitch_to_number(const std::string& pitch)
     return number;
 }
 
-void    MusicalSymbol::edit_config()
-{
+void
+MusicalSymbol::edit_config() {
     namespace fs = std::filesystem;
     
     // 1. 기존 값 복사
@@ -711,8 +715,9 @@ void    MusicalSymbol::edit_config()
     // 6. config 정보 저장
     __save_config();
 }
-void    MusicalSymbol::show()
-{
+
+void
+MusicalSymbol::show() {
     //
     cv::Mat previewImage = __rendering(x, y, degree, scale, true, false, false);
     
@@ -721,13 +726,14 @@ void    MusicalSymbol::show()
     cv::waitKey();
     cv::destroyWindow("MusicalSymbol preview");
 }
-cv::Mat MusicalSymbol::rendering(bool extensionSize, bool auxiliaryStaff, bool auxiliaryCenter)
-{
+
+cv::Mat
+MusicalSymbol::rendering(bool extensionSize, bool auxiliaryStaff, bool auxiliaryCenter) {
     return __rendering(x, y, degree, scale, extensionSize, auxiliaryStaff, auxiliaryCenter);
 }
 
-MusicalSymbol MusicalSymbol::copy() const
-{
+MusicalSymbol
+MusicalSymbol::copy() const {
     MusicalSymbol ms = *this;
     ms.image = ms.image.clone();
     ms.original = false;

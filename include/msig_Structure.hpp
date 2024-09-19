@@ -21,10 +21,8 @@
 #include <msig_common.hpp>
 #include <msig_Utility.hpp>
 
-namespace MSIG
-{
-namespace Structure
-{
+namespace MSIG {
+namespace Structure {
 
 
 class Image
@@ -57,19 +55,19 @@ public:
     Folder(const std::filesystem::path& folderPath, double declineRate=1.0);
     Folder(const Folder& original, bool copyFolders, bool copyImages);
 public:
-    bool operator<(const Folder& other) const;
-    void operator()(const Folder& other);
-    explicit operator std::vector<Folder>() const;
+    bool        operator<(const Folder& other) const;
+    void        operator()(const Folder& other);
+    explicit    operator std::vector<Folder>() const;
 private:
     std::vector<Folder> __split();
     std::vector<Folder> __stretch();
     void                __calculate_all_combination(std::vector<std::vector<unsigned char>>& combinations, unsigned char numberOfThings);
     void                __save_rule(bool recursive=true);
 public:
-    void reconstruction(std::deque<Folder>& reconstructionFolders);
+    void                reconstruction(std::deque<Folder>& reconstructionFolders);
 public:
-    void tree(const std::string& prefix="", size_t order=0);
-    void get_all_images_name(std::set<std::string>& allImagesNames);
+    void                tree(const std::string& prefix="", size_t order=0);
+    void                get_all_images_name(std::set<std::string>& allImagesNames);
 };
 
 

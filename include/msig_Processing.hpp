@@ -17,10 +17,8 @@
 
 #include <msig_common.hpp>
 
-namespace MSIG
-{
-namespace Processing
-{
+namespace MSIG {
+namespace Processing {
 
 
 /*

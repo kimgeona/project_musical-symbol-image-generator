@@ -65,13 +65,11 @@ size_t menu(const std::vector<std::string>& items, const std::string& selectMess
 }
 
 // MSIG UI
-void todo_end()
-{
+void todo_end() {
     // 프로그램 종료
     std::cout << std::endl << std::endl << "  프로그램을 종료합니다." << std::endl;
 }
-void todo_0_0()
-{
+void todo_0_0() {
     namespace fs = std::filesystem;
     
     // 데이터셋 경로 생성
@@ -109,8 +107,7 @@ void todo_0_0()
     // 프로그램 종료
     todo_end();
 }
-void todo_0_1()
-{
+void todo_0_1() {
     namespace fs = std::filesystem;
     
     // 데이터셋 경로 생성
@@ -132,8 +129,7 @@ void todo_0_1()
     // 프로그램 종료
     todo_end();
 }
-void todo_0_2()
-{
+void todo_0_2() {
     namespace fs = std::filesystem;
     
     // 데이터셋 경로 생성
@@ -156,8 +152,7 @@ void todo_0_2()
     // 프로그램 종료
     todo_end();
 }
-void todo_0()
-{
+void todo_0()   {
     // 작업 선택
     switch (menu({
         "데이터셋 초기화",
@@ -170,8 +165,7 @@ void todo_0()
         case 2: todo_0_2(); break;
     }
 }
-void todo_1()
-{
+void todo_1()   {
     namespace fs = std::filesystem;
     
     // 데이터셋 경로 생성
@@ -191,8 +185,7 @@ void todo_1()
     // 프로그램 종료
     todo_end();
 }
-void page()
-{
+void page()     {
     namespace fs = std::filesystem;
     
     // 프로그램 정보 출력

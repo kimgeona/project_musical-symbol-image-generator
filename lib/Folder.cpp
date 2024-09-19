@@ -1,10 +1,8 @@
 
 #include <msig_Structure.hpp>
 
-namespace MSIG
-{
-namespace Structure
-{
+namespace MSIG {
+namespace Structure {
 
 Folder::Folder(const std::filesystem::path& folderPath, double declineRate)
 {
@@ -109,6 +107,7 @@ Folder::Folder(const std::filesystem::path& folderPath, double declineRate)
     // 10. __rule__.txt 새로 저장
     __save_rule(false);
 }
+
 Folder::Folder(const Folder& original, bool copyFolders, bool copyImages)
 {
     namespace fs = std::filesystem;
@@ -127,24 +126,7 @@ Folder::Folder(const Folder& original, bool copyFolders, bool copyImages)
         this->images = original.images;
 }
 
-bool        Folder::operator<(const Folder& other) const
-{
-    return this->path < other.path;
-}
-void        Folder::operator()(const Folder& other)
-{
-    if (folders.empty()) {
-        folders.push_back(other);
-    }
-    else if (folders.size() > 1) {
-        std::string errorMessage = "MSIG::Algorithm::Folder.operator() : 일렬로 연결된 폴더에만 새로운 폴더를 추가할 수 있습니다.";
-        throw std::runtime_error(errorMessage);
-    }
-    else {
-        folders[0](other);
-    }
-}
-            Folder::operator std::vector<Folder>() const
+Folder::operator std::vector<Folder>() const
 {
     if (folders.empty()) {
         return std::vector<Folder>({Folder(*this, false, true)});
@@ -160,8 +142,27 @@ void        Folder::operator()(const Folder& other)
     }
 }
 
-std::vector<Folder> Folder::__split()   // 논리적 분할 : 제외 정보, 다중 선택 정보
-{
+bool
+Folder::operator<(const Folder& other) const {
+    return this->path < other.path;
+}
+
+void
+Folder::operator()(const Folder& other) {
+    if (folders.empty()) {
+        folders.push_back(other);
+    }
+    else if (folders.size() > 1) {
+        std::string errorMessage = "MSIG::Algorithm::Folder.operator() : 일렬로 연결된 폴더에만 새로운 폴더를 추가할 수 있습니다.";
+        throw std::runtime_error(errorMessage);
+    }
+    else {
+        folders[0](other);
+    }
+}
+
+std::vector<Folder>
+Folder::__split() {
     namespace fs = std::filesystem;
     
     // *.
@@ -315,8 +316,9 @@ std::vector<Folder> Folder::__split()   // 논리적 분할 : 제외 정보, 다
     // 4. 완성된 분할된 폴더 반환.
     return splitedFolders3;
 }
-std::vector<Folder> Folder::__stretch() // 논리적 재구성 : 폴더 선택 경로 단일 경로로 재구성
-{
+
+std::vector<Folder>
+Folder::__stretch() {
     namespace fs = std::filesystem;
     
     // *. __split() 작업이 이루어지지 않은 폴더는 __stretch() 작업이 이루어지면 안됨.
@@ -409,8 +411,9 @@ std::vector<Folder> Folder::__stretch() // 논리적 재구성 : 폴더 선택 �
     // 3. 반환
     return stretchedFolders;
 }
-void                Folder::__calculate_all_combination(std::vector<std::vector<unsigned char>>& combinations, unsigned char numberOfThings) // numberOfThing 개로 가능한 모든 조합 구하기
-{
+
+void
+Folder::__calculate_all_combination(std::vector<std::vector<unsigned char>>& combinations, unsigned char numberOfThings) {
     // 뽑혀야 하는 대상들의 인덱스 번호
     std::vector<unsigned char> vec;
     for (unsigned char i=0; i<numberOfThings; i++)
@@ -439,8 +442,9 @@ void                Folder::__calculate_all_combination(std::vector<std::vector<
         while (std::prev_permutation(bitmask.begin(), bitmask.end())); // 다음 조합을 구함
     }
 }
-void                Folder::__save_rule(bool recursive)
-{
+
+void
+Folder::__save_rule(bool recursive) {
     namespace fs = std::filesystem;
     
     // *. 추상화된 폴더는 규칙 저장 하면 안됨.
@@ -513,8 +517,8 @@ void                Folder::__save_rule(bool recursive)
     }
 }
 
-void    Folder::reconstruction(std::deque<Folder>& reconstructionFolders)
-{
+void
+Folder::reconstruction(std::deque<Folder>& reconstructionFolders) {
     namespace fs = std::filesystem;
     
     // 1. 논리적 분할 -> 논리적 재구성 -> 반환
@@ -524,8 +528,8 @@ void    Folder::reconstruction(std::deque<Folder>& reconstructionFolders)
     }
 }
 
-void    Folder::tree(const std::string& prefix, size_t order)
-{
+void
+Folder::tree(const std::string& prefix, size_t order) {
     namespace fs = std::filesystem;
     
     /*
@@ -608,8 +612,9 @@ void    Folder::tree(const std::string& prefix, size_t order)
         }
     }
 }
-void    Folder::get_all_images_name(std::set<std::string>& allImagesNames)
-{
+
+void
+Folder::get_all_images_name(std::set<std::string>& allImagesNames) {
     namespace fs = std::filesystem;
     
     // 현재 폴더의 모든 이미지 이름 삽입

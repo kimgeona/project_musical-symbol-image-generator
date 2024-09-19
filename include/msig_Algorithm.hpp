@@ -24,10 +24,8 @@
 #include <msig_Utility.hpp>
 
 
-namespace MSIG
-{
-namespace Algorithm
-{
+namespace MSIG {
+namespace Algorithm {
 
 
 /*
@@ -84,11 +82,11 @@ private:
 public:
     DependentSelectionTree(const std::filesystem::path& defaultDatasetDirectory, double selectionProbabilityControl=1.0);
 private:
-    double __generate_probability();
+    double  __generate_probability();
 public:
-    void pick_thread(std::deque<std::vector<std::filesystem::path>>& vvp, bool printStatus=false, bool randomPick=true, int numThreads=-1);
-    void pick(std::deque<std::vector<std::filesystem::path>>& vvp, bool printStatus=false, bool randomPick=true);
-    void get_all_images_name(std::vector<std::string>& imagesNames);
+    void    pick_thread(std::deque<std::vector<std::filesystem::path>>& vvp, bool printStatus=false, bool randomPick=true, int numThreads=-1);
+    void    pick(std::deque<std::vector<std::filesystem::path>>& vvp, bool printStatus=false, bool randomPick=true);
+    void    get_all_images_name(std::vector<std::string>& imagesNames);
 };
 
 
@@ -159,21 +157,21 @@ public:
 public:
     MusicalSymbol(std::filesystem::path imagePath, bool makingConfigData=false, int width=192, int height=512, int staffPadding=26);
 public:
-    explicit operator bool() const;
-    MusicalSymbol operator& (const MusicalSymbol& other) const;
-    MusicalSymbol operator| (const MusicalSymbol& other) const;
-    MusicalSymbol operator+ (const MusicalSymbol& other) const;
+    explicit        operator bool() const;
+    MusicalSymbol   operator& (const MusicalSymbol& other) const;
+    MusicalSymbol   operator| (const MusicalSymbol& other) const;
+    MusicalSymbol   operator+ (const MusicalSymbol& other) const;
 private:
-    cv::Mat __rendering(int x, int y, double degree, double scale, bool extensionSize, bool auxiliaryStaff, bool auxiliaryCenter);
-    void    __save_config();
-    void    __as_default();
-    int     __pitch_to_number(const std::string& pitch);
+    cv::Mat         __rendering(int x, int y, double degree, double scale, bool extensionSize, bool auxiliaryStaff, bool auxiliaryCenter);
+    void            __save_config();
+    void            __as_default();
+    int             __pitch_to_number(const std::string& pitch);
 public:
-    void    edit_config();
-    void    show();
-    cv::Mat rendering(bool extensionSize, bool auxiliaryStaff, bool auxiliaryCenter);
+    void            edit_config();
+    void            show();
+    cv::Mat         rendering(bool extensionSize, bool auxiliaryStaff, bool auxiliaryCenter);
 public:
-    MusicalSymbol copy() const;
+    MusicalSymbol   copy() const;
 };
 
 

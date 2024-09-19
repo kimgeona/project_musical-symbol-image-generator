@@ -1,13 +1,11 @@
 
 #include <msig_Utility.hpp>
 
-namespace MSIG
-{
-namespace Utility
-{
+namespace MSIG {
+namespace Utility {
 
-std::string              grep(std::filesystem::path filePath, std::string grepString)
-{
+std::string
+grep(std::filesystem::path filePath, std::string grepString) {
     namespace fs = std::filesystem;
     
     // 1. 파일 열기
@@ -26,8 +24,8 @@ std::string              grep(std::filesystem::path filePath, std::string grepSt
     return "";
 }
 
-void                     attach(std::filesystem::path filePath, std::string attachString)
-{
+void
+attach(std::filesystem::path filePath, std::string attachString) {
     namespace fs = std::filesystem;
     
     // 1. 파일 열기
@@ -40,8 +38,8 @@ void                     attach(std::filesystem::path filePath, std::string atta
     fout.close();
 }
 
-std::vector<std::string> split(std::string str, std::string splitStr)
-{
+std::vector<std::string>
+split(std::string str, std::string splitStr) {
     namespace fs = std::filesystem;
     
     // 1. 빈 문자열 검사
@@ -60,8 +58,8 @@ std::vector<std::string> split(std::string str, std::string splitStr)
     return result;
 }
 
-std::vector<std::vector<std::string>> split(std::string str, std::string splitStr, std::string splitStr2)
-{
+std::vector<std::vector<std::string>>
+split(std::string str, std::string splitStr, std::string splitStr2) {
     namespace fs = std::filesystem;
     
     // 1. 빈 문자열 검사

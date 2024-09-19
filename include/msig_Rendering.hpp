@@ -18,10 +18,8 @@
 #include <msig_common.hpp>
 #include <msig_Algorithm.hpp>
 
-namespace MSIG
-{
-namespace Rendering
-{
+namespace MSIG {
+namespace Rendering {
    
 
 /*
@@ -86,10 +84,10 @@ private:
     void        __making_image(std::filesystem::path imagePath, std::deque<std::vector<std::filesystem::path>>& selectionList);
     std::string __labeling(std::string name, const std::vector<std::filesystem::path>& vp);
 public:
-    void pick_thread(int numThreads=-1);
-    void pick();
-    void draw_thread(int numThreads=-1);
-    void draw();
+    void        pick_thread(int numThreads=-1);
+    void        pick();
+    void        draw_thread(int numThreads=-1);
+    void        draw();
 };
 
 

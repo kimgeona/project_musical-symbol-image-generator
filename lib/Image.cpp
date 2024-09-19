@@ -1,10 +1,8 @@
 
 #include <msig_Structure.hpp>
 
-namespace MSIG
-{
-namespace Structure
-{
+namespace MSIG {
+namespace Structure {
 
 Image::Image(const std::filesystem::path& imagePath)
 {
@@ -130,8 +128,8 @@ Image::Image(const Image& original, bool copyExclude, bool copyMultipleSelection
         this->multipleSelectionFolders = original.multipleSelectionFolders;
 }
 
-void Image::print_information()
-{
+void
+Image::print_information() {
     using namespace std;
     namespace fs = std::filesystem;
     

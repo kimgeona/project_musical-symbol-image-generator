@@ -1,13 +1,12 @@
 
 #include <msig_Processing.hpp>
 
-namespace MSIG
-{
-namespace Processing
-{
+namespace MSIG {
+namespace Processing {
 
-cv::Mat Matrix::mat_attach   (const cv::Mat& img, const cv::Mat& img_sub, int x, int y, bool trim)  // 합성
-{
+// 합성
+cv::Mat
+Matrix::mat_attach(const cv::Mat& img, const cv::Mat& img_sub, int x, int y, bool trim) {
     using namespace std;
     using namespace cv;
     
@@ -84,8 +83,10 @@ cv::Mat Matrix::mat_attach   (const cv::Mat& img, const cv::Mat& img_sub, int x,
         return img3;
     }
 }
-cv::Mat Matrix::mat_rotate   (const cv::Mat& img, double& degree, int& cx, int& cy)                 // 회전
-{
+
+// 회전
+cv::Mat
+Matrix::mat_rotate(const cv::Mat& img, double& degree, int& cx, int& cy) {
     using namespace std;
     using namespace cv;
     
@@ -153,8 +154,10 @@ cv::Mat Matrix::mat_rotate   (const cv::Mat& img, double& degree, int& cx, int& 
     
     return img_new;
 }
-cv::Mat Matrix::mat_scale    (const cv::Mat& img, double& scale, int& cx, int& cy)                  // 확대
-{
+
+// 확대
+cv::Mat
+Matrix::mat_scale(const cv::Mat& img, double& scale, int& cx, int& cy) {
     using namespace std;
     using namespace cv;
     
@@ -178,8 +181,10 @@ cv::Mat Matrix::mat_scale    (const cv::Mat& img, double& scale, int& cx, int& c
     
     return img1;
 }
-cv::Mat Matrix::mat_symmetry (const cv::Mat& img, std::string symmetry)                             // 대칭
-{
+
+// 대칭
+cv::Mat
+Matrix::mat_symmetry(const cv::Mat& img, std::string symmetry) {
     using namespace std;
     using namespace cv;
     
@@ -198,8 +203,10 @@ cv::Mat Matrix::mat_symmetry (const cv::Mat& img, std::string symmetry)         
     // 완성된 이미지 리턴
     return img1;
 }
-cv::Mat Matrix::remove_padding(const cv::Mat& img, int& center_x, int& center_y)                    // 배경 제거
-{
+
+// 배경 제거
+cv::Mat
+Matrix::remove_padding(const cv::Mat& img, int& center_x, int& center_y) {
     using namespace std;
     using namespace cv;
 

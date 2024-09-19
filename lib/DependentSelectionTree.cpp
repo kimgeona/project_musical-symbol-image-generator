@@ -1,10 +1,8 @@
 
 #include <msig_Algorithm.hpp>
 
-namespace MSIG
-{
-namespace Algorithm
-{
+namespace MSIG {
+namespace Algorithm {
 
 DependentSelectionTree::DependentSelectionTree(const std::filesystem::path& defaultDatasetDirectory, double selectionProbabilityControl) :
 generator(std::random_device()()),
@@ -18,16 +16,16 @@ originaFolder(defaultDatasetDirectory, selectionProbabilityControl)
     mainThreadID = std::this_thread::get_id();
 }
 
-double  DependentSelectionTree::__generate_probability()
-{
+double
+DependentSelectionTree::__generate_probability() {
     namespace fs = std::filesystem;
     
     // 1. 난수를 뽑아서 반환
     return distribution(generator);
 }
 
-void    DependentSelectionTree::pick_thread(std::deque<std::vector<std::filesystem::path>>& vvp, bool printStatus, bool randomPick, int numThreads)
-{
+void
+DependentSelectionTree::pick_thread(std::deque<std::vector<std::filesystem::path>>& vvp, bool printStatus, bool randomPick, int numThreads) {
     /*
      NOTE: 현재 CPU 갯수만큼 쓰레딩 처리를 하였지만 조합 계산에 있어 유의미한 차이를 보이지 않는다.
            아마 조합 계산은 빨리 다 되었는데 이를 저장할 vvp 벡터가 하나밖에 없어서 그런게 아닌가 싶다.
@@ -66,8 +64,9 @@ void    DependentSelectionTree::pick_thread(std::deque<std::vector<std::filesyst
        std::cout << "  - 악상기호 조합 생성을 완료하였습니다. 총 " << vvp.size() << "개." << std::endl << std::endl;
    }
 }
-void    DependentSelectionTree::pick(std::deque<std::vector<std::filesystem::path>>& vvp, bool printStatus, bool randomPick)
-{
+
+void
+DependentSelectionTree::pick(std::deque<std::vector<std::filesystem::path>>& vvp, bool printStatus, bool randomPick) {
     // NOTE: 현재 그냥 단일 쓰레드로 처리할 예정이기에 공유자원 잠금 코드를 주석처리함.
     //       혹시 해당 작업을 멀티 쓰레딩으로 처리하고자 한다면, 공유자원 잠금 주석을 전부 지우길 바람.
     
@@ -181,8 +180,9 @@ void    DependentSelectionTree::pick(std::deque<std::vector<std::filesystem::pat
         std::cout << "  - 악상기호 조합 생성을 완료하였습니다. 총 " << vvp.size() << "개." << std::endl << std::endl;
     }
 }
-void    DependentSelectionTree::get_all_images_name(std::vector<std::string>& imagesNames)
-{
+
+void
+DependentSelectionTree::get_all_images_name(std::vector<std::string>& imagesNames) {
     // 모든 이미지 이름 구하기
     std::set<std::string> allImagesNames;
     originaFolder.get_all_images_name(allImagesNames);

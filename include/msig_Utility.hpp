@@ -22,19 +22,21 @@
 
 #include <msig_common.hpp>
 
-namespace MSIG
-{
-namespace Utility
-{
+namespace MSIG {
+namespace Utility {
 
 
-std::string              grep(std::filesystem::path filePath, std::string grepString);
+std::string
+grep(std::filesystem::path filePath, std::string grepString);
 
-void                     attach(std::filesystem::path filePath, std::string attachString);
+void
+attach(std::filesystem::path filePath, std::string attachString);
 
-std::vector<std::string> split(std::string str, std::string splitStr);
+std::vector<std::string>
+split(std::string str, std::string splitStr);
 
-std::vector<std::vector<std::string>> split(std::string str, std::string splitStr, std::string splitStr2);
+std::vector<std::vector<std::string>>
+split(std::string str, std::string splitStr, std::string splitStr2);
 
 
 }
