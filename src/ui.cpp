@@ -212,7 +212,7 @@ void page()
     {
         std::cout << "  ! 현재 디렉토리에 폴더가 존재하지 않습니다." << std::endl;
         std::cout << "  ! 프로그램을 종료합니다." << std::endl << std::endl;
-        return 0;
+        return;
     }
     
     // 폴더 이름 저장

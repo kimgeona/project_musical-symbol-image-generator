@@ -11,6 +11,7 @@ int main(int argc, char* argv[])
     // 플랫폼 설정
 #ifdef _WIN32
     system("chcp 65001");
+    system("cls");
 #endif
     
     // 메인 페이지 실행
