@@ -31,6 +31,9 @@ dstTest(defaultDataset, testRate)
     else {
         
     }
+    
+    // 5. 현재 스레드(메인) ID 저장
+    mainThreadID = std::this_thread::get_id();
 }
 
 void        Canvas::__making_csv(std::filesystem::path csvPath, const std::deque<std::vector<std::filesystem::path>>& selectionList)
@@ -60,22 +63,63 @@ void        Canvas::__making_csv(std::filesystem::path csvPath, const std::deque
     }
     csv.close();
 }
+void        Canvas::__making_image_thread(std::filesystem::path imagePath, std::deque<std::vector<std::filesystem::path>> &selectionList, int numThreads)
+{
+    namespace fs = std::filesystem;
+    
+    // 1. 현재 컴퓨터의 CPU 갯수 구하기
+    unsigned int numberOfCPU = 0;
+    if (numThreads < 0) numberOfCPU = std::thread::hardware_concurrency();
+    else                numberOfCPU = (unsigned int)numThreads;
+    if (numberOfCPU < 1) {
+        numberOfCPU = 1;
+    }
+    
+    // 2. 쓰레딩 시작
+    for (size_t i=0; i<numberOfCPU; i++) {
+        threads.emplace_back(&Canvas::__making_image, this, imagePath, std::ref(selectionList));
+    }
+    
+    // 3. 쓰레딩 작업 기다리기
+    for (size_t i=0; i<numberOfCPU; i++) {
+        threads[i].join();
+    }
+}
 void        Canvas::__making_image(std::filesystem::path imagePath, std::deque<std::vector<std::filesystem::path>>& selectionList)
 {
     namespace fs = std::filesystem;
     
-    // TODO: 스레딩 기법 적용시키기
-    // FIXME: 나중에 dynamic programming을 살려보자!
+    // FIXME: 나중에 dynamic programming을 적용시켜서 더 빠르게 처리해 보자.
     
-    // 현재 생성한 이미지 갯수
-    size_t count = 0;
+    // *. 현재까지 생성한 이미지 갯수
+    static size_t count = 0;
+    
+    // *. 현재 스레드 ID 저장
+    std::thread::id thisThreadID = std::this_thread::get_id();
     
     // 이미지 생성 시작
-    while (selectionList.size()>0)
+    while (true)
     {
+        // 공유자원 잠금
+        if (mainThreadID != thisThreadID)
+            mutex_dvp.lock();
+        
+        // 남은 작업량 확인
+        if (selectionList.empty()) {
+            mutex_dvp.unlock();
+            break;
+        }
+        
         // 조합 목록 추출
         std::vector<std::filesystem::path> vp = selectionList.front();
         selectionList.pop_front();
+        
+        // 카운트 증가 및 저장
+        size_t thisCount = count++;
+        
+        // 공유자원 잠금 해제
+        if (mainThreadID != thisThreadID)
+            mutex_dvp.unlock();
         
         // 악상기호 조합
         MSIG::Algorithm::MusicalSymbol ms(vp[0]);
@@ -88,15 +132,16 @@ void        Canvas::__making_image(std::filesystem::path imagePath, std::deque<s
         
         // 악상기호 브러싱
         if (brushing) {
-            resultImage = ms.rendering(true, false, false);
-            // TODO: 모델 과적합 방지를 위해 resultImage를 MSIG::Processing::Brush 클래스에서 제공하는 함수들에 한번씩 통과시키기. 그리고 마지막에 this->imageWidht, this->imageHeight 크기만큼 자르기.
+            // TODO: MSIG::Processing::Brush 작성이 끝나면 ms.rendering(true, false, false) 로 바꾸기
+            resultImage = ms.rendering(false, false, false);
+            // TODO: MSIG::Processing::Brush 작성이 끝나면 작성한 함수들에 resultImage를 한번씩 통과시키기. 그리고 마지막에 this->imageWidht, this->imageHeight 크기만큼 자르기.
         }
         else {
             resultImage = ms.rendering(false, false, false);
         }
         
         // 완성된 악상기호 저장
-        cv::imwrite(imagePath.string()+std::to_string(count++)+".png", resultImage);
+        cv::imwrite(imagePath.string()+std::to_string(thisCount)+".png", resultImage);
     }
 }
 std::string Canvas::__labeling(std::string name, const std::vector<std::filesystem::path>& vp)

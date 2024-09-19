@@ -177,15 +177,16 @@ void todo_1()
     // 데이터셋 경로 생성
     std::filesystem::path datasetPath(datasetName);
     
-    // TODO: MSIG::Processing::Brush 클래스 완성되면 true로 바꾸기.
-    MSIG::Rendering::Canvas canvas(datasetName, 1.0, 0.1, 0.1, false);
+    // 캔버스 생성
+    MSIG::Rendering::Canvas canvas(datasetName, 1.0, 0.1, 0.1, true);
     
+    // 악상기호 조합 계산
     std::cout << "  * 악상기호 조합을 계산합니다." << std::endl;
     canvas.pick_thread();
     
-    // TODO: MSIG::Rendering::Canvas::draw_thread() 완성하면 draw() -> draw_thread()로 교체하기.
+    // 악상기호 이미지 생성
     std::cout << "  * 악상기호 이미지를 생성합니다." << std::endl;
-    canvas.draw();
+    canvas.draw_thread();
     
     // 프로그램 종료
     todo_end();

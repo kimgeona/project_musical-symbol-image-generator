@@ -74,10 +74,15 @@ public:
     std::deque<std::vector<std::filesystem::path>> selectionListValidation;
     std::deque<std::vector<std::filesystem::path>> selectionListTest;
     std::vector<std::string>                       imageNames;
+private:
+    std::thread::id mainThreadID;
+    std::vector<std::thread> threads;
+    std::mutex mutex_dvp;
 public:
     Canvas(std::filesystem::path defaultDataset, double trainRate, double validationRate, double testRate, bool brushing, int imageWidth=192, int imageHeight=512);
 private:
     void        __making_csv(std::filesystem::path csvPath, const std::deque<std::vector<std::filesystem::path>>& selectionList);
+    void        __making_image_thread(std::filesystem::path imagePath, std::deque<std::vector<std::filesystem::path>> &selectionList, int numThreads=-1);
     void        __making_image(std::filesystem::path imagePath, std::deque<std::vector<std::filesystem::path>>& selectionList);
     std::string __labeling(std::string name, const std::vector<std::filesystem::path>& vp);
 public:
