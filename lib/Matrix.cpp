@@ -226,41 +226,49 @@ Matrix::remove_padding(const cv::Mat& img, int& center_x, int& center_y) {
     // Threshold를 적용하여 220부터 흰색까지의 색상을 모두 검은색으로 변환
     Mat binary;
     threshold(inverted, binary, 220, 255, THRESH_BINARY);
-
-    // Contour를 찾아 가장 큰 영역의 바운딩 박스를 찾음
-    vector<vector<Point>> contours;
-    findContours(binary, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-
-    Rect boundingBox;
-    if (!contours.empty()) {// 윤곽선을 하나에 벡터에 모아서 바운딩박스 계산
-        vector<Point> allPoints;
-        for (auto& contour : contours) {
-            allPoints.insert(allPoints.end(), contour.begin(), contour.end());
+    
+    //
+    int top = 0, bottom = binary.rows - 1;
+    int left = 0, right = binary.cols - 1;
+    
+    // 상단에서 첫 번째 0이 아닌 행을 찾음
+    for (int i = 0; i < binary.rows; ++i) {
+        if (cv::sum(binary.row(i))[0] > 0) {
+            top = i;
+            break;
         }
-        boundingBox = boundingRect(allPoints);
     }
-    else {// 패딩을 제거할 영역이 없으면 원본 이미지 반환
-        center_x = img.cols / 2;
-        center_y = img.rows / 2;
-        Mat result = img.clone();
-        
-        return result;
+    
+    // 하단에서 첫 번째 0이 아닌 행을 찾음
+    for (int i = binary.rows - 1; i >= 0; --i) {
+        if (cv::sum(binary.row(i))[0] > 0) {
+            bottom = i;
+            break;
+        }
+    }
+    
+    // 좌측에서 첫 번째 0이 아닌 열을 찾음
+    for (int j = 0; j < binary.cols; ++j) {
+        if (cv::sum(binary.col(j))[0] > 0) {
+            left = j;
+            break;
+        }
     }
 
-    // 이미지에서 패딩 제거
-    Mat padding_img = img(boundingBox).clone();
-
-    // 부드럽게 만들어주는 알고리즘 처리 (Gaussian Blur 예시)
-    GaussianBlur(padding_img, padding_img, Size(5, 5), 0);
-
-    // 이미지 중심 좌표 다시 계산
-    center_x = boundingBox.x + boundingBox.width / 2;
-    center_y = boundingBox.y + boundingBox.height / 2;
-
-    // 원본 이미지에서 이전 및 새로운 중심 좌표를 표시
-    Mat result = img.clone();
-
-    return result;
+    // 우측에서 첫 번째 0이 아닌 열을 찾음
+    for (int j = binary.cols - 1; j >= 0; --j) {
+        if (cv::sum(binary.col(j))[0] > 0) {
+            right = j;
+            break;
+        }
+    }
+    
+    // 좌표 계산
+    center_x = center_x - left;
+    center_y = center_y - top;
+    
+    // 크롭된 이미지 반환
+    return gray(cv::Rect(left, top, right - left + 1, bottom - top + 1));
 }
 
 }

@@ -362,9 +362,10 @@ MusicalSymbol::operator+ (const MusicalSymbol& other) const {
         throw std::runtime_error(errorMessage);
     }
     
-    // 3. 악상기호 배치
-    // mainImage에 붙일 sumImage의 x, y 좌표를 수정함.
+    // 3. 배치에 이용될 subImage 배경 제거
+    subImage.image = Processing::Matrix::remove_padding(subImage.image, subImage.x, subImage.y);    // 배경 제거
     
+    // 4. 악상기호 배치
     if      (subImage.position & MS_TOP)
     {
         // 안쪽 배치
@@ -455,36 +456,27 @@ MusicalSymbol::operator+ (const MusicalSymbol& other) const {
     }
     else if (subImage.position & MS_LEFT)
     {
-        // TODO: 글리산도 악상기호도 배치가 가능하도록 수정해야함. 오선지를 제거 해야될 것 같은 느낌
-        // 안쪽 배치
-        if ((subImage.position & MS_IN) && (mainImage.edge[2] > mainImage.in[2]))
-        {
-            subImage.x += mainImage.staffPadding * ++(mainImage.in[2]);
-        }
-        // 바깥쪽 배치
-        else
-        {
-            // FIXME: 현재로써는 오선지 좌우 바깥쪽으로 악상기호가 배치될 일이 없어서 이렇게 해두었음.
-            subImage.x += mainImage.staffPadding * ++(mainImage.out[2]);
-        }
+        // sumImage.x += 누적 패딩 값 + 오선지 패딩 * 2 / 3 + 이미지 중심 좌표에서 오른쪽 크기
+        subImage.x += mainImage.pad[2] + mainImage.staffPadding * 2 / 3 + (subImage.image.cols - subImage.x);
+        
+        // 누적 패딩 += subImage 가로 크기 + 오선지 패딩
+        mainImage.pad[2] += subImage.image.cols + mainImage.staffPadding * 2 / 3 ;
     }
     else if (subImage.position & MS_RIGHT)
     {
-        // TODO: 글리산도 악상기호도 배치가 가능하도록 수정해야함. 오선지를 제거 해야될 것 같은 느낌
-        // 안쪽 배치
-        if ((subImage.position & MS_IN) && (mainImage.edge[3] > mainImage.in[3]))
-        {
-            subImage.x -= mainImage.staffPadding * ++(++mainImage.in[3]);
-        }
-        // 바깥쪽 배치
-        else
-        {
-            // FIXME: 현재로써는 오선지 좌우 바깥쪽으로 악상기호가 배치될 일이 없어서 이렇게 해두었음.
-            subImage.x -= mainImage.staffPadding * ++(++mainImage.out[3]);
-        }
+        // sumImage.x += 누적 패딩 값 + 오선지 패딩 + 이미지 중심 좌표에서 왼쪽 크기
+        subImage.x -= mainImage.pad[3] + mainImage.staffPadding + (subImage.x);
+        
+        // 누적 패딩 += subImage 가로 크기 + 오선지 패딩
+        mainImage.pad[3] -= subImage.image.cols + mainImage.staffPadding;
+    }
+    else
+    {
+        mainImage.pad[2] = (subImage.x) > (mainImage.pad[2]) ? (subImage.x) : (mainImage.pad[2]);
+        mainImage.pad[3] = (subImage.image.cols - subImage.x) > (mainImage.pad[3]) ? (subImage.image.cols - subImage.x) : (mainImage.pad[3]);
     }
     
-    // 4. 두 악상기호를 합치고 반환.
+    // 5. 두 악상기호를 합치고 반환.
     return mainImage & subImage;
 }
 
