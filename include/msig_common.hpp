@@ -56,6 +56,8 @@ namespace MSIG
     #define MS_STAFF  0b10000000
     #define MS_IN     0b00010000
     #define MS_OUT    0b00100000
+
+    // TODO: 에러 클래스와 해당 에러가 무슨 타입인지를 나타내는 에러 매크로 작성하기
 }
 
 #endif /* msig_common_hpp */

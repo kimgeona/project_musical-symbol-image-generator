@@ -38,6 +38,8 @@ public:
     Image(const std::filesystem::path& imagePath);
     Image(const Image& original, bool copyExclude, bool copyMultipleSelection);
 public:
+    bool operator<(const Image& other) const;
+public:
     void print_information();
 };
 
@@ -56,11 +58,14 @@ public:
     Folder(const Folder& original, bool copyFolders, bool copyImages);
 public:
     bool        operator<(const Folder& other) const;
-    void        operator()(const Folder& other);
+    int         operator()(const Folder& other);
     explicit    operator std::vector<Folder>() const;
-private:
+    // TODO: 작성 끝나면 private으로 바꾸기
+public:
     std::vector<Folder> __split();
     std::vector<Folder> __stretch();
+    void                __clean(bool recursive, bool keepImageData);
+    void                __clean_image_data(bool recursive, bool excludeList, bool multipleSelectionList);
     void                __calculate_all_combination(std::vector<std::vector<unsigned char>>& combinations, unsigned char numberOfThings);
     void                __save_rule(bool recursive=true);
 public:

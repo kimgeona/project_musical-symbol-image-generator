@@ -13,9 +13,9 @@ Image::Image(const std::filesystem::path& imagePath)
     this->groupName = "";
     
     // 1. imagePath가 올바른 이미지 경로인지 확인
-    // TODO: 이미지 확장자를 .png 말고 다른 이미지 파일로도 받을지 고민해보기.
-    if (!fs::exists(imagePath)                     ||
-        !fs::is_regular_file(imagePath)            ||
+    // FIXME: 이미지 확장자를 .png 말고 다른 이미지 파일로도 받을지 고민해보기.
+    if (!fs::exists(imagePath)                  ||
+        !fs::is_regular_file(imagePath)         ||
         imagePath.extension().string()!=".png")
     {
         std::string errorMessage = "MSIG::Algorithm::Image.Image() : \"" + imagePath.string() + "\"은 존재하지 않는 이미지입니다.";
@@ -25,10 +25,9 @@ Image::Image(const std::filesystem::path& imagePath)
     // 2. 이미지 주소 저장
     this->path = imagePath;
     
-    try
-    {
-        // 3. 이미지 데이터 불러오기
-        // TODO: 데이터들의 좌우 공백을 제거하여 값을 저장할 방법 생각하기.
+    // 3. 이미지 데이터 불러오기
+    try {
+        // FIXME: 데이터들의 좌우 공백을 제거하여 값을 저장할 방법 생각하기.
         std::string imageData = Utility::grep(imagePath.parent_path()/fs::path("__rule__.txt"), imagePath.filename().string());
         std::vector<std::string> splitedData;
         
@@ -60,26 +59,53 @@ Image::Image(const std::filesystem::path& imagePath)
             }
         }
         
+        // 3-3. 다중 선택 정보 저장
+        for (auto& s1 : Utility::split(splitedData.at(1), ","))
+        {
+            // 문자열에서 다중 선택 경로 추출
+            fs::path currentLevelPath = this->path.parent_path() / fs::path(s1);
+            
+            // currentLevel에서 폴더 존재 확인
+            if (fs::exists(currentLevelPath) &&
+                fs::is_directory(currentLevelPath))
+            {
+                // 다중 선택 정보에 경로 추가
+                this->multipleSelectionFolders.push_back(currentLevelPath);
+            }
+        }
+        
         // 3-3. 제외 정보 저장
         for (auto& s1 : Utility::split(splitedData.at(0), ","))
         {
+            // 문자열에서 제외 경로 추출
             fs::path stringToPath;
             for (auto& s2 : Utility::split(s1, "_")) {
                 stringToPath = stringToPath / fs::path(s2);
             }
-            stringToPath = this->path.parent_path() / stringToPath;
-            if (fs::exists(stringToPath) && (fs::is_directory(stringToPath) || (fs::is_regular_file(stringToPath) && stringToPath.extension().string()==".png"))) {
-                this->excludeFoldersAndImages.push_back(stringToPath);
+            fs::path currentLevelPath = this->path.parent_path() / stringToPath;
+            fs::path parentLevelPath = this->path.parent_path().parent_path() / stringToPath;
+            
+            // currentLevel에서 폴더 또는 이미지 존재 확인
+            if (fs::exists(currentLevelPath)                    &&
+                (fs::is_directory(currentLevelPath)             ||
+                 (fs::is_regular_file(currentLevelPath)         &&
+                  currentLevelPath.extension().string()==".png" &&
+                  currentLevelPath != this->path)))
+            {
+                // 제외 정보에 경로 추가
+                this->excludeFoldersAndImages.push_back(currentLevelPath);
             }
-        }
-        
-        // 3-4. 다중 선택 정보 저장
-        for (auto& s1 : Utility::split(splitedData.at(1), ","))
-        {
-            fs::path stringToPath = this->path.parent_path() / fs::path(s1);
-            if (fs::exists(stringToPath) && fs::is_directory(stringToPath)) {
-                this->multipleSelectionFolders.push_back(stringToPath);
-            }
+            
+            // parentLevel에서 폴더 또는 이미지 존재 확인
+            else if (fs::exists(parentLevelPath)                    &&
+                     (fs::is_directory(parentLevelPath)             ||
+                      (fs::is_regular_file(parentLevelPath)         &&
+                       parentLevelPath.extension().string()==".png" &&
+                       parentLevelPath != this->path)))
+             {
+                 // 제외 정보에 경로 추가
+                 this->excludeFoldersAndImages.push_back(parentLevelPath);
+             }
         }
     }
     catch (const std::out_of_range& e)
@@ -89,25 +115,16 @@ Image::Image(const std::filesystem::path& imagePath)
     }
     
     // 4. 불러온 이미지 데이터 검사
-    // 4-1. 제외 정보 중복 제거
-    // NOTE: __rule__.txt 작성된 데이터들이 정렬 되어있으면 좋겠다는 생각에 set<>을 이용하여 중복을 제거함. 만약 지금보다 빠른 성능이 요구된다면 unorderd_set<>을 이용할 것.
+    // 4-1. 중복 제거
     std::set<std::filesystem::path> tmp_sp_1(this->excludeFoldersAndImages.begin(), this->excludeFoldersAndImages.end());
-    this->excludeFoldersAndImages = std::vector<std::filesystem::path>(tmp_sp_1.begin(), tmp_sp_1.end());
-    
-    // 4-2. 제외 정보 (논리적인) 중복 제거
-    std::vector<std::filesystem::path> tmp_vp = this->excludeFoldersAndImages;
-    for (auto& p1 : tmp_vp) {
-        if (fs::is_regular_file(p1)) continue;
-        for (auto& p2 : tmp_vp)
-            if (fs::is_regular_file(p2) && p1 == p2.parent_path())
-                this->excludeFoldersAndImages.erase(std::find(this->excludeFoldersAndImages.begin(), this->excludeFoldersAndImages.end(), p2));
-    }
-    
-    // FIXME: 만약 제외 정보에서 특정 폴더내 모든 이미지가 선택되었다면 제외 정보를 특정 폴더 이름으로 대체하는 코드를 작성해야함.
-    
-    // 4-3. 다중 선택 정보 중복 제거
     std::set<std::filesystem::path> tmp_sp_2(this->multipleSelectionFolders.begin(), this->multipleSelectionFolders.end());
+    this->excludeFoldersAndImages = std::vector<std::filesystem::path>(tmp_sp_1.begin(), tmp_sp_1.end());
     this->multipleSelectionFolders = std::vector<std::filesystem::path>(tmp_sp_2.begin(), tmp_sp_2.end());
+    
+    // FIXME: 특정 폴더 내에 있는 이미지들이 전부 제외 정보로 등록되어있는지 확인해봐야 될까? 아니면 안해도 될까?
+    
+    // 4-2. 제외 정보와 다중 선택 정보 교집합 검사. 교집합이 있으면 안됨.
+    // NOTE: 어짜피 다중 선택 정보로 중복해서 뽑혔다고 하여도 제외 정보로 인해 없어지게됨. 그래서 코드 작성 건너뜀.
 }
 
 Image::Image(const Image& original, bool copyExclude, bool copyMultipleSelection)
@@ -126,6 +143,11 @@ Image::Image(const Image& original, bool copyExclude, bool copyMultipleSelection
     // 2. 이미지들 복사
     if (copyMultipleSelection)
         this->multipleSelectionFolders = original.multipleSelectionFolders;
+}
+
+bool
+Image::operator<(const Image& other) const {
+    return this->path < other.path;
 }
 
 void
