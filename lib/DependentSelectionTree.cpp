@@ -4,10 +4,10 @@
 namespace MSIG {
 namespace Algorithm {
 
-DependentSelectionTree::DependentSelectionTree(const std::filesystem::path& defaultDatasetDirectory, double selectionProbabilityControl) :
+DependentSelectionTree::DependentSelectionTree(const std::filesystem::path& defaultDatasetDirectory, double declineRate) :
 generator(std::random_device()()),
 distribution(0.0, 1.0),
-originaFolder(defaultDatasetDirectory, selectionProbabilityControl)
+originaFolder(defaultDatasetDirectory, declineRate)
 {
     // 1. 폴더 논리적 재구성 실행
     originaFolder.reconstruction(reconstructedFolders);

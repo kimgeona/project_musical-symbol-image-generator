@@ -122,7 +122,7 @@ Canvas::__making_image(std::filesystem::path imagePath, std::deque<std::vector<s
             mutex_dvp.unlock();
         
         // 악상기호 조합
-        MSIG::Algorithm::MusicalSymbol ms(vp[0]);
+        MSIG::Algorithm::MusicalSymbol ms(vp[0], false);
         for (size_t i=1; i<vp.size(); i++) {
             ms = ms + MSIG::Algorithm::MusicalSymbol(vp[i], false, this->imageWidth, this->imageHeight);
         }
@@ -190,13 +190,13 @@ Canvas::pick() {
     namespace fs = std::filesystem;
     
     // 1. train 데이터셋
-    dstTrain.pick(selectionListTrain);
+    dstTrain.pick(selectionListTrain, false, true);
     
     // 2. validation 데이터셋
-    dstValidation.pick(selectionListValidation);
+    dstValidation.pick(selectionListValidation, false, true);
     
     // 3. test 데이터셋
-    dstTest.pick(selectionListTest);
+    dstTest.pick(selectionListTest, false, true);
 }
 
 void
@@ -204,10 +204,10 @@ Canvas::draw_thread(int numThreads) {
     namespace fs = std::filesystem;
     
     // *. 기존 데이터셋 지우기
-    if (!fs::exists(this->newDatasetPath))
+    if (fs::exists(this->newDatasetPath))
     {
-        std::cout << "  - 존재하는 데이터셋 폴더 \"" << this->newDatasetPath << "\"를 지웁니다." << std::endl;
-        fs::remove(this->newDatasetPath);
+        std::cout << "  - 존재하는 데이터셋 폴더 \"" << this->newDatasetPath.string() << "\"를 지웁니다." << std::endl;
+        fs::remove_all(this->newDatasetPath);
     }
     
     // 1. train 데이터셋
@@ -228,10 +228,10 @@ Canvas::draw() {
     namespace fs = std::filesystem;
     
     // *. 기존 데이터셋 지우기
-    if (!fs::exists(this->newDatasetPath))
+    if (fs::exists(this->newDatasetPath))
     {
-        std::cout << "  - 존재하는 데이터셋 폴더 \"" << this->newDatasetPath << "\"를 지웁니다." << std::endl;
-        fs::remove(this->newDatasetPath);
+        std::cout << "  - 존재하는 데이터셋 폴더 \"" << this->newDatasetPath.string() << "\"를 지웁니다." << std::endl;
+        fs::remove_all(this->newDatasetPath);
     }
     
     // 1. train 데이터셋

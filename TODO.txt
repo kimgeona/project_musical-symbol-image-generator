@@ -1,5 +1,4 @@
 == TODO ==
-- MSIG::Algorithm::MusicalSymbol 클래스의 오선지 안쪽 좌우 배치방법 문제 해결하기
 - MSIG::Processing::Brush 클래스 작성 완료하기
 - MSIG::Rendering::Canvas::draw() 함수에 Dynamic Programming 기법 적용 하여 데이터셋 생성 속도 증가시키기.
 
@@ -19,6 +18,7 @@
 - 예전에는 DEBUG 메그로를 이용해 프로그램을 디버깅한 것 같은데, 어떤 방식으로 DEBUG을 사용한 것일까? 지금 나는 컴파일하고 BreakPoint를 걸어서 런타임 환경에서 직접 변수들을 확인하고 있는데.. 과거에는 어떤 방식으로 디버깅을 했을까? 과연 이게 지금도 쓸만할까..?
 
 == DONE ============================================================
+- MSIG::Algorithm::MusicalSymbol 클래스의 오선지 안쪽 좌우 배치방법 문제 해결하기
 - MSIG::Rendering::Canvas::draw_thread() 함수 작성하기
 - 메인 프로그램 작성하기
 - 데이터셋을 train, validation, test 이렇게 세개 만들도록 코드 수정

@@ -80,12 +80,12 @@ private:
     std::mutex mutex_vF;
     std::mutex mutex_vvp;
 public:
-    DependentSelectionTree(const std::filesystem::path& defaultDatasetDirectory, double selectionProbabilityControl=1.0);
+    DependentSelectionTree(const std::filesystem::path& defaultDatasetDirectory, double declineRate=1.0);
 private:
     double  __generate_probability();
 public:
-    void    pick_thread(std::deque<std::vector<std::filesystem::path>>& vvp, bool printStatus=false, bool randomPick=true, int numThreads=-1);
-    void    pick(std::deque<std::vector<std::filesystem::path>>& vvp, bool printStatus=false, bool randomPick=true);
+    void    pick_thread(std::deque<std::vector<std::filesystem::path>>& vvp, bool printStatus, bool randomPick, int numThreads=-1);
+    void    pick(std::deque<std::vector<std::filesystem::path>>& vvp, bool printStatus, bool randomPick);
     void    get_all_images_name(std::vector<std::string>& imagesNames);
 };
 
@@ -155,7 +155,7 @@ public:
     int  out [4];                                   // 오선지 밖
     int  pad [4];                                   // 부가적인 패딩값
 public:
-    MusicalSymbol(std::filesystem::path imagePath, bool makingConfigData=false, int width=192, int height=512, int staffPadding=26);
+    MusicalSymbol(std::filesystem::path imagePath, bool makingConfigData, int width=192, int height=512, int staffPadding=26);
 public:
     explicit        operator bool() const;
     MusicalSymbol   operator& (const MusicalSymbol& other) const;
