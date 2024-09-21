@@ -1,8 +1,8 @@
 
 # group
-staff-top=~
-staff-middle=~
 staff-bottom=~
+staff-middle=~
+staff-top=~
 
 # rule
 staff-a3-0-2.png=staff-bottom

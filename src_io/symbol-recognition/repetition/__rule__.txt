@@ -3,5 +3,5 @@
 
 # rule
 repetition-simile-multi.png=~
-repetition-slash.png=~
 repetition-simile.png=~
+repetition-slash.png=~

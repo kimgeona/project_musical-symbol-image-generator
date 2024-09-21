@@ -2,11 +2,11 @@
 # group
 
 # rule
-repetition-volta-end-open.png=~
-repetition-segno.png=~
-repetition-volta-start-2.png=~
-repetition-volta-end-close.png=~
-repetition-volta-start-1.png=~
 repetition-coda.png=~
 repetition-da-capo.png=~
 repetition-dal-segno.png=~
+repetition-segno.png=~
+repetition-volta-end-close.png=~
+repetition-volta-end-open.png=~
+repetition-volta-start-1.png=~
+repetition-volta-start-2.png=~
