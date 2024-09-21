@@ -3,9 +3,9 @@
 
 # rule
 articulation-accent.png=~
-articulation-staccato.png=~
-articulation-marcato-up.png=~
 articulation-fermata-up.png=~
-articulation-tenuto.png=~
+articulation-marcato-up.png=~
 articulation-portato.png=~
 articulation-staccatissimo.png=~
+articulation-staccato.png=~
+articulation-tenuto.png=~

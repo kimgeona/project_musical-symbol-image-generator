@@ -2,12 +2,12 @@
 # group
 
 # rule
-ornament-tril-plus.png=~
 ornament-acciaccatura.png=~
-ornament-tril.png=~
-ornament-mordent-upper.png=~
-ornament-mordent-lower.png=~
-ornament-turn.png=~
-ornament-turn-slash.png=~
 ornament-appoggiatura.png=~
+ornament-mordent-lower.png=~
+ornament-mordent-upper.png=~
+ornament-tril-plus.png=~
+ornament-tril.png=~
 ornament-turn-inverted.png=~
+ornament-turn-slash.png=~
+ornament-turn.png=~

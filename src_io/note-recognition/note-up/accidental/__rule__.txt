@@ -2,8 +2,8 @@
 # group
 
 # rule
-accidental-sharp.png=~
 accidental-flat-double.png=~
-accidental-sharp-double.png=~
-accidental-natural.png=~
 accidental-flat.png=~
+accidental-natural.png=~
+accidental-sharp-double.png=~
+accidental-sharp.png=~

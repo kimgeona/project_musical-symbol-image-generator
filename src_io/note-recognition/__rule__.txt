@@ -1,15 +1,29 @@
 
 # group
+staff-top=~
+staff-middle=~
+staff-bottom=~
 
 # rule
-staff-a4-0-0.png=~
-staff-f5-0-0.png=~
-staff-g5-0-0.png=~
-staff-g4-0-0.png=~
-staff-f4-0-0.png=~
-staff-c5-0-0.png=~
-staff-b4-0-0.png=~
-staff-d4-0-0.png=~
-staff-e4-0-0.png=~
-staff-e5-0-0.png=~
-staff-d5-0-0.png=~
+staff-a3-0-2.png=staff-bottom
+staff-a4-0-0.png=staff-middle
+staff-a5-1-0.png=staff-top
+staff-b3-0-1.png=staff-bottom
+staff-b4-0-0.png=staff-middle
+staff-b5-1-0.png=staff-top
+staff-c4-0-1.png=staff-bottom
+staff-c5-0-0.png=staff-middle
+staff-c6-2-0.png=staff-top
+staff-d4-0-0.png=staff-bottom
+staff-d5-0-0.png=staff-middle
+staff-d6-2-0.png=staff-top
+staff-e4-0-0.png=staff-middle
+staff-e5-0-0.png=staff-middle
+staff-e6-3-0.png=staff-top
+staff-f4-0-0.png=staff-middle
+staff-f5-0-0.png=staff-middle
+staff-f6-3-0.png=staff-top
+staff-g3-0-2.png=staff-bottom
+staff-g4-0-0.png=staff-middle
+staff-g5-0-0.png=staff-top
+staff-g6-4-0.png=staff-top
