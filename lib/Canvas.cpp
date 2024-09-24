@@ -27,35 +27,73 @@ dstTest(defaultDataset, testRate)
         this->imageHeight = imageHeight;
     }
     else {
-        
+        throw std::runtime_error("MSIG::Rendering::Canvas::Canvas() : 이미지 크기는 0보다 크게 지정해야 합니다.");
     }
     
-    // 5. 현재 스레드(메인) ID 저장
-    mainThreadID = std::this_thread::get_id();
+    // 5. MuscialSymbols 전부 로드하기
+    for (auto& p : fs::recursive_directory_iterator(defaultDataset)) {
+        if (fs::exists(p.path())                  &&
+            fs::is_regular_file(p.path())         &&
+            p.path().extension().string()==".png")
+        {
+            musicalSymbols.emplace(p.path(), Algorithm::MusicalSymbol(p.path(), true, this->imageWidth, this->imageHeight));
+        }
+    }
 }
 
 void
 Canvas::__making_csv(std::filesystem::path csvPath, const std::deque<std::vector<std::filesystem::path>>& selectionList) {
     namespace fs = std::filesystem;
     
-    // 파일 열기
-    if (!fs::exists(csvPath.parent_path())) {
-        fs::create_directories(csvPath.parent_path());
+    // static 변수
+    static size_t i = 0;
+    static std::string csvPathString = "";
+    
+    //
+    if (i==0)
+    {
+        csvPathString = csvPath.string();
     }
-    std::fstream csv(csvPath.string(), std::ios::out);
+    else if (csvPathString != csvPath.string())
+    {
+        i = 0;
+        csvPathString = csvPath.string();
+    }
+    
+    // 파일 열기
+    std::fstream csv;
+    if (i==0)
+    {
+        // 폴더 생성
+        if (!fs::exists(csvPath.parent_path())) {
+            fs::create_directories(csvPath.parent_path());
+        }
+        // 파일 생성하고 쓰기
+        csv = std::fstream(csvPath.string(), std::ios::out);
+    }
+    else
+    {
+        // 파일 맨 뒤에 쓰기
+        csv = std::fstream(csvPath.string(), std::ios::out|std::ios::app);
+    }
     if (!csv)
     {
         throw std::runtime_error("MSIG::Rendering::Canvas::__making_csv() : CSV 파일을 쓸 수 없습니다.");
     }
     
+    
     // csv 헤더 생성
-    csv << "name";
-    for (auto& s : this->imageNames)
-        csv << "," << s;
-    csv << std::endl;
+    if (i==0)
+    {
+        csv << "name";
+        // TODO: YOLO 형식으로 csv 헤더 다시 작성해야함
+        for (auto& s : this->imageNames)
+            csv << "," << s;
+        csv << std::endl;
+    }
     
     // csv 데이터 쓰기
-    for (size_t i=0; i<selectionList.size(); i++)
+    for (size_t pre=i+selectionList.size(); i<pre; i++)
     {
         csv << __labeling(std::to_string(i)+".png", selectionList[i]) << std::endl;
     }
@@ -63,7 +101,7 @@ Canvas::__making_csv(std::filesystem::path csvPath, const std::deque<std::vector
 }
 
 void
-Canvas::__making_image_thread(std::filesystem::path imagePath, std::deque<std::vector<std::filesystem::path>> &selectionList, int numThreads) {
+Canvas::__making_image(std::filesystem::path imagePath, std::deque<std::vector<std::filesystem::path>> &selectionList, int numThreads) {
     namespace fs = std::filesystem;
     
     // 1. 현재 컴퓨터의 CPU 갯수 구하기
@@ -76,7 +114,7 @@ Canvas::__making_image_thread(std::filesystem::path imagePath, std::deque<std::v
     
     // 2. 쓰레딩 시작
     for (size_t i=0; i<numberOfCPU; i++) {
-        threads.emplace_back(&Canvas::__making_image, this, imagePath, std::ref(selectionList));
+        threads.emplace_back(&Canvas::__thread_function, this, imagePath, std::ref(selectionList));
     }
     
     // 3. 쓰레딩 작업 기다리기
@@ -86,7 +124,7 @@ Canvas::__making_image_thread(std::filesystem::path imagePath, std::deque<std::v
 }
 
 void
-Canvas::__making_image(std::filesystem::path imagePath, std::deque<std::vector<std::filesystem::path>>& selectionList) {
+Canvas::__thread_function(std::filesystem::path imagePath, std::deque<std::vector<std::filesystem::path>>& selectionList) {
     namespace fs = std::filesystem;
     
     // FIXME: 나중에 dynamic programming을 적용시켜서 더 빠르게 처리해 보자.
@@ -94,15 +132,11 @@ Canvas::__making_image(std::filesystem::path imagePath, std::deque<std::vector<s
     // *. 현재까지 생성한 이미지 갯수
     static size_t count = 0;
     
-    // *. 현재 스레드 ID 저장
-    std::thread::id thisThreadID = std::this_thread::get_id();
-    
     // 이미지 생성 시작
     while (true)
     {
         // 공유자원 잠금
-        if (mainThreadID != thisThreadID)
-            mutex_dvp.lock();
+        mutex_dvp.lock();
         
         // 남은 작업량 확인
         if (selectionList.empty()) {
@@ -118,13 +152,12 @@ Canvas::__making_image(std::filesystem::path imagePath, std::deque<std::vector<s
         size_t thisCount = count++;
         
         // 공유자원 잠금 해제
-        if (mainThreadID != thisThreadID)
-            mutex_dvp.unlock();
+        mutex_dvp.unlock();
         
         // 악상기호 조합
-        MSIG::Algorithm::MusicalSymbol ms(vp[0], false);
+        MSIG::Algorithm::MusicalSymbol ms = musicalSymbols.at(vp[0]);
         for (size_t i=1; i<vp.size(); i++) {
-            ms = ms + MSIG::Algorithm::MusicalSymbol(vp[i], false, this->imageWidth, this->imageHeight);
+            ms = ms + musicalSymbols.at(vp[i]);
         }
         
         // 악상기호 이미지 구하기
@@ -147,6 +180,8 @@ Canvas::__making_image(std::filesystem::path imagePath, std::deque<std::vector<s
 
 std::string
 Canvas::__labeling(std::string name, const std::vector<std::filesystem::path>& vp) {
+    // TODO: YOLO 형식으로 코드 다시 작성해야함
+    
     // 이미지 이름들 복사본
     std::vector<std::string> imageNamesCopy = this->imageNames;
     
@@ -172,35 +207,7 @@ Canvas::__labeling(std::string name, const std::vector<std::filesystem::path>& v
 }
 
 void
-Canvas::pick_thread(int numThreads) {
-    namespace fs = std::filesystem;
-    
-    // 1. train 데이터셋
-    dstTrain.pick_thread(selectionListTrain, false, true, numThreads);
-    
-    // 2. validation 데이터셋
-    dstValidation.pick_thread(selectionListValidation, false, true, numThreads);
-    
-    // 3. test 데이터셋
-    dstTest.pick_thread(selectionListTest, false, true, numThreads);
-}
-
-void
-Canvas::pick() {
-    namespace fs = std::filesystem;
-    
-    // 1. train 데이터셋
-    dstTrain.pick(selectionListTrain, false, true);
-    
-    // 2. validation 데이터셋
-    dstValidation.pick(selectionListValidation, false, true);
-    
-    // 3. test 데이터셋
-    dstTest.pick(selectionListTest, false, true);
-}
-
-void
-Canvas::draw_thread(int numThreads) {
+Canvas::draw(int numThreads) {
     namespace fs = std::filesystem;
     
     // *. 기존 데이터셋 지우기
@@ -210,41 +217,47 @@ Canvas::draw_thread(int numThreads) {
         fs::remove_all(this->newDatasetPath);
     }
     
-    // 1. train 데이터셋
-    __making_csv(newDatasetPath/fs::path("train")/fs::path("label.csv"), selectionListTrain);   // 악상기호 데이터셋 레이블 생성
-    __making_image_thread(newDatasetPath/fs::path("train"), selectionListTrain);                // 악상기호 이미지 생성 시작
-    
-    // 2. validation 데이터셋
-    __making_csv(newDatasetPath/fs::path("validation")/fs::path("label.csv"), selectionListValidation);
-    __making_image_thread(newDatasetPath/fs::path("validation"), selectionListValidation);
-    
-    // 3. test 데이터셋
-    __making_csv(newDatasetPath/fs::path("test")/fs::path("label.csv"), selectionListTest);
-    __making_image_thread(newDatasetPath/fs::path("test"), selectionListTest);
-}
-
-void
-Canvas::draw() {
-    namespace fs = std::filesystem;
-    
-    // *. 기존 데이터셋 지우기
-    if (fs::exists(this->newDatasetPath))
-    {
-        std::cout << "  - 존재하는 데이터셋 폴더 \"" << this->newDatasetPath.string() << "\"를 지웁니다." << std::endl;
-        fs::remove_all(this->newDatasetPath);
+    // Train
+    std::cout << "  - Train 데이터셋을 생성합니다." << std::endl;
+    dstTrain.reconstruction();
+    while (true) {
+        // 악상기호 조합 뽑기
+        dstTrain.pick(selectionListTrain, true);
+        if (selectionListTrain.empty()) {
+            break;
+        }
+        // 악상기호 데이터셋 생성
+        __making_csv(newDatasetPath/fs::path("train")/fs::path("label.csv"), selectionListTrain);   // 악상기호 데이터셋 레이블 생성
+        __making_image(newDatasetPath/fs::path("train"), selectionListTrain, numThreads);           // 악상기호 이미지 생성 시작
     }
     
-    // 1. train 데이터셋
-    __making_csv(newDatasetPath/fs::path("train")/fs::path("label.csv"), selectionListTrain);   // 악상기호 데이터셋 레이블 생성
-    __making_image(newDatasetPath/fs::path("train"), selectionListTrain);                       // 악상기호 이미지 생성 시작
+    // Validation
+    std::cout << "  - Validation 데이터셋을 생성합니다." << std::endl;
+    dstValidation.reconstruction();
+    while (true) {
+        // 악상기호 조합 뽑기
+        dstValidation.pick(selectionListValidation, true);
+        if (selectionListValidation.empty()) {
+            break;
+        }
+        // 악상기호 데이터셋 생성
+        __making_csv(newDatasetPath/fs::path("validation")/fs::path("label.csv"), selectionListValidation);
+        __making_image(newDatasetPath/fs::path("validation"), selectionListValidation, numThreads);
+    }
     
-    // 2. validation 데이터셋
-    __making_csv(newDatasetPath/fs::path("validation")/fs::path("label.csv"), selectionListValidation);
-    __making_image(newDatasetPath/fs::path("validation"), selectionListValidation);
-    
-    // 3. test 데이터셋
-    __making_csv(newDatasetPath/fs::path("test")/fs::path("label.csv"), selectionListTest);
-    __making_image(newDatasetPath/fs::path("test"), selectionListTest);
+    // Test
+    std::cout << "  - Test 데이터셋을 생성합니다." << std::endl;
+    dstTest.reconstruction();
+    while (true) {
+        // 악상기호 조합 뽑기
+        dstTest.pick(selectionListTest, true);
+        if (selectionListTest.empty()) {
+            break;
+        }
+        // 악상기호 데이터셋 생성
+        __making_csv(newDatasetPath/fs::path("test")/fs::path("label.csv"), selectionListTest);
+        __making_image(newDatasetPath/fs::path("test"), selectionListTest, numThreads);
+    }
 }
 
 }

@@ -137,14 +137,22 @@ Folder::operator<(const Folder& other) const {
 
 int
 Folder::operator()(const Folder& other) {
+    // *. 분할된 폴더만 해당 연산자를 사용할 수 있음
+    if (!this->splited) {
+        std::string errorMessage = "MSIG::Algorithm::Folder.operator() : 분할되지 않은 폴더는 연결 연산자를 사용할 수 없습니다.";
+        throw std::runtime_error(errorMessage);
+    }
+    
     if (folders.empty()) {
-        // 1. 제외 대상 제거(정보까지 제거)
+        // 검사할 폴더
         Folder unverifiedFolder = other;
-        // 1-1. 제외 대상(폴더)이 삽입된 경우, -1 리턴
+        
+        // 제외 대상 폴더가 삽입된 경우, -1 리턴
         if (std::find(images[0].excludeFoldersAndImages.begin(), images[0].excludeFoldersAndImages.end(), unverifiedFolder.path)!=images[0].excludeFoldersAndImages.end()) {
             return -1;
         }
-        // 1-2. 제외 대상(이미지)이 삽입된 경우, 전부 제거
+        
+        // 제외 대상 이미지가 삽입된 경우, 전부 제거
         std::vector<Image> newImages;
         for (auto& image : unverifiedFolder.images) {
             if (std::find(images[0].excludeFoldersAndImages.begin(), images[0].excludeFoldersAndImages.end(), image.path)==images[0].excludeFoldersAndImages.end()) {
@@ -152,17 +160,33 @@ Folder::operator()(const Folder& other) {
             }
         }
         unverifiedFolder.images = newImages;
-        // 1-3. 만약 이미지 제거 후 폴더가 비면 return -1;
+        
+        // other에 이미지가 비어있으면, -1 리턴
         if (unverifiedFolder.images.empty()) {
             return -1;
         }
         
-        // 2. 정상 삽입
-        folders.push_back(other);
+        // this의 제외 조건 other에게 상속 시키기
+        for (auto& otherImage : unverifiedFolder.images) {
+            // 제외 조건 집합
+            std::set<std::filesystem::path> cascadedExcludeList;
+            // 제외 조건 합치기
+            for (auto& p : otherImage.excludeFoldersAndImages) {
+                cascadedExcludeList.insert(p);
+            }
+            for (auto& p : this->images[0].excludeFoldersAndImages) {
+                cascadedExcludeList.insert(p);
+            }
+            // 합쳐진 제외 조건 저장
+            otherImage.excludeFoldersAndImages = std::vector<std::filesystem::path>(cascadedExcludeList.begin(), cascadedExcludeList.end());
+        }
+        
+        // 폴더 연결
+        folders.push_back(unverifiedFolder);
         return 0;
     }
     else if (folders.size() > 1) {
-        std::string errorMessage = "MSIG::Algorithm::Folder.operator() : 일렬로 연결된 폴더에만 새로운 폴더를 추가할 수 있습니다.";
+        std::string errorMessage = "MSIG::Algorithm::Folder.operator() : 하위 폴더가 하나인 폴더에만 새로운 폴더를 연결할 수 있습니다.";
         throw std::runtime_error(errorMessage);
     }
     else {
@@ -192,7 +216,6 @@ Folder::__split() {
         setForExclude.insert(image.excludeFoldersAndImages);
         setForMultipleSelection.insert(image.multipleSelectionFolders);
     }
-    
     // 2-2. 분할 그룹에 따라 분할
     std::vector<Folder> splitedFolders;
     std::vector<std::vector<std::filesystem::path>> vectorForExclude(setForExclude.begin(), setForExclude.end());
@@ -218,7 +241,7 @@ Folder::__split() {
             splitedFolders.push_back(newFolder);
     }
     
-    // 3. 분할된 폴더 구조 체크
+    // 3. 분할된 폴더 구조 검사
     // 3-1. 다중 선택 폴더에 저장 되어있는 폴더들을 "단일 선택 폴더"와, "다중 선택 폴더"로 나누어 분리 저장
     // test* ─┬─ a* ─┬─ e
     //        │      ├─ f
@@ -232,18 +255,18 @@ Folder::__split() {
     //        │      ├─ f
     //        │      └─ g
     //        ├─ b
-    //        └─ d*
+    //        └─ b*
     std::vector<Folder> splitedFolders2;
     for (auto& newFolder : splitedFolders)
     {
-        // 3-2-1. newFolder.images의 다중 선택 항목들 조사
+        // 3-1-1. newFolder.images의 다중 선택 항목들 조사
         std::set<std::filesystem::path> multipleSelectionList;
         for (auto& image : newFolder.images)
         for (auto& p : image.multipleSelectionFolders) {
             multipleSelectionList.insert(p);
         }
         
-        // 3-2-2. newFolder.folders의 폴더들을 "단일 선택 폴더"와 "다중 선택 폴더"로 분리
+        // 3-1-2. newFolder.folders의 폴더들을 "단일 선택 폴더"와 "다중 선택 폴더"로 분리
         Folder singleSelectionFolder(newFolder, false, true);
         Folder multipleSelectionFolder(newFolder, false, true);
         for (auto& folder : newFolder.folders)
@@ -254,12 +277,12 @@ Folder::__split() {
                 singleSelectionFolder.folders.push_back(folder);
         }
         
-        // 3-2-3. "단일 선택 폴더"에 저장된 이미지들의 다중 선택 데이터 초기화
+        // 3-1-3. "단일 선택 폴더"에 저장된 이미지들의 다중 선택 데이터 초기화
         for (auto& image : singleSelectionFolder.images) {
             image.multipleSelectionFolders.clear();
         }
         
-        // 3-2-4. newFolder 에서 분리된 "단일 선택 폴더"들과 "다중 선택 폴더"들 저장
+        // 3-1-4. newFolder 에서 분리된 "단일 선택 폴더"들과 "다중 선택 폴더"들 저장
         if (singleSelectionFolder.folders.empty() ||
             multipleSelectionFolder.folders.empty())
         {
@@ -273,7 +296,6 @@ Folder::__split() {
             splitedFolders2.push_back(multipleSelectionFolder);
         }
     }
-    
     // 3-2. "다중 선택 폴더" 내부에 "다중 선택으로 인해 분할된 폴더=(동일한 path를 가지는 폴더)"가 존재하면 따로 분리 보관
     // test* ─┬─ a ─┬─ e
     //        │     ├─ f
@@ -303,13 +325,13 @@ Folder::__split() {
     std::vector<Folder> splitedFolders3;
     for (auto& newFolder : splitedFolders2)
     {
-        // 3-1. newFolder가 "다중 선택 폴더"가 아니면 건너뜀.
+        // 3-2-1. newFolder가 "다중 선택 폴더"가 아니면 건너뜀.
         if (newFolder.images[0].multipleSelectionFolders.empty()) {
             splitedFolders3.push_back(newFolder);
             continue;
         }
         
-        // 3-2. newFolder.folders를 path를 기준으로 분리
+        // 3-2-2. newFolder.folders를 path를 기준으로 분리
         // {fa, fa, fa*, fb, fb, fb*} -> a={fa, fa, fa*}, b={fb, fb, fb*}
         std::set<std::filesystem::path> paths;
         for (auto& folder : newFolder.folders) {
@@ -322,13 +344,13 @@ Folder::__split() {
                 pairs[p].push_back(folder);
         }
         
-        // 3-3. 나올 수 있는 폴더 조합 수 모두 계산
+        // 3-2-3. 나올 수 있는 폴더 조합 수 모두 계산
         // a={fa, fa, fa*}, b={fb, fb, fb*} -> 3 * 3 -> 9
         size_t combinationCount = 1;
         for (auto& [p, vF] : pairs)
             combinationCount = combinationCount * vF.size();
         
-        // 3-4. 폴더들을 조합하여 newFolder들 생성
+        // 3-2-4. 폴더들을 조합하여 newFolder들 생성
         for (size_t i=0; i<combinationCount; i++) {
             Folder folder(newFolder, false, true);
             for (auto& [p, vF] : pairs) {
@@ -337,18 +359,17 @@ Folder::__split() {
             splitedFolders3.push_back(folder);
         }
     }
-    
     // 3-3. 제외 대상 제거
     for (auto& newFolder : splitedFolders3)
     {
-        newFolder.__clean(false, true);
+        newFolder.__pruning(false, true);
     }
     
     // 4. 완성된 분할된 폴더 반환.
     return splitedFolders3;
 }
 
-std::vector<Folder>
+void
 Folder::__stretch() {
     namespace fs = std::filesystem;
     
@@ -364,103 +385,57 @@ Folder::__stretch() {
     
     // 1. 하위 폴더가 존재하지 않는 경우
     if (this->folders.empty()) {
-        // 현재 폴더만 반환
-        return std::vector<Folder>({Folder(*this, false, true)});
+        return Folder(*this, false, true);
     }
     
-    // 2. 단일 선택, 중복 선택에 따라 다르게 진행
-    std::vector<Folder> stretchedFolders;
-    if (this->images[0].multipleSelectionFolders.empty())
+    // 2. 하위 폴더들 먼저 stretch
+    for (auto& folder : this->folders)
+        folder.__stretch();
+    
+    // 3. 중복 선택 폴더인 경우 stretch 수행
+    if (!(this->images[0].multipleSelectionFolders.empty()))
     {
-        // 2-1-1. 단일 선택은 하위 폴더와 현재 폴더를 1대1로 연결
-        for (auto& folder : this->folders)
-        for (auto& vF : folder.__stretch()) {
-            stretchedFolders.emplace_back(*this, false, true);
-            stretchedFolders[stretchedFolders.size()-1].folders.push_back(vF);
-        }
-        
-        // 2-1-2. 자기 폴더만 추가 (하위 폴더가 없는것 취급)
-        //stretchedFolders.emplace_back(*this, false, true);
-    }
-    else
-    {
-        // 2-2. 다중 선택은 하위 폴더들 중복해서 연결
-        // 2-2-1. 하위 폴더에서 모든 폴더 조합 뽑기
-        std::vector<std::vector<Folder>> vvF;
-        for (auto& folder : this->folders)
-            vvF.push_back(folder.__stretch());
-        
-        // 2-2-2. 가능한 모든 폴더 조합 갯수 구하기
-        // {a,b,c} -> (a), (b), (c),
+        // 3-1. 가능한 모든 폴더 조합 갯수 구하기
+        // (a,b,c) <- (a), (b), (c),
         //            (a,b), (b,c), (a,c), (b, a), (c, a), (c, b)
         //            (a,b,c), (a,c,b), (b,a,c), (b,c,a), (c,a,b), (c,b,a)
         std::vector<std::vector<unsigned char>> combinations;
         this->__calculate_all_combination(combinations, (unsigned char)this->folders.size());
         
-        // 2-2-3. 하위 폴더와 현재 폴더들을 연결
-        // (a,b,c) <- [a), (b), (c), (a,b), (b,c), ..., (a,b,c), (a,c,b), ..., (c,b,a)]
+        // 3-2. 뽑힌 조합대로 폴더들 새로 구성
+        std::vector<Folder> stretchedFolders;
         for (auto& combination : combinations) {
-            // 현재 폴더 조합을 몇 번 반복할 것인지 계산
-            // (a,b,c) * ?
-            size_t count = 1;
-            for (auto& index : combination) {
-                count = count * vvF[index].size();
-            }
-            // 현재 폴더 조합에서 반복 시작
-            // (a,b,c), (a,b,c), ..., (a,b,c)
-            for (size_t i=0; i<count; i++)
-            {
-                // 현재 폴더 복사본 생성
-                Folder newFolder(*this, false, true);
-                size_t discount = 1;
-                
-                // 잘못 생성 여부 : 제외 대상 폴더가 삽입된 경우와 제외대상 이미지를 전부 제거했는데 폴더가 비어버리는 경우
-                int wrong = 0;
-                
-                // 하위 폴더 뽑기
-                // (a1, b1, c1) <--(pick_by_index)-- (a{a1,a2,...}, b{b1,b2,...}, c{c1,c2,...})
-                for (size_t j=0; j<combination.size(); j++)
-                {
-                    if (j>0) {
-                        discount = discount * vvF[combination[j-1]].size();
-                    }
-                    
-                    // 폴더 연결
-                    wrong = newFolder(Folder(vvF[combination[j]][(i/discount) % vvF[combination[j]].size()], true, true));
-                    
-                    // 잘못 생성되면 중지
-                    if (wrong) {
-                        break;
-                    }
-                }
-                
-                // 잘못 생성된건 건너뛰기
+            // 첫 번째 폴더 생성
+            Folder pickedFolder(this->folders[combination[0]], true, true);
+            // 폴더들 연결
+            int wrong = 0;
+            for (size_t i=1; i<combination.size(); i++) {
+                wrong = pickedFolder(this->folders[combination[i]]);
+                // 잘못 연결 확인
                 if (wrong) {
-                    continue;
+                    break;
                 }
-                
-                // 생성된 목록에 추가
-                stretchedFolders.push_back(newFolder);
             }
+            // 잘못 연결(제외조건 위반 연결)되면 이번 연결은 건너뛰기
+            if (wrong) {
+                continue;
+            }
+            // 생성된 목록에 추가
+            stretchedFolders.push_back(pickedFolder);
         }
+        
+        // 3-3. 제외 대상 제거
+        for (auto& folder : stretchedFolders) {
+            folder.__pruning(true, true);
+        }
+        
+        // 3-4. 기존 folders를 stretchedFolders로 교체
+        this->folders = stretchedFolders;
     }
-    
-    // 3. 제외 대상 제거
-    for (auto& newFolder : stretchedFolders) {
-        newFolder.__clean(true, true);
-    }
-    
-    // 4. 이미지의 제외, 다중 선택 정보들 전부 제거
-    //for (auto& newFolder : stretchedFolders) {
-    //    newFolder.__clean_image_data(true, true, true);
-    //}
-    
-    // 5. 반환
-    return stretchedFolders;
 }
 
 void
-Folder::__clean(bool recursive, bool keepImageData) {
+Folder::__pruning(bool recursive, bool keepImageData) {
     namespace fs = std::filesystem;
     
     // 현재 폴더에 있는 모든 이미지들의 제외 항목들 제거하기
@@ -493,19 +468,19 @@ Folder::__clean(bool recursive, bool keepImageData) {
     // 6. 하위 폴더의 있는 모든 이미지들의 제외 항목들 제거하기
     if (recursive) {
         for (auto& folder : folders) {
-            folder.__clean(recursive, keepImageData);
+            folder.__pruning(recursive, keepImageData);
         }
     }
 }
 
 void
-Folder::__clean_image_data(bool recursive, bool excludeList, bool multipleSelectionList) {
+Folder::__deleting_rules(bool recursive, bool excludeList, bool multipleSelectionList) {
     namespace fs = std::filesystem;
     
     // 하위 폴더의 있는 모든 이미지들의 제외, 다중 선택 정보 지우기
     if (recursive) {
         for (auto& folder : folders) {
-            folder.__clean_image_data(recursive, excludeList, multipleSelectionList);
+            folder.__deleting_rules(recursive, excludeList, multipleSelectionList);
         }
     }
     
@@ -629,10 +604,55 @@ void
 Folder::reconstruction(std::deque<Folder>& reconstructionFolders) {
     namespace fs = std::filesystem;
     
-    // 1. 논리적 분할 -> 논리적 재구성 -> 반환
-    for (auto& splitedFolder : this->__split())
-    for (auto& stretchedFolder : splitedFolder.__stretch()) {
-        reconstructionFolders.push_back(stretchedFolder);
+    // 1. 논리적 분할 -> 논리적 펼치기 -> 반환
+    for (auto& splitedFolder : this->__split()) {
+        splitedFolder.__stretch();
+        splitedFolder.__deleting_rules(true, true, true);
+        reconstructionFolders.push_back(splitedFolder);
+    }
+}
+
+Folder
+Folder::peek() {
+    namespace fs = std::filesystem;
+    
+    if (!this->folders.empty()) {
+        Folder thisFolder(*this, false, true);
+        thisFolder.folders.push_back(this->folders[0].peek());
+        return thisFolder;
+    }
+    else {
+        return Folder(*this, false, true);
+    }
+}
+
+bool
+Folder::pop() {
+    namespace fs = std::filesystem;
+    
+    // 현재 폴더가 마지막 폴더가 아닌 경우
+    if (!this->folders.empty()) {
+        // 첫번째 하위 폴더 pop() 결과 저장
+        bool left = this->folders[0].pop();
+        if (left)
+        {
+            return true;
+        }
+        // 첫번째 하위 폴더가 마지막인경우
+        else
+        {
+            // 첫번째 하위 폴더 지우기
+            this->folders.erase(this->folders.begin());
+            // 현재 폴더가 마지막인 경우
+            if (this->folders.size()==0)
+            {
+                return false;
+            }
+        }
+    }
+    // 현재 폴더가 마지막인 경우
+    else {
+        return false;
     }
 }
 

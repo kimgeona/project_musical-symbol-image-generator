@@ -38,6 +38,9 @@ split(std::string str, std::string splitStr);
 std::vector<std::vector<std::string>>
 split(std::string str, std::string splitStr, std::string splitStr2);
 
+std::string
+trim(const std::string& str);
+
 
 }
 }

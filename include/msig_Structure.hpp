@@ -57,19 +57,21 @@ public:
     Folder(const std::filesystem::path& folderPath, double declineRate=1.0);
     Folder(const Folder& original, bool copyFolders, bool copyImages);
 public:
-    bool        operator<(const Folder& other) const;
-    int         operator()(const Folder& other);
+    bool        operator< (const Folder& other) const;
+    int         operator() (const Folder& other);
     explicit    operator std::vector<Folder>() const;
     // TODO: 작성 끝나면 private으로 바꾸기
 public:
     std::vector<Folder> __split();
-    std::vector<Folder> __stretch();
-    void                __clean(bool recursive, bool keepImageData);
-    void                __clean_image_data(bool recursive, bool excludeList, bool multipleSelectionList);
+    void                __stretch();
+    void                __pruning(bool recursive, bool keepImageData);
+    void                __deleting_rules(bool recursive, bool excludeList, bool multipleSelectionList);
     void                __calculate_all_combination(std::vector<std::vector<unsigned char>>& combinations, unsigned char numberOfThings);
     void                __save_rule(bool recursive=true);
 public:
     void                reconstruction(std::deque<Folder>& reconstructionFolders);
+    Folder              peek();
+    bool                pop();
 public:
     void                tree(const std::string& prefix="", size_t order=0);
     void                get_all_images_name(std::set<std::string>& allImagesNames);

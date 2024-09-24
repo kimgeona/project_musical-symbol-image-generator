@@ -55,6 +55,11 @@ split(std::string str, std::string splitStr) {
         n = str.find(splitStr, p);
     }
     result.push_back(str.substr(p, str.length()-p));
+    
+    // 3. 문자열 벡터의 문자열들 좌우 공백 제거
+    for (auto& str : result) {
+        str = trim(str);
+    }
     return result;
 }
 
@@ -83,6 +88,25 @@ split(std::string str, std::string splitStr, std::string splitStr2) {
     }
     
     return result;
+}
+
+std::string
+trim(const std::string& str) {
+    size_t start = 0;
+    size_t end = str.size();
+
+    // 좌측 공백 제거
+    while (start < end && std::isspace(str[start])) {
+        ++start;
+    }
+
+    // 우측 공백 제거
+    while (end > start && std::isspace(str[end - 1])) {
+        --end;
+    }
+
+    // 새로운 문자열 반환
+    return str.substr(start, end - start);
 }
 
 }

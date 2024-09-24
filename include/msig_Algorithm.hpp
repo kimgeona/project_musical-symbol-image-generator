@@ -75,7 +75,6 @@ private:
     std::mt19937                           generator;
     std::uniform_real_distribution<double> distribution;
 private:
-    std::thread::id mainThreadID;
     std::vector<std::thread> threads;
     std::mutex mutex_vF;
     std::mutex mutex_vvp;
@@ -83,9 +82,10 @@ public:
     DependentSelectionTree(const std::filesystem::path& defaultDatasetDirectory, double declineRate=1.0);
 private:
     double  __generate_probability();
+    void    __thread_function(std::deque<std::vector<std::filesystem::path>>& vvp, bool randomPick);
 public:
-    void    pick_thread(std::deque<std::vector<std::filesystem::path>>& vvp, bool printStatus, bool randomPick, int numThreads=-1);
-    void    pick(std::deque<std::vector<std::filesystem::path>>& vvp, bool printStatus, bool randomPick);
+    void    reconstruction();
+    void    pick(std::deque<std::vector<std::filesystem::path>>& vvp, bool randomPick, int numThreads=-1);
     void    get_all_images_name(std::vector<std::string>& imagesNames);
 };
 
