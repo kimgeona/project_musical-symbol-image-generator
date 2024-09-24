@@ -47,55 +47,44 @@ Canvas::__making_csv(std::filesystem::path csvPath, const std::deque<std::vector
     
     // static 변수
     static size_t i = 0;
-    static std::string csvPathString = "";
     
-    //
-    if (i==0)
-    {
-        csvPathString = csvPath.string();
-    }
-    else if (csvPathString != csvPath.string())
-    {
-        i = 0;
-        csvPathString = csvPath.string();
+    // 폴더 생성
+    if (!fs::exists(csvPath.parent_path())) {
+        fs::create_directories(csvPath.parent_path());
     }
     
     // 파일 열기
     std::fstream csv;
-    if (i==0)
+    if (!fs::exists(csvPath))
     {
-        // 폴더 생성
-        if (!fs::exists(csvPath.parent_path())) {
-            fs::create_directories(csvPath.parent_path());
-        }
-        // 파일 생성하고 쓰기
+        // 파일 새로 생성
         csv = std::fstream(csvPath.string(), std::ios::out);
-    }
-    else
-    {
-        // 파일 맨 뒤에 쓰기
-        csv = std::fstream(csvPath.string(), std::ios::out|std::ios::app);
-    }
-    if (!csv)
-    {
-        throw std::runtime_error("MSIG::Rendering::Canvas::__making_csv() : CSV 파일을 쓸 수 없습니다.");
-    }
-    
-    
-    // csv 헤더 생성
-    if (i==0)
-    {
+        
+        // 파일 생성 확인
+        if (!csv)
+            throw std::runtime_error("MSIG::Rendering::Canvas::__making_csv() : CSV 파일을 쓸 수 없습니다.");
+        
+        // csv 헤더 생성
         csv << "name";
         // TODO: YOLO 형식으로 csv 헤더 다시 작성해야함
         for (auto& s : this->imageNames)
             csv << "," << s;
         csv << std::endl;
     }
+    else
+    {
+        // 파일 새로 생성
+        csv = std::fstream(csvPath.string(), std::ios::out|std::ios::app);
+        
+        // 파일 생성 확인
+        if (!csv)
+            throw std::runtime_error("MSIG::Rendering::Canvas::__making_csv() : CSV 파일을 쓸 수 없습니다.");
+    }
     
     // csv 데이터 쓰기
-    for (size_t pre=i+selectionList.size(); i<pre; i++)
+    for (size_t pre=0; pre<selectionList.size(); pre++, i++)
     {
-        csv << __labeling(std::to_string(i)+".png", selectionList[i]) << std::endl;
+        csv << __labeling(std::to_string(i)+".png", selectionList[pre]) << std::endl;
     }
     csv.close();
 }
@@ -113,6 +102,7 @@ Canvas::__making_image(std::filesystem::path imagePath, std::deque<std::vector<s
     }
     
     // 2. 쓰레딩 시작
+    threads.clear();
     for (size_t i=0; i<numberOfCPU; i++) {
         threads.emplace_back(&Canvas::__thread_function, this, imagePath, std::ref(selectionList));
     }
@@ -174,7 +164,7 @@ Canvas::__thread_function(std::filesystem::path imagePath, std::deque<std::vecto
         }
         
         // 완성된 악상기호 저장
-        cv::imwrite(imagePath.string()+std::to_string(thisCount)+".png", resultImage);
+        cv::imwrite((imagePath/fs::path(std::to_string(thisCount)+".png")).string(), resultImage);
     }
 }
 

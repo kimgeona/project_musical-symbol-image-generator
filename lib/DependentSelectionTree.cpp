@@ -125,6 +125,7 @@ DependentSelectionTree::pick(std::deque<std::vector<std::filesystem::path>>& vvp
     vvp = std::deque<std::vector<std::filesystem::path>>();
     
     // 3. 쓰레딩 시작
+    threads.clear();
     for (size_t i=0; i<numberOfCPU; i++) {
         threads.emplace_back(&DependentSelectionTree::__thread_function, this, std::ref(vvp), randomPick);
     }
