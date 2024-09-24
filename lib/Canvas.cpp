@@ -69,7 +69,7 @@ Canvas::__making_csv(std::filesystem::path csvPath, const std::deque<std::vector
         // TODO: YOLO 형식으로 csv 헤더 다시 작성해야함
         for (auto& s : this->imageNames)
             csv << "," << s;
-        csv << std::endl;
+        csv << "\n";
     }
     else
     {
@@ -84,7 +84,7 @@ Canvas::__making_csv(std::filesystem::path csvPath, const std::deque<std::vector
     // csv 데이터 쓰기
     for (size_t pre=0; pre<selectionList.size(); pre++, i++)
     {
-        csv << __labeling(std::to_string(i)+".png", selectionList[pre]) << std::endl;
+        csv << __labeling(std::to_string(i)+".png", selectionList[pre]) << "\n";
     }
     csv.close();
 }
@@ -203,12 +203,12 @@ Canvas::draw(int numThreads) {
     // *. 기존 데이터셋 지우기
     if (fs::exists(this->newDatasetPath))
     {
-        std::cout << "  - 존재하는 데이터셋 폴더 \"" << this->newDatasetPath.string() << "\"를 지웁니다." << std::endl;
+        std::cout << "  - 존재하는 데이터셋 폴더 \"" << this->newDatasetPath.string() << "\"를 지웁니다." << "\n";
         fs::remove_all(this->newDatasetPath);
     }
     
     // Train
-    std::cout << "  - Train 데이터셋을 생성합니다." << std::endl;
+    std::cout << "  - Train 데이터셋을 생성합니다." << "\n";
     dstTrain.reconstruction();
     while (true) {
         // 악상기호 조합 뽑기
@@ -222,7 +222,7 @@ Canvas::draw(int numThreads) {
     }
     
     // Validation
-    std::cout << "  - Validation 데이터셋을 생성합니다." << std::endl;
+    std::cout << "  - Validation 데이터셋을 생성합니다." << "\n";
     dstValidation.reconstruction();
     while (true) {
         // 악상기호 조합 뽑기
@@ -236,7 +236,7 @@ Canvas::draw(int numThreads) {
     }
     
     // Test
-    std::cout << "  - Test 데이터셋을 생성합니다." << std::endl;
+    std::cout << "  - Test 데이터셋을 생성합니다." << "\n";
     dstTest.reconstruction();
     while (true) {
         // 악상기호 조합 뽑기

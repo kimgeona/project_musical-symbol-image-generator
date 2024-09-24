@@ -485,7 +485,7 @@ MusicalSymbol::__rendering(int x, int y, double degree, double scale, bool exten
     namespace fs = std::filesystem;
     
     //
-    cv::Mat newImage((extensionSize ? diagonal : width), (extensionSize ? diagonal : height), CV_8UC1, cv::Scalar(255));
+    cv::Mat newImage((extensionSize ? diagonal : height), (extensionSize ? diagonal : width), CV_8UC1, cv::Scalar(255));
     cv::Mat musicalSymbolImage = this->image.clone();
     
     // 이미지 편집

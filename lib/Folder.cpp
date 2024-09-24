@@ -385,7 +385,7 @@ Folder::__stretch() {
     
     // 1. 하위 폴더가 존재하지 않는 경우
     if (this->folders.empty()) {
-        return Folder(*this, false, true);
+        return;
     }
     
     // 2. 하위 폴더들 먼저 stretch
@@ -712,7 +712,7 @@ Folder::tree(const std::string& prefix, size_t order) {
     if (folders.size() < 1)
     {
         // 최하위 폴더 도달시 줄바꿈
-        std::cout << std::endl;
+        std::cout << "\n";
         return;
     }
     else if (folders.size() == 1)
