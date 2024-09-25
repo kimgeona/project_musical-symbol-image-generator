@@ -109,7 +109,6 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path imagePath, bool makingConfigD
                 // pitch    : 현재 기본이 되는 음정
                 // edge[4]  : 악상기호를 오선지 안에 각각 몇개를 배치할 수 있는지의 갯수.
                 // in[4]    : 현재 오선지 안에 배치되어 있는 악상기호 갯수.
-                // out[4]   : 현재 오선지 안에 최대로 배치할 수 있는 악상기호 갯수.
                 // pad[4]   : 악상기호 사이 보조 여백.
                 
                 // pitch, ledger 정보 추출
@@ -151,6 +150,10 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path imagePath, bool makingConfigD
                 if (this->edge[1] > 0 && p % 2 == 0) {
                     this->edge[1]--;
                 }
+                // 범위 클리핑
+                for (int i=0; i<2; i++)
+                    if (this->edge[i] < 0)
+                        this->edge[i] = 0;
                 
                 //
                 this->in[0] = 0;
@@ -170,22 +173,12 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path imagePath, bool makingConfigD
                 this->pad[2] = 0;
                 this->pad[3] = 0;
                 
-                // 음표가 오선 맨 끝에 걸터 있다면
-                if (p == t) {
-                    // 배경 제거한 이미지
-                    int tmpX = this->x;
-                    int tmpY = this->y;
-                    cv::Mat tmpImage = Processing::Matrix::remove_padding(this->image, tmpX, tmpY);
-                    
-                    this->pad[0] = tmpY;
+                // 악상기호 사이 여백 초기화 (오선지 밖에 음표가 있는 경우)
+                if (p >= t) {
+                    this->pad[0] = 0;
                 }
-                if (p == b) {
-                    // 배경 제거한 이미지
-                    int tmpX = this->x;
-                    int tmpY = this->y;
-                    cv::Mat tmpImage = Processing::Matrix::remove_padding(this->image, tmpX, tmpY);
-                    
-                    this->pad[1] = tmpImage.rows - tmpY;
+                if (p <= b) {
+                    this->pad[1] = 0;
                 }
                 
                 // 배치 정보 추가
@@ -411,7 +404,7 @@ MusicalSymbol::operator+ (const MusicalSymbol& other) const {
             subImage.y += mainImage.staffPadding * mainImage.in[0]++;
             
             // 음표가 실선에 겹쳐져 있는 경우 추가적인 패딩 추가
-            if (pitch % 2 == 0) subImage.y += mainImage.staffPadding / 2.0;
+            if (pitch % 2 == 0) subImage.y += mainImage.staffPadding + mainImage.staffPadding / 2.0;
             else                subImage.y += mainImage.staffPadding;
             
             // subImage의 여백을 제거한 크기의 검은 이미지 생성
@@ -456,7 +449,7 @@ MusicalSymbol::operator+ (const MusicalSymbol& other) const {
             subImage.y -= mainImage.staffPadding * mainImage.in[1]++;
             
             // 음표가 실선에 겹쳐져 있는 경우 추가적인 패딩 추가
-            if (pitch % 2 == 0) subImage.y -= mainImage.staffPadding / 2.0;
+            if (pitch % 2 == 0) subImage.y -= mainImage.staffPadding + mainImage.staffPadding / 2.0;
             else                subImage.y -= mainImage.staffPadding;
             
             // subImage의 여백을 제거한 크기의 검은 이미지 생성

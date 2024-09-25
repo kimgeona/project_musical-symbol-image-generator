@@ -1,29 +1,28 @@
 
 # group
-staff-bottom=~
-staff-middle=~
-staff-top=~
+staff-down=note-up~
+staff-up=note-down~
 
 # rule
-staff-a3-0-2.png=staff-bottom
-staff-a4-0-0.png=staff-middle
-staff-a5-1-0.png=staff-top
-staff-b3-0-1.png=staff-bottom
-staff-b4-0-0.png=staff-middle
-staff-b5-1-0.png=staff-top
-staff-c4-0-1.png=staff-bottom
-staff-c5-0-0.png=staff-middle
-staff-c6-2-0.png=staff-top
-staff-d4-0-0.png=staff-bottom
-staff-d5-0-0.png=staff-middle
-staff-d6-2-0.png=staff-top
-staff-e4-0-0.png=staff-middle
-staff-e5-0-0.png=staff-middle
-staff-e6-3-0.png=staff-top
-staff-f4-0-0.png=staff-middle
-staff-f5-0-0.png=staff-middle
-staff-f6-3-0.png=staff-top
-staff-g3-0-2.png=staff-bottom
-staff-g4-0-0.png=staff-middle
-staff-g5-0-0.png=staff-top
-staff-g6-4-0.png=staff-top
+staff-a3-0-2.png=staff-up
+staff-a4-0-0.png=staff-up
+staff-a5-1-0.png=staff-down
+staff-b3-0-1.png=staff-up
+staff-b4-0-0.png=staff-down
+staff-b5-1-0.png=staff-down
+staff-c4-0-1.png=staff-up
+staff-c5-0-0.png=staff-down
+staff-c6-2-0.png=staff-down
+staff-d4-0-0.png=staff-up
+staff-d5-0-0.png=staff-down
+staff-d6-2-0.png=staff-down
+staff-e4-0-0.png=staff-up
+staff-e5-0-0.png=staff-down
+staff-e6-3-0.png=staff-down
+staff-f4-0-0.png=staff-up
+staff-f5-0-0.png=staff-down
+staff-f6-3-0.png=staff-down
+staff-g3-0-2.png=staff-up
+staff-g4-0-0.png=staff-up
+staff-g5-0-0.png=staff-down
+staff-g6-4-0.png=staff-down
