@@ -1,4 +1,4 @@
 
 # config
 measure-bar.png=34~25~0.000000~2.100000~fixed
-measure-repeat-start.png=15~29~0.000000~2.300000~fixed
+measure-repeat-start.png=9~29~0.000000~2.300000~fixed

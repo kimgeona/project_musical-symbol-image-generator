@@ -1,6 +1,6 @@
 
 # config
-key-flat-1.png=32~25~0.000000~1.800000~fixed
+key-flat-1.png=32~26~0.000000~2.000000~fixed
 key-flat-2.png=30~50~0.000000~2.800000~fixed
 key-flat-3.png=40~51~0.000000~2.600000~fixed
 key-flat-4.png=35~49~0.000000~2.500000~fixed

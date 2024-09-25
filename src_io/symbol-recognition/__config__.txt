@@ -1,5 +1,5 @@
 
 # config
-staff-b4-0-0-end.png=50~30~0.000000~2.200000~staff
-staff-b4-0-0-start.png=0~30~0.000000~2.200000~staff
-staff-b4-0-0.png=50~30~0.000000~2.200000~staff
+staff-b4-0-0-end.png=50~29~0.000000~2.200000~staff
+staff-b4-0-0-start.png=0~29~0.000000~2.200000~staff
+staff-b4-0-0.png=50~29~0.000000~2.200000~staff
