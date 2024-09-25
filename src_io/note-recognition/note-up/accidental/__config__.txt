@@ -4,4 +4,4 @@ accidental-flat-double.png=15~25~0.000000~1.800000~left,in
 accidental-flat.png=9~29~0.000000~1.800000~left,in
 accidental-natural.png=7~21~0.000000~2.000000~left,in
 accidental-sharp-double.png=8~9~0.000000~2.600000~left,in
-accidental-sharp.png=9~24~0.000000~1.700000~left,in
+accidental-sharp.png=9~24~0.000000~2.100000~left,in
