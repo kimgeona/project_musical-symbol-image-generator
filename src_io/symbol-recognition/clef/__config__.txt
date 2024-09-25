@@ -1,0 +1,11 @@
+
+# config
+clef-c-alto.png=46~29~0.000000~2.100000~fixed
+clef-c-tenor.png=40~49~0.000000~2.200000~fixed
+clef-f.png=20~25~0.000000~1.400000~fixed
+clef-g-double.png=47~50~0.000000~1.600000~fixed
+clef-g-minus-15.png=25~50~0.000000~1.200000~fixed
+clef-g-minus-8.png=25~50~0.000000~1.400000~fixed
+clef-g-plus-15.png=20~55~0.000000~1.400000~fixed
+clef-g-plus-8.png=20~60~0.000000~1.400000~fixed
+clef-g.png=20~55~0.000000~1.600000~fixed

@@ -1,0 +1,12 @@
+
+# config
+glissando-end-1.png=35~55~6.000000~1.400000~left,in
+glissando-end-2.png=55~35~0.000000~1.800000~left,in
+glissando-end-3.png=65~15~0.000000~1.800000~left,in
+glissando-end-4.png=49~3~0.000000~2.100000~left,in
+glissando-end-5.png=35~0~354.000000~1.400000~left,in
+glissando-start-1.png=5~45~354.000000~1.400000~right,in
+glissando-start-2.png=0~30~0.000000~2.000000~right,in
+glissando-start-3.png=5~10~0.000000~2.000000~right,in
+glissando-start-4.png=6~6~0.000000~1.800000~right,in
+glissando-start-5.png=5~5~6.000000~1.600000~right,in

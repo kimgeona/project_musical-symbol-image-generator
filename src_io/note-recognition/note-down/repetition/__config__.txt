@@ -1,0 +1,3 @@
+
+# config
+repetition-volta-middle.png=185~35~0.000000~2.000000~top,out

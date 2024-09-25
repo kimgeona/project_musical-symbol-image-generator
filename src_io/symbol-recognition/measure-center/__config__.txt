@@ -1,0 +1,5 @@
+
+# config
+measure-bar-dotted.png=27~25~0.000000~2.100000~fixed
+measure-bar-double.png=39~25~0.000000~2.100000~fixed
+measure-bar.png=34~25~0.000000~2.100000~fixed

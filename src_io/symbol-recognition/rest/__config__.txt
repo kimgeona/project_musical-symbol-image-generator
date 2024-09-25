@@ -1,0 +1,17 @@
+
+# config
+rest-1-dot.png=30~21~0.000000~1.600000~fixed
+rest-1.png=30~20~0.000000~1.400000~fixed
+rest-16-dot.png=35~45~0.000000~1.000000~fixed
+rest-16.png=35~45~0.000000~1.000000~fixed
+rest-2-dot.png=45~34~0.000000~1.400000~fixed
+rest-2.png=44~34~0.000000~1.300000~fixed
+rest-32-dot.png=40~50~0.000000~1.000000~fixed
+rest-32.png=40~35~0.000000~1.000000~fixed
+rest-4-dot.png=45~50~0.000000~1.000000~fixed
+rest-4.png=45~47~0.000000~1.000000~fixed
+rest-64-dot.png=40~50~0.000000~1.000000~fixed
+rest-64.png=40~50~0.000000~1.000000~fixed
+rest-8-dot.png=25~40~0.000000~1.200000~fixed
+rest-8.png=25~40~0.000000~1.400000~fixed
+rest-caesura.png=75~55~0.000000~1.000000~fixed

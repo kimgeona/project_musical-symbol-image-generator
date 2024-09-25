@@ -1,0 +1,11 @@
+
+# config
+ornament-acciaccatura.png=13~15~0.000000~1.800000~left,in
+ornament-appoggiatura.png=11~17~0.000000~1.600000~left,in
+ornament-mordent-lower.png=21~13~0.000000~2.400000~top,out
+ornament-mordent-upper.png=19~12~0.000000~2.000000~top,out
+ornament-tril-plus.png=13~10~0.000000~2.100000~top,out
+ornament-tril.png=12~13~0.000000~1.900000~top,out
+ornament-turn-inverted.png=12~7~0.000000~2.800000~top,out
+ornament-turn-slash.png=12~10~0.000000~2.900000~top,out
+ornament-turn.png=12~7~0.000000~3.000000~top,out
