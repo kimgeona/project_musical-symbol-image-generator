@@ -2,6 +2,6 @@
 # group
 
 # rule
-staff-b4-0-0-end.png=~
-staff-b4-0-0-start.png=~
-staff-b4-0-0.png=~
+staff-b4-0-0-end.png=clef,key,measure-center,measure-start,note,repetition,rest,time~
+staff-b4-0-0-start.png=clef,key,measure-center,measure-end,note,repetition,rest,time~
+staff-b4-0-0.png=measure-end,measure-start~

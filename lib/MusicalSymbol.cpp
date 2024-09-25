@@ -110,6 +110,7 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path imagePath, bool makingConfigD
                 // edge[4]  : 악상기호를 오선지 안에 각각 몇개를 배치할 수 있는지의 갯수.
                 // in[4]    : 현재 오선지 안에 배치되어 있는 악상기호 갯수.
                 // out[4]   : 현재 오선지 안에 최대로 배치할 수 있는 악상기호 갯수.
+                // pad[4]   : 악상기호 사이 보조 여백.
                 
                 // pitch, ledger 정보 추출
                 std::vector<std::string> staffData = Utility::split(this->path.filename().stem().string(), "-");
@@ -155,8 +156,20 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path imagePath, bool makingConfigD
                 this->out[2] = edge[2];
                 this->out[3] = edge[3];
                 
+                // 악상기호 사이 여백 초기화
+                this->pad[0] = 0;
+                this->pad[1] = 0;
+                this->pad[2] = 0;
+                this->pad[3] = 0;
+                
                 // 배치 정보 추가
                 this->position |= MS_FIXED;
+            }
+            else
+            {
+                // 기본 값으로 초기화
+                for (int i=0; i<4; i++)
+                    this->pad[i] = this->in[i] = this->edge[i] = this->out[i] = 0;
             }
         }
         catch (const std::out_of_range& e)
