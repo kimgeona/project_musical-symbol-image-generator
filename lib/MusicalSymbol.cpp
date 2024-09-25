@@ -138,30 +138,30 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path imagePath, bool makingConfigD
                     throw std::runtime_error("MSIG::Algorithm::Image.Image() : \"" + imagePath.string() + "\" staff 이미지 이름의 pitch와 ledger 정보가 잘못되었습니다.");
                 }
                 
-                // 현재 pitch 를 기준으로 상,하,좌,우에 악상기호들이 몇 개가 들어갈 수 있는지 계산.
+                // 현재 음표의 위치(pitch)를 기준으로 상,하,좌,우에 악상기호들이 몇 개가 들어갈 수 있는지 계산.
                 this->edge[0] = (t - p) / 2;    // 현재 pitch를 기준으로 위에는 악상기호가 몇 개 들어갈수 있는지 계산.
                 this->edge[1] = (p - b) / 2;    // 현재 pitch를 기준으로 아래에는 악상기호가 몇 개 들어갈수 있는지 계산.
                 this->edge[2] = 100;            // 좌,우 는 기본 100개의 악상기호가 들어갈 수 있음.
                 this->edge[3] = 100;
                 
-                // 현재 pitch가 실선에 겹쳐있는지 겹쳐있지 않은지에 따라 배치할 수 있는 공간 1칸을 건너뛸지 말지 확인.
+                // 실선에 걸치는 음표인 경우엔 들어갈 수 있는 공간 1개 감소
                 if (this->edge[0] > 0 && p % 2 == 0) {
-                    this->in[0] = 1;
+                    this->edge[0]--;
                 }
                 if (this->edge[1] > 0 && p % 2 == 0) {
-                    this->in[1] = 1;
+                    this->edge[1]--;
                 }
                 
-                // 오선지 내부 배치를 벗어나는 지점 계산.
-                this->out[0] = edge[0];
-                this->out[1] = edge[1];
-                this->out[2] = edge[2];
-                this->out[3] = edge[3];
+                //
+                this->in[0] = 0;
+                this->in[1] = 0;
+                this->in[2] = 0;
+                this->in[3] = 0;
                 
                 // 악상기호 사이 여백 초기화
                 if (p % 2 == 0) {
-                    this->pad[0] = this->staffPadding * this->edge[0];
-                    this->pad[1] = this->staffPadding * this->edge[1];
+                    this->pad[0] = this->staffPadding + this->staffPadding * this->edge[0];
+                    this->pad[1] = this->staffPadding + this->staffPadding * this->edge[1];
                 }
                 else {
                     this->pad[0] = this->staffPadding * this->edge[0] + this->staffPadding * 0.5;
@@ -170,6 +170,24 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path imagePath, bool makingConfigD
                 this->pad[2] = 0;
                 this->pad[3] = 0;
                 
+                // 음표가 오선 맨 끝에 걸터 있다면
+                if (p == t) {
+                    // 배경 제거한 이미지
+                    int tmpX = this->x;
+                    int tmpY = this->y;
+                    cv::Mat tmpImage = Processing::Matrix::remove_padding(this->image, tmpX, tmpY);
+                    
+                    this->pad[0] = tmpY;
+                }
+                if (p == b) {
+                    // 배경 제거한 이미지
+                    int tmpX = this->x;
+                    int tmpY = this->y;
+                    cv::Mat tmpImage = Processing::Matrix::remove_padding(this->image, tmpX, tmpY);
+                    
+                    this->pad[1] = tmpImage.rows - tmpY;
+                }
+                
                 // 배치 정보 추가
                 this->position |= MS_FIXED;
             }
@@ -177,7 +195,7 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path imagePath, bool makingConfigD
             {
                 // 기본 값으로 초기화
                 for (int i=0; i<4; i++)
-                    this->pad[i] = this->in[i] = this->edge[i] = this->out[i] = 0;
+                    this->pad[i] = this->in[i] = this->edge[i] = 0;
             }
         }
         catch (const std::out_of_range& e)

@@ -154,7 +154,6 @@ public:
     int  pitch;                                     // 현재 음정
     int  edge[4];                                   // 오선지 경계
     int  in  [4];                                   // 오선지 안
-    int  out [4];                                   // 오선지 밖
     int  pad [4];                                   // 부가적인 패딩값
 public:
     MusicalSymbol(std::filesystem::path imagePath, bool makingConfigData, int width=192, int height=512, int staffPadding=26);
