@@ -1,7 +1,7 @@
 
 # group
-octave-down=~
-octave-up=~
+octave-down=articulation,dynamic,ornament,tie~
+octave-up=articulation,dynamic,ornament,tie~
 
 # rule
 octave-down-end.png=octave-down

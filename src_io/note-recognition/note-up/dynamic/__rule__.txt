@@ -1,7 +1,7 @@
 
 # group
-dynamic-long-crescendo=~
-dynamic-long-decrescendo=~
+dynamic-long-crescendo=articulation~
+dynamic-long-decrescendo=articulation~
 
 # rule
 dynamic-crescendo-end.png=dynamic-long-crescendo
