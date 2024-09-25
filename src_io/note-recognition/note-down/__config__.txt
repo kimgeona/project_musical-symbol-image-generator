@@ -1,6 +1,6 @@
 
 # config
-note-down-1.png=10~9~0.000000~2.200000~fixed
+note-down-1.png=10~9~0.000000~2.000000~fixed
 note-down-16.png=27~10~0.000000~2.200000~fixed
 note-down-2.png=13~10~0.000000~2.100000~fixed
 note-down-32.png=25~12~0.000000~2.100000~fixed

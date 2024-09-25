@@ -1,12 +1,12 @@
 
 # config
-glissando-end-1.png=34~53~6.000000~3.000000~left,in
-glissando-end-2.png=53~35~0.000000~3.400000~left,in
-glissando-end-3.png=65~15~0.000000~3.400000~left,in
-glissando-end-4.png=49~3~0.000000~3.700000~left,in
-glissando-end-5.png=32~1~354.000000~3.000000~left,in
-glissando-start-1.png=4~45~354.000000~3.000000~right,in
-glissando-start-2.png=2~28~0.000000~3.600000~right,in
-glissando-start-3.png=5~10~0.000000~3.600000~right,in
-glissando-start-4.png=7~7~0.000000~3.400000~right,in
-glissando-start-5.png=8~6~6.000000~3.200000~right,in
+glissando-end-1.png=34~53~6.000000~2.400000~left,in
+glissando-end-2.png=53~35~0.000000~2.800000~left,in
+glissando-end-3.png=65~15~0.000000~2.800000~left,in
+glissando-end-4.png=49~3~0.000000~3.100000~left,in
+glissando-end-5.png=32~1~354.000000~2.400000~left,in
+glissando-start-1.png=4~45~354.000000~2.400000~right,in
+glissando-start-2.png=2~28~0.000000~3.000000~right,in
+glissando-start-3.png=5~10~0.000000~3.000000~right,in
+glissando-start-4.png=7~7~0.000000~2.800000~right,in
+glissando-start-5.png=8~6~6.000000~2.600000~right,in
