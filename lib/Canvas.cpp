@@ -203,13 +203,14 @@ Canvas::draw(int numThreads) {
     // *. 기존 데이터셋 지우기
     if (fs::exists(this->newDatasetPath))
     {
-        std::cout << "  - 존재하는 데이터셋 폴더 \"" << this->newDatasetPath.string() << "\"를 지웁니다." << "\n";
+        std::cout << "  - 존재하는 데이터셋 폴더 \"" << this->newDatasetPath.string() << "\"를 지웁니다." << std::endl;
         fs::remove_all(this->newDatasetPath);
     }
     
     // Train
-    std::cout << "  - Train 데이터셋을 생성합니다." << "\n";
+    std::cout << "  - Train 데이터셋을 생성합니다.";
     dstTrain.reconstruction();
+    std::cout << " [최대 " << static_cast<size_t>(dstTrain) << " 장]" << std::endl;
     while (true) {
         // 악상기호 조합 뽑기
         dstTrain.pick(selectionListTrain, true);
@@ -222,8 +223,9 @@ Canvas::draw(int numThreads) {
     }
     
     // Validation
-    std::cout << "  - Validation 데이터셋을 생성합니다." << "\n";
+    std::cout << "  - Validation 데이터셋을 생성합니다.";
     dstValidation.reconstruction();
+    std::cout << " [최대 " << static_cast<size_t>(dstValidation) << " 장]" << std::endl;
     while (true) {
         // 악상기호 조합 뽑기
         dstValidation.pick(selectionListValidation, true);
@@ -236,8 +238,9 @@ Canvas::draw(int numThreads) {
     }
     
     // Test
-    std::cout << "  - Test 데이터셋을 생성합니다." << "\n";
+    std::cout << "  - Test 데이터셋을 생성합니다.";
     dstTest.reconstruction();
+    std::cout << " [최대 " << static_cast<size_t>(dstTest) << " 장]" << std::endl;
     while (true) {
         // 악상기호 조합 뽑기
         dstTest.pick(selectionListTest, true);

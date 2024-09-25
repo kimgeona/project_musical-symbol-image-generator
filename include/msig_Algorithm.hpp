@@ -80,6 +80,8 @@ private:
     std::mutex mutex_vvp;
 public:
     DependentSelectionTree(const std::filesystem::path& defaultDatasetDirectory, double declineRate=1.0);
+public:
+    explicit operator size_t() const;
 private:
     double  __generate_probability();
     void    __thread_function(std::deque<std::vector<std::filesystem::path>>& vvp, bool randomPick);

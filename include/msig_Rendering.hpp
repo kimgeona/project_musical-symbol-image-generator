@@ -56,23 +56,23 @@ namespace Rendering {
  */
 class Canvas
 {
-public:
+private:
     std::filesystem::path path;
     std::filesystem::path newDatasetPath;
-public:
+private:
     bool brushing;
     int  imageWidth;
     int  imageHeight;
-public:
+private:
     Algorithm::DependentSelectionTree dstTrain;
     Algorithm::DependentSelectionTree dstValidation;
     Algorithm::DependentSelectionTree dstTest;
-public:
+private:
     std::deque<std::vector<std::filesystem::path>> selectionListTrain;
     std::deque<std::vector<std::filesystem::path>> selectionListValidation;
     std::deque<std::vector<std::filesystem::path>> selectionListTest;
     std::vector<std::string>                       imageNames;
-public:
+private:
     std::map<std::filesystem::path, Algorithm::MusicalSymbol> musicalSymbols;
 private:
     std::vector<std::thread> threads;

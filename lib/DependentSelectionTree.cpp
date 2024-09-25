@@ -12,6 +12,21 @@ originaFolder(defaultDatasetDirectory, declineRate)
     // 수행할 작업 없음.
 }
 
+DependentSelectionTree::operator size_t() const
+{
+    if (reconstructedFolders.size()>0)
+    {
+        size_t imageCount = 0;
+        for (auto& F : reconstructedFolders)
+            imageCount += static_cast<size_t>(F);
+        return imageCount;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 double
 DependentSelectionTree::__generate_probability() {
     namespace fs = std::filesystem;

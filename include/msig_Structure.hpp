@@ -60,8 +60,8 @@ public:
     bool        operator< (const Folder& other) const;
     int         operator() (const Folder& other);
     explicit    operator std::vector<Folder>() const;
-    // TODO: 작성 끝나면 private으로 바꾸기
-public:
+    explicit    operator size_t() const;
+private:
     std::vector<Folder> __split();
     void                __stretch();
     void                __pruning(bool recursive, bool keepImageData);

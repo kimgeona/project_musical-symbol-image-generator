@@ -130,6 +130,25 @@ Folder::operator std::vector<Folder>() const
     }
 }
 
+Folder::operator size_t() const
+{
+    // 현재 폴더의 이미지 갯수 조사
+    size_t imageCount = this->images.size();
+    
+    // 하위 폴더가 없다면 현재 폴더 이미지 갯수만 반환
+    if (folders.size()==0)
+        return imageCount;
+    
+    // 하위 폴더의 이미지 갯수 조사
+    size_t subImageCount = 0;
+    for (auto& folder : folders)
+    {
+        subImageCount += static_cast<size_t>(folder);
+    }
+    
+    return imageCount * subImageCount;
+}
+
 bool
 Folder::operator<(const Folder& other) const {
     return this->path < other.path;
