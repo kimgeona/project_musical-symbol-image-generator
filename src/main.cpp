@@ -2,6 +2,9 @@
 #include <iostream>
 #include <filesystem>
 
+// 외부 라이브러리
+#include <opencv2/core/utils/logger.hpp>
+
 // 나의 라이브러리
 #include <msig.hpp>
 
@@ -230,6 +233,9 @@ int main(int argc, char* argv[])
     system("chcp 65001");
     system("cls");
 #endif
+    
+    // OpenCV 로그 출력 설정 : 에러만 출력
+    cv::utils::logging::setLogLevel(cv::utils::logging::LOG_LEVEL_ERROR);
     
     // 메인 페이지 실행
     page();
