@@ -147,6 +147,8 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path imagePath, bool makingConfigD
                 // 현재 pitch가 실선에 겹쳐있는지 겹쳐있지 않은지에 따라 배치할 수 있는 공간 1칸을 건너뛸지 말지 확인.
                 if (this->edge[0] > 0 && p % 2 == 0) {
                     this->in[0] = 1;
+                }
+                if (this->edge[1] > 0 && p % 2 == 0) {
                     this->in[1] = 1;
                 }
                 
@@ -157,8 +159,14 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path imagePath, bool makingConfigD
                 this->out[3] = edge[3];
                 
                 // 악상기호 사이 여백 초기화
-                this->pad[0] = 0;
-                this->pad[1] = 0;
+                if (p % 2 == 0) {
+                    this->pad[0] = this->staffPadding * this->edge[0];
+                    this->pad[1] = this->staffPadding * this->edge[1];
+                }
+                else {
+                    this->pad[0] = this->staffPadding * this->edge[0] + this->staffPadding * 0.5;
+                    this->pad[1] = this->staffPadding * this->edge[1] + this->staffPadding * 0.5;
+                }
                 this->pad[2] = 0;
                 this->pad[3] = 0;
                 
@@ -375,19 +383,27 @@ MusicalSymbol::operator+ (const MusicalSymbol& other) const {
         throw std::runtime_error(errorMessage);
     }
     
-    // 3. 배치에 이용될 subImage 배경 제거
-    subImage.image = Processing::Matrix::remove_padding(subImage.image, subImage.x, subImage.y);    // 배경 제거
-    
-    // 4. 악상기호 배치
+    // 3. 악상기호 배치
     if      (subImage.position & MS_TOP)
     {
         // 안쪽 배치
         if ((subImage.position & MS_IN) && (mainImage.edge[0] > mainImage.in[0]))
         {
+            // 오선지 안쪽에 배치
             subImage.y += mainImage.staffPadding * mainImage.in[0]++;
             
-            if (pitch % 2 == 0) otherImage.y += mainImage.staffPadding / 2.0;
-            else                otherImage.y += mainImage.staffPadding;
+            // 음표가 실선에 겹쳐져 있는 경우 추가적인 패딩 추가
+            if (pitch % 2 == 0) subImage.y += mainImage.staffPadding / 2.0;
+            else                subImage.y += mainImage.staffPadding;
+            
+            // subImage의 여백을 제거한 크기의 검은 이미지 생성
+            MusicalSymbol tmpImage = subImage.copy();
+            tmpImage.image = Processing::Matrix::remove_padding(tmpImage.image, tmpImage.x, tmpImage.y);
+            tmpImage.image = cv::Mat(tmpImage.image.rows, tmpImage.image.cols, CV_8UC1, cv::Scalar(0));
+            
+            // 오선지 안에 배치한 악상기호의 크기가 바깥쪽 배치에 주는 영향 계산
+            if (mainImage.pad[0] < tmpImage.y)
+                mainImage.pad[0] = tmpImage.y;
         }
         // 바깥쪽 배치
         else
@@ -398,29 +414,19 @@ MusicalSymbol::operator+ (const MusicalSymbol& other) const {
             tmpImage.image = cv::Mat(tmpImage.image.rows, tmpImage.image.cols, CV_8UC1, cv::Scalar(0));
             
             // 배치를 위해 오선지 밖 좌표로 이동
-            tmpImage.y += mainImage.staffPadding * mainImage.out[0];
             tmpImage.y += mainImage.pad[0];
             
-            if (pitch % 2 == 0) tmpImage.y += mainImage.staffPadding / 2.0;
-            else                tmpImage.y += mainImage.staffPadding;
-            
-            if (static_cast<bool>(mainImage | tmpImage))
-            {
-                while (mainImage | tmpImage){
-                    tmpImage.y += 1;
-                    mainImage.pad[0] += 1;
-                }
-                
-                tmpImage.y += mainImage.staffPadding / 4.5;
-                mainImage.pad[0] += mainImage.staffPadding / 4.5;
+            // mainImage와 tmpImage가 서로 겹치지 않을 때 까지 tmpImage 올리기
+            while (static_cast<bool>(mainImage | tmpImage)){
+                tmpImage.y += 1;
+                mainImage.pad[0] += 1;
             }
             
-            // 악상기호 좌표 이동
-            subImage.y += mainImage.staffPadding * mainImage.out[0]++;
-            subImage.y += mainImage.pad[0];
+            // mainImage와 tmpImage 사이 간격 주기
+            mainImage.pad[0] += mainImage.staffPadding * 0.7;
             
-            if (pitch % 2 == 0) subImage.y += mainImage.staffPadding / 2.0;
-            else                subImage.y += mainImage.staffPadding;
+            // subImage 악상기호 좌표 이동
+            subImage.y += mainImage.pad[0];
         }
     }
     else if (subImage.position & MS_BOTTOM)
@@ -428,10 +434,21 @@ MusicalSymbol::operator+ (const MusicalSymbol& other) const {
         // 안쪽 배치
         if ((subImage.position & MS_IN) && (mainImage.edge[1] > mainImage.in[1]))
         {
+            // 오선지 안쪽에 배치
             subImage.y -= mainImage.staffPadding * mainImage.in[1]++;
             
-            if (pitch % 2 == 0) otherImage.y -= mainImage.staffPadding / 2.0;
-            else                otherImage.y -= mainImage.staffPadding;
+            // 음표가 실선에 겹쳐져 있는 경우 추가적인 패딩 추가
+            if (pitch % 2 == 0) subImage.y -= mainImage.staffPadding / 2.0;
+            else                subImage.y -= mainImage.staffPadding;
+            
+            // subImage의 여백을 제거한 크기의 검은 이미지 생성
+            MusicalSymbol tmpImage = subImage.copy();
+            tmpImage.image = Processing::Matrix::remove_padding(tmpImage.image, tmpImage.x, tmpImage.y);
+            tmpImage.image = cv::Mat(tmpImage.image.rows, tmpImage.image.cols, CV_8UC1, cv::Scalar(0));
+            
+            // 오선지 안에 배치한 악상기호의 크기가 바깥쪽 배치에 주는 영향 계산
+            if (mainImage.pad[1] < abs(tmpImage.y) + tmpImage.image.rows)
+                mainImage.pad[1] = abs(tmpImage.y) + tmpImage.image.rows;
         }
         // 바깥쪽 배치
         else
@@ -442,54 +459,59 @@ MusicalSymbol::operator+ (const MusicalSymbol& other) const {
             tmpImage.image = cv::Mat(tmpImage.image.rows, tmpImage.image.cols, CV_8UC1, cv::Scalar(0));
             
             // 배치를 위해 오선지 밖 좌표로 이동
-            tmpImage.y -= mainImage.staffPadding * mainImage.out[1];
             tmpImage.y -= mainImage.pad[1];
             
-            if (pitch % 2 == 0) tmpImage.y -= mainImage.staffPadding / 2.0;
-            else                tmpImage.y -= mainImage.staffPadding;
-            
-            if (static_cast<bool>(mainImage | tmpImage))
-            {
-                while (static_cast<bool>(mainImage | tmpImage)){
-                    tmpImage.y -= 1;
-                    mainImage.pad[1] += 1;
-                }
-                
-                tmpImage.y -= mainImage.staffPadding / 4.5;
-                mainImage.pad[1] += mainImage.staffPadding / 4.5;
+            // mainImage와 tmpImage가 서로 겹치지 않을 때 까지 tmpImage 올리기
+            while (static_cast<bool>(mainImage | tmpImage)){
+                tmpImage.y -= 1;
+                mainImage.pad[1] += 1;
             }
             
-            // 악상기호 좌표 이동
-            subImage.y -= mainImage.staffPadding * mainImage.out[1]++;
-            subImage.y -= mainImage.pad[1];
+            // mainImage와 tmpImage 사이 간격 주기
+            mainImage.pad[1] += mainImage.staffPadding * 0.7;
             
-            if (pitch % 2 == 0) subImage.y -= mainImage.staffPadding / 2.0;
-            else                subImage.y -= mainImage.staffPadding;
+            // subImage 악상기호 좌표 이동
+            subImage.y -= mainImage.pad[1];
         }
     }
     else if (subImage.position & MS_LEFT)
     {
+        // subImage의 여백을 제거한 크기의 검은 이미지 생성
+        MusicalSymbol tmpImage = subImage.copy();
+        tmpImage.image = Processing::Matrix::remove_padding(tmpImage.image, tmpImage.x, tmpImage.y);
+        tmpImage.image = cv::Mat(tmpImage.image.rows, tmpImage.image.cols, CV_8UC1, cv::Scalar(0));
+        
         // sumImage.x += 누적 패딩 값 + 오선지 패딩 * 2 / 3 + 이미지 중심 좌표에서 오른쪽 크기
-        subImage.x += mainImage.pad[2] + mainImage.staffPadding * 2 / 3 + (subImage.image.cols - subImage.x);
+        subImage.x += mainImage.pad[2] + mainImage.staffPadding * 2.0 / 3.0 + (tmpImage.image.cols - tmpImage.x);
         
         // 누적 패딩 += subImage 가로 크기 + 오선지 패딩
-        mainImage.pad[2] += subImage.image.cols + mainImage.staffPadding * 2 / 3 ;
+        mainImage.pad[2] += tmpImage.image.cols + mainImage.staffPadding * 2 / 3 ;
     }
     else if (subImage.position & MS_RIGHT)
     {
+        // subImage의 여백을 제거한 크기의 검은 이미지 생성
+        MusicalSymbol tmpImage = subImage.copy();
+        tmpImage.image = Processing::Matrix::remove_padding(tmpImage.image, tmpImage.x, tmpImage.y);
+        tmpImage.image = cv::Mat(tmpImage.image.rows, tmpImage.image.cols, CV_8UC1, cv::Scalar(0));
+        
         // sumImage.x += 누적 패딩 값 + 오선지 패딩 + 이미지 중심 좌표에서 왼쪽 크기
-        subImage.x -= mainImage.pad[3] + mainImage.staffPadding + (subImage.x);
+        subImage.x -= mainImage.pad[3] + mainImage.staffPadding + (tmpImage.x);
         
         // 누적 패딩 += subImage 가로 크기 + 오선지 패딩
-        mainImage.pad[3] -= subImage.image.cols + mainImage.staffPadding;
+        mainImage.pad[3] -= tmpImage.image.cols + mainImage.staffPadding;
     }
     else
     {
-        mainImage.pad[2] = (subImage.x) > (mainImage.pad[2]) ? (subImage.x) : (mainImage.pad[2]);
-        mainImage.pad[3] = (subImage.image.cols - subImage.x) > (mainImage.pad[3]) ? (subImage.image.cols - subImage.x) : (mainImage.pad[3]);
+        // subImage의 여백을 제거한 크기의 검은 이미지 생성
+        MusicalSymbol tmpImage = subImage.copy();
+        tmpImage.image = Processing::Matrix::remove_padding(tmpImage.image, tmpImage.x, tmpImage.y);
+        tmpImage.image = cv::Mat(tmpImage.image.rows, tmpImage.image.cols, CV_8UC1, cv::Scalar(0));
+        
+        mainImage.pad[2] = (tmpImage.x) > (mainImage.pad[2]) ? (tmpImage.x) : (mainImage.pad[2]);
+        mainImage.pad[3] = (tmpImage.image.cols - tmpImage.x) > (mainImage.pad[3]) ? (tmpImage.image.cols - tmpImage.x) : (mainImage.pad[3]);
     }
     
-    // 5. 두 악상기호를 합치고 반환.
+    // 4. 두 악상기호를 합치고 반환.
     return mainImage & subImage;
 }
 

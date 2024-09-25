@@ -201,16 +201,17 @@ Canvas::draw(int numThreads) {
     namespace fs = std::filesystem;
     
     // *. 기존 데이터셋 지우기
-    if (fs::exists(this->newDatasetPath))
-    {
-        std::cout << "  - 존재하는 데이터셋 폴더 \"" << this->newDatasetPath.string() << "\"를 지웁니다." << std::endl;
+    if (fs::exists(this->newDatasetPath)) {
+        std::cout << "  - 이미 생성되어 있는 데이터셋을 지웁니다." << std::endl;
         fs::remove_all(this->newDatasetPath);
     }
     
     // Train
-    std::cout << "  - Train 데이터셋을 생성합니다.";
+    std::cout << "  - Train 데이터셋 조합을 계산합니다.";
+    // 트리 재구성
     dstTrain.reconstruction();
-    std::cout << " [최대 " << static_cast<size_t>(dstTrain) << " 장]" << std::endl;
+    std::cout << " [조합 최대 " << static_cast<size_t>(dstTrain) << " 개]" << std::endl;
+    std::cout << "  - Train 데이터셋을 생성합니다." << std::endl;
     while (true) {
         // 악상기호 조합 뽑기
         dstTrain.pick(selectionListTrain, true);
@@ -223,9 +224,11 @@ Canvas::draw(int numThreads) {
     }
     
     // Validation
-    std::cout << "  - Validation 데이터셋을 생성합니다.";
+    std::cout << "  - Validation 데이터셋 조합을 계산합니다.";
+    // 트리 재구성
     dstValidation.reconstruction();
-    std::cout << " [최대 " << static_cast<size_t>(dstValidation) << " 장]" << std::endl;
+    std::cout << " [조합 최대 " << static_cast<size_t>(dstValidation) << " 개]" << std::endl;
+    std::cout << "  - Validation 데이터셋을 생성합니다." << std::endl;
     while (true) {
         // 악상기호 조합 뽑기
         dstValidation.pick(selectionListValidation, true);
@@ -238,9 +241,11 @@ Canvas::draw(int numThreads) {
     }
     
     // Test
-    std::cout << "  - Test 데이터셋을 생성합니다.";
+    std::cout << "  - Test 데이터셋 조합을 계산합니다.";
+    // 트리 재구성
     dstTest.reconstruction();
-    std::cout << " [최대 " << static_cast<size_t>(dstTest) << " 장]" << std::endl;
+    std::cout << " [조합 최대 " << static_cast<size_t>(dstTest) << " 개]" << std::endl;
+    std::cout << "  - Test 데이터셋을 생성합니다." << std::endl;
     while (true) {
         // 악상기호 조합 뽑기
         dstTest.pick(selectionListTest, true);

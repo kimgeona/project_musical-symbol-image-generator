@@ -448,7 +448,14 @@ Folder::__stretch() {
             folder.__pruning(true, true);
         }
         
-        // 3-4. 기존 folders를 stretchedFolders로 교체
+        // 3-4. stretched 된 폴더들 생성 확률 낮추기
+        for (auto& folder : stretchedFolders) {
+            for (auto& image : folder.images) {
+                image.selectionProbability *= 1.0 / stretchedFolders.size() * this->folders.size();    // (1 / streched 된 폴더들 갯수) * streched 되기 전 원래 폴더 갯수
+            }
+        }
+        
+        // 3-5. 기존 folders를 stretchedFolders로 교체
         this->folders = stretchedFolders;
     }
 }

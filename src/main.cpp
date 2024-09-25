@@ -197,8 +197,9 @@ void page()     {
     std::vector<std::string> vs;
     for (auto& p : fs::directory_iterator(fs::path(".")))
     {
-        if (fs::exists(p.path()) &&     // 존재하는지
-            fs::is_directory(p.path())) // 폴더인지
+        if (fs::exists(p.path())        &&  // 존재하는지
+            fs::is_directory(p.path())  &&  // 폴더인지
+            p.path().filename().string().find("MSIG")==std::string::npos)   // 해당 프로그램으로 생성된 데이터셋 폴더가 아닌지
         {
             vs.push_back(p.path().filename().string());
         }
