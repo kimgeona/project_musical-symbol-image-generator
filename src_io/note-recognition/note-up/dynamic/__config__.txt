@@ -1,20 +1,20 @@
 
 # config
 dynamic-crescendo-end.png=99~16~0.000000~2.400000~bottom,out
-dynamic-crescendo-middle.png=59~14~0.000000~2.400000~bottom,out
-dynamic-crescendo-start.png=3~15~0.000000~2.400000~bottom,out
+dynamic-crescendo-middle.png=59~14~0.000000~2.200000~bottom,out
+dynamic-crescendo-start.png=3~15~0.000000~2.200000~bottom,out
 dynamic-crescendo.png=30~25~0.000000~1.400000~bottom,out
-dynamic-decrescendo-end.png=105~15~0.000000~2.200000~bottom,out
-dynamic-decrescendo-middle.png=50~15~0.000000~2.400000~bottom,out
-dynamic-decrescendo-start.png=5~15~0.000000~2.400000~bottom,out
+dynamic-decrescendo-end.png=105~15~0.000000~2.000000~bottom,out
+dynamic-decrescendo-middle.png=50~15~0.000000~2.200000~bottom,out
+dynamic-decrescendo-start.png=5~15~0.000000~2.200000~bottom,out
 dynamic-decrescendo.png=15~25~0.000000~1.600000~bottom,out
 dynamic-forte.png=15~17~0.000000~1.600000~bottom,out
 dynamic-fortepiano.png=20~18~0.000000~1.600000~bottom,out
 dynamic-fortissimo.png=25~18~0.000000~1.600000~bottom,out
 dynamic-fortississimo.png=27~15~0.000000~1.800000~bottom,out
 dynamic-mezzo-forte.png=29~17~0.000000~1.600000~bottom,out
-dynamic-mezzo-piano.png=25~10~0.000000~1.600000~bottom,out
-dynamic-pianissimo.png=30~10~0.000000~1.600000~bottom,out
-dynamic-pianississimo.png=40~10~0.000000~1.600000~bottom,out
-dynamic-piano.png=15~10~0.000000~1.800000~bottom,out
+dynamic-mezzo-piano.png=25~13~0.000000~1.600000~bottom,out
+dynamic-pianissimo.png=30~13~0.000000~1.600000~bottom,out
+dynamic-pianississimo.png=40~13~0.000000~1.600000~bottom,out
+dynamic-piano.png=15~13~0.000000~1.800000~bottom,out
 dynamic-sforzando.png=20~17~0.000000~1.600000~bottom,out

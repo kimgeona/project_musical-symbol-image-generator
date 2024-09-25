@@ -1,12 +1,12 @@
 
 # config
-tie-end-1.png=45~60~6.000000~1.400000~bottom,in
-tie-end-2.png=65~45~0.000000~1.600000~bottom,in
-tie-end-3.png=70~7~0.000000~2.000000~bottom,in
-tie-end-4.png=60~5~0.000000~1.600000~bottom,in
-tie-end-5.png=45~5~354.000000~1.600000~bottom,in
-tie-start-1.png=10~60~354.000000~1.600000~bottom,in
-tie-start-2.png=0~40~0.000000~1.600000~bottom,in
-tie-start-3.png=0~0~0.000000~2.200000~bottom,in
-tie-start-4.png=10~15~0.000000~1.800000~bottom,in
-tie-start-5.png=15~15~6.000000~1.600000~bottom,in
+tie-end-1.png=44~58~0.000000~3.000000~bottom,in
+tie-end-2.png=62~41~0.000000~3.200000~bottom,in
+tie-end-3.png=69~7~0.000000~3.600000~bottom,in
+tie-end-4.png=60~8~0.000000~3.200000~bottom,in
+tie-end-5.png=40~8~360.000000~3.200000~bottom,in
+tie-start-1.png=10~60~0.000000~3.200000~bottom,in
+tie-start-2.png=5~37~1.000000~3.200000~bottom,in
+tie-start-3.png=3~2~0.000000~3.800000~bottom,in
+tie-start-4.png=10~15~0.000000~3.400000~bottom,in
+tie-start-5.png=15~15~0.000000~3.200000~bottom,in

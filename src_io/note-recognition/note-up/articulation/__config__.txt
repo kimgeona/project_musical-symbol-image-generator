@@ -1,9 +1,9 @@
 
 # config
-articulation-accent.png=15~10~0.000000~2.000000~bottom,out
-articulation-fermata-down.png=20~13~0.000000~2.000000~bottom,out
-articulation-marcato-down.png=11~15~0.000000~2.000000~bottom,out
-articulation-portato.png=29~19~0.000000~1.400000~bottom,out
-articulation-staccatissimo.png=12~10~0.000000~2.200000~top,out
-articulation-staccato.png=9~9~0.000000~2.500000~top,in
-articulation-tenuto.png=13~8~0.000000~2.400000~top,in
+articulation-accent.png=15~9~0.000000~2.000000~bottom,out
+articulation-fermata-down.png=20~12~0.000000~1.800000~bottom,out
+articulation-marcato-down.png=10~15~0.000000~2.000000~bottom,out
+articulation-portato.png=30~19~0.000000~1.200000~bottom,out
+articulation-staccatissimo.png=12~10~0.000000~2.200000~bottom,out
+articulation-staccato.png=9~9~0.000000~2.500000~bottom,in
+articulation-tenuto.png=13~8~0.000000~2.400000~bottom,in

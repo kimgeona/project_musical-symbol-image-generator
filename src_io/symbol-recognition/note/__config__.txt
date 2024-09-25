@@ -1,16 +1,16 @@
 
 # config
-note-down-1.png=10~9~0.000000~2.100000~fixed
-note-down-16.png=27~11~0.000000~1.900000~fixed
-note-down-2.png=13~11~0.000000~1.800000~fixed
-note-down-32.png=25~13~0.000000~1.900000~fixed
-note-down-4.png=13~11~0.000000~2.000000~fixed
-note-down-64.png=25~11~0.000000~2.000000~fixed
-note-down-8.png=21~14~0.000000~2.200000~fixed
-note-up-1.png=10~9~0.000000~2.200000~fixed
-note-up-16.png=13~45~0.000000~1.900000~fixed
-note-up-2.png=11~47~0.000000~2.000000~fixed
-note-up-32.png=12~52~0.000000~2.000000~fixed
-note-up-4.png=12~46~0.000000~2.000000~fixed
-note-up-64.png=12~63~0.000000~2.100000~fixed
-note-up-8.png=12~44~0.000000~2.000000~fixed
+note-down-1.png=10~9~0.000000~2.300000~fixed
+note-down-16.png=27~11~0.000000~2.100000~fixed
+note-down-2.png=13~11~0.000000~2.000000~fixed
+note-down-32.png=25~13~0.000000~2.100000~fixed
+note-down-4.png=13~11~0.000000~2.200000~fixed
+note-down-64.png=25~11~0.000000~2.200000~fixed
+note-down-8.png=21~14~0.000000~2.400000~fixed
+note-up-1.png=10~9~0.000000~2.400000~fixed
+note-up-16.png=13~45~0.000000~2.100000~fixed
+note-up-2.png=11~47~0.000000~2.200000~fixed
+note-up-32.png=12~52~0.000000~2.200000~fixed
+note-up-4.png=12~46~0.000000~2.200000~fixed
+note-up-64.png=12~63~0.000000~2.300000~fixed
+note-up-8.png=12~44~0.000000~2.200000~fixed
