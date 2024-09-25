@@ -6,4 +6,4 @@ articulation-marcato-up.png=11~13~0.000000~2.200000~top,out
 articulation-portato.png=29~18~0.000000~0.900000~top,out
 articulation-staccatissimo.png=11~9~0.000000~2.600000~top,out
 articulation-staccato.png=9~9~0.000000~2.600000~top,in
-articulation-tenuto.png=13~8~0.000000~2.800000~top,in
+articulation-tenuto.png=13~8~0.000000~3.200000~top,in
