@@ -4,6 +4,6 @@ articulation-accent.png=14~9~0.000000~2.400000~bottom,out
 articulation-fermata-up.png=20~14~0.000000~2.000000~top,out
 articulation-marcato-up.png=10~13~0.000000~2.300000~bottom,out
 articulation-portato.png=30~20~0.000000~1.600000~bottom,out
-articulation-staccatissimo.png=11~9~0.000000~2.600000~bottom,out  
+articulation-staccatissimo.png=11~9~0.000000~2.600000~bottom,out
 articulation-staccato.png=9~9~0.000000~2.600000~bottom,in
 articulation-tenuto.png=13~8~0.000000~3.400000~bottom,in
