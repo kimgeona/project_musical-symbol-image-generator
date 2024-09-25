@@ -518,6 +518,8 @@ MusicalSymbol::operator+ (const MusicalSymbol& other) const {
         tmpImage.image = Processing::Matrix::remove_padding(tmpImage.image, tmpImage.x, tmpImage.y);
         tmpImage.image = cv::Mat(tmpImage.image.rows, tmpImage.image.cols, CV_8UC1, cv::Scalar(0));
         
+        mainImage.pad[0] = (tmpImage.y) > (mainImage.pad[0]) ? (tmpImage.y) : (mainImage.pad[0]);
+        mainImage.pad[1] = (tmpImage.image.rows - tmpImage.y) > (mainImage.pad[1]) ? (tmpImage.image.rows - tmpImage.y) : (mainImage.pad[1]);
         mainImage.pad[2] = (tmpImage.x) > (mainImage.pad[2]) ? (tmpImage.x) : (mainImage.pad[2]);
         mainImage.pad[3] = (tmpImage.image.cols - tmpImage.x) > (mainImage.pad[3]) ? (tmpImage.image.cols - tmpImage.x) : (mainImage.pad[3]);
     }
