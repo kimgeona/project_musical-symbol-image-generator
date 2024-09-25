@@ -648,6 +648,11 @@ Folder::pop() {
             {
                 return false;
             }
+            // 현재 폴더가 마지막이 아닌 경우
+            else
+            {
+                return true;
+            }
         }
     }
     // 현재 폴더가 마지막인 경우

@@ -101,7 +101,6 @@ Canvas::__making_image(std::filesystem::path imagePath, std::deque<std::vector<s
         numberOfCPU = 1;
     }
     
-    numberOfCPU = 1;
     // 2. 쓰레딩 시작
     threads.clear();
     for (size_t i=0; i<numberOfCPU; i++) {
