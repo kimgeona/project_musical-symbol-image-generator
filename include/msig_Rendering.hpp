@@ -60,30 +60,30 @@ private:
     std::filesystem::path path;
     std::filesystem::path newDatasetPath;
 private:
-    bool brushing;
-    int  imageWidth;
-    int  imageHeight;
+    double  trainRate;
+    double  validationRate;
+    double  testRate;
+    bool    brushing;
+    int     imageWidth;
+    int     imageHeight;
 private:
-    Algorithm::DependentSelectionTree dstTrain;
-    Algorithm::DependentSelectionTree dstValidation;
-    Algorithm::DependentSelectionTree dstTest;
-private:
-    std::deque<std::vector<std::filesystem::path>> selectionListTrain;
-    std::deque<std::vector<std::filesystem::path>> selectionListValidation;
-    std::deque<std::vector<std::filesystem::path>> selectionListTest;
-    std::vector<std::string>                       imageNames;
+    std::vector<std::string> imageNames;
 private:
     std::map<std::filesystem::path, Algorithm::MusicalSymbol> musicalSymbols;
 private:
     std::vector<std::thread> threads;
     std::mutex mutex_dvp;
+    std::mutex mutex_csv;
 public:
     Canvas(std::filesystem::path defaultDataset, double trainRate, double validationRate, double testRate, bool brushing, int imageWidth=192, int imageHeight=512);
 private:
-    void        __making_csv(std::filesystem::path csvPath, const std::deque<std::vector<std::filesystem::path>>& selectionList);
-    void        __making_image(std::filesystem::path imagePath, std::deque<std::vector<std::filesystem::path>> &selectionList, int numThreads);
-    void        __thread_function(std::filesystem::path imagePath, std::deque<std::vector<std::filesystem::path>>& selectionList);
-    std::string __labeling(std::string name, const std::vector<std::filesystem::path>& vp);
+    void        __remove_dataset();
+    void        __making_dataset(std::string datasetName, double declineRate, int numThreads);
+    void        __thread_function(std::filesystem::path& imagePath,
+                                  std::fstream& csv,
+                                  size_t& count,
+                                  std::deque<std::vector<std::filesystem::path>>& selectionList);
+    std::string __labeling(std::string name, Algorithm::MusicalSymbol& ms);
 public:
     void        draw(int numThreads=-1);
 };
