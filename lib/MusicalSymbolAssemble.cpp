@@ -198,6 +198,7 @@ MusicalSymbolAssemble::assemble()
             
             // subImage의 여백을 제거한 크기의 검은 이미지 생성
             MusicalSymbol tmpImage = ms.copy();
+            tmpImage.as_default();
             tmpImage.image = Processing::Matrix::remove_padding(tmpImage.image, tmpImage.x, tmpImage.y);
             tmpImage.image = cv::Mat(tmpImage.image.rows, tmpImage.image.cols, CV_8UC1, cv::Scalar(0));
             
@@ -251,7 +252,7 @@ MusicalSymbolAssemble::assemble()
                     }
                     
                     // staffImage와 tmpImage 사이 간격 주기
-                    tmpImage.y -= staffImage.staffPadding * 0.7;
+                    tmpImage.y += staffImage.staffPadding * 0.7;
                     padding[0] += staffImage.staffPadding * 0.7;
                     
                     // subImage 좌표 수정
@@ -306,6 +307,7 @@ MusicalSymbolAssemble::assemble()
             {
                 // sumImage.x += 누적 패딩 값 + 오선지 패딩 * 0.7 + 이미지 중심 좌표에서 오른쪽 크기
                 subImage.x += padding[2] + staffImage.staffPadding * 0.7 + (tmpImage.image.cols - tmpImage.x);
+                tmpImage.x += padding[2] + staffImage.staffPadding * 0.7 + (tmpImage.image.cols - tmpImage.x);
                 
                 // 누적 패딩 += subImage 가로 크기 + 오선지 패딩
                 padding[2] += tmpImage.image.cols + staffImage.staffPadding * 0.7 ;
@@ -314,19 +316,27 @@ MusicalSymbolAssemble::assemble()
             {
                 // sumImage.x += 누적 패딩 값 + 오선지 패딩 * 0.7 + 이미지 중심 좌표에서 왼쪽 크기
                 subImage.x -= padding[3] + staffImage.staffPadding * 0.7 + (tmpImage.x);
+                tmpImage.x -= padding[3] + staffImage.staffPadding * 0.7 + (tmpImage.x);
                 
                 // 누적 패딩 += subImage 가로 크기 + 오선지 패딩
                 padding[3] -= tmpImage.image.cols + staffImage.staffPadding;
             }
             
-            // 바운딩 박스 좌표, 악상기호 중심 좌표 저장
+            // 이미지 합성시 늘어날 크기를 기준으로의 중심좌표
+            int deltaX = (staffImage.x > subImage.x) ? staffImage.x : subImage.x;
+            int deltaY = (staffImage.y > subImage.y) ? staffImage.y : subImage.y;
+            
+            // 이미지 합성시 늘어날 크기 coordinates에 반영
+            __coordinate_adjustment(deltaX - staffImage.x, deltaY - staffImage.y);
+            
+            // 이미지 합성시 늘어날 크기를 기준으로 바운딩 박스 좌표, 악상기호 중심 좌표 저장
             coordinates[subImage.path] = std::array<int, 6>({
-                staffImage.x - (tmpImage.x - originX) - tmpImage.x,                         // x1
-                staffImage.y - (tmpImage.y - originY) - tmpImage.y,                         // y1
-                staffImage.x - (tmpImage.x - originX) - tmpImage.x + tmpImage.image.cols,   // x2
-                staffImage.y - (tmpImage.y - originY) - tmpImage.y + tmpImage.image.rows,   // y2
-                staffImage.x - (tmpImage.x - originX),                                      // cx
-                staffImage.y - (tmpImage.y - originY)                                       // cy
+                deltaX - tmpImage.x,                        // x1
+                deltaY - tmpImage.y,                        // y1
+                deltaX - tmpImage.x + tmpImage.image.cols,  // x2
+                deltaY - tmpImage.y + tmpImage.image.rows,  // y2
+                deltaX - tmpImage.x + originX,              // cx
+                deltaY - tmpImage.y + originY,              // cy
             });
             
             // 오선지 이미지는 건너뛰기
@@ -355,7 +365,7 @@ MusicalSymbolAssemble::assemble()
         resultImage.as_default();
         
         // 배치 수행
-        for (size_t i=1; i<mss.size(); i++)
+        for (size_t i=0; i<mss.size(); i++)
         {
             // subImage 생성
             MusicalSymbol subImage = mss[i].copy();
@@ -365,6 +375,7 @@ MusicalSymbolAssemble::assemble()
             
             // subImage의 여백을 제거한 크기의 검은 이미지 생성
             MusicalSymbol tmpImage = mss[i].copy();
+            tmpImage.as_default();
             tmpImage.image = Processing::Matrix::remove_padding(tmpImage.image, tmpImage.x, tmpImage.y);
             tmpImage.image = cv::Mat(tmpImage.image.rows, tmpImage.image.cols, CV_8UC1, cv::Scalar(0));
             
@@ -373,7 +384,22 @@ MusicalSymbolAssemble::assemble()
             int originY = tmpImage.y;
             
             // staffImage와 합성할 subImage 좌표 수정
-            if      (subImage.position == MS_FIXED)
+            if (i==0)
+            {
+                // 첫번째는 좌표만 저장함
+                // 바운딩 박스 좌표, 악상기호 중심 좌표 저장
+                coordinates[subImage.path] = std::array<int, 6>({
+                    resultImage.x - tmpImage.x,                         // x1
+                    resultImage.y - tmpImage.y,                         // y1
+                    resultImage.x - tmpImage.x + tmpImage.image.cols,   // x2
+                    resultImage.y - tmpImage.y + tmpImage.image.rows,   // y2
+                    resultImage.x - tmpImage.x + originX,               // cx
+                    resultImage.y - tmpImage.y + originY,               // cy
+                });
+                
+                continue;
+            }
+            else if (subImage.position == MS_FIXED)
             {
                 // 패딩 업데이트
                 padding[0] = (tmpImage.y) > (padding[0]) ? (tmpImage.y) : (padding[0]);
@@ -393,7 +419,7 @@ MusicalSymbolAssemble::assemble()
                 }
                 
                 // staffImage와 tmpImage 사이 간격 주기
-                tmpImage.y -= resultImage.staffPadding * 0.7;
+                tmpImage.y += resultImage.staffPadding * 0.7;
                 padding[0] += resultImage.staffPadding * 0.7;
                 
                 // subImage 좌표 수정
@@ -429,7 +455,7 @@ MusicalSymbolAssemble::assemble()
                 }
                 
                 // staffImage와 tmpImage 사이 간격 주기
-                tmpImage.x -= resultImage.staffPadding * 0.7;
+                tmpImage.x += resultImage.staffPadding * 0.7;
                 padding[2] += resultImage.staffPadding * 0.7;
                 
                 // subImage 좌표 수정
@@ -454,21 +480,24 @@ MusicalSymbolAssemble::assemble()
                 subImage.x -= padding[3];
             }
             
-            // 바운딩 박스 좌표, 악상기호 중심 좌표 저장
+            // 이미지 합성시 늘어날 크기를 기준으로의 중심좌표
+            int deltaX = (resultImage.x > subImage.x) ? resultImage.x : subImage.x;
+            int deltaY = (resultImage.y > subImage.y) ? resultImage.y : subImage.y;
+            
+            // 이미지 합성시 늘어날 크기 coordinates에 반영
+            __coordinate_adjustment(deltaX - resultImage.x, deltaY - resultImage.y);
+            
+            // 이미지 합성시 늘어날 크기를 기준으로 바운딩 박스 좌표, 악상기호 중심 좌표 저장
             coordinates[subImage.path] = std::array<int, 6>({
-                resultImage.x - (tmpImage.x - originX) - tmpImage.x,                         // x1
-                resultImage.y - (tmpImage.y - originY) - tmpImage.y,                         // y1
-                resultImage.x - (tmpImage.x - originX) - tmpImage.x + tmpImage.image.cols,   // x2
-                resultImage.y - (tmpImage.y - originY) - tmpImage.y + tmpImage.image.rows,   // y2
-                resultImage.x - (tmpImage.x - originX),                                      // cx
-                resultImage.y - (tmpImage.y - originY)                                       // cy
+                deltaX - tmpImage.x,                        // x1
+                deltaY - tmpImage.y,                        // y1
+                deltaX - tmpImage.x + tmpImage.image.cols,  // x2
+                deltaY - tmpImage.y + tmpImage.image.rows,  // y2
+                deltaX - tmpImage.x + originX,              // cx
+                deltaY - tmpImage.y + originY,              // cy
             });
             
-            // 오선지 이미지는 건너뛰기
-            if (subImage.position & MS_STAFF)
-                continue;
-            
-            // staffImage와 subImage 합성
+            // resultImage와 subImage 합성
             resultImage = resultImage & subImage;
         }
         
@@ -486,6 +515,67 @@ std::map<std::filesystem::path, std::array<int, 6>>
 MusicalSymbolAssemble::assemble_labels()
 {
     return coordinates;
+}
+
+void
+MusicalSymbolAssemble::show()
+{
+    // assemble 진행
+    MusicalSymbol ms = assemble();
+    
+    // 좌표 차이 계산
+    int deltaX = ms.diagonal - ms.x;
+    int deltaY = ms.diagonal - ms.y;
+    
+    // coordinates 좌표 차이 적용
+    //__coordinate_adjustment(deltaX, deltaY);
+    
+    // 그레이스케일 이미지를 컬러 이미지로 변환 (3채널)
+    //cv::Mat assembledImage = ms.rendering(true, false, false);
+    cv::Mat assembledImage = ms.image;
+    cv::cvtColor(assembledImage, assembledImage, cv::COLOR_GRAY2BGR);
+
+    // 색상을 생성할 때 사용할 컬러 팔레트 (BGR 형식)
+    std::vector<cv::Scalar> colors = {
+        {0, 0, 255},   // 빨강
+        {0, 255, 0},   // 초록
+        {255, 0, 0},   // 파랑
+        {0, 255, 255}, // 노랑
+        {255, 0, 255}, // 보라
+        {255, 255, 0}  // 하늘색
+    };
+
+    int colorIndex = 0;
+
+    for (const auto& [imagePath, coordinate] : coordinates) {
+        // 바운딩 박스 좌표
+        int x1 = coordinate[0];
+        int y1 = coordinate[1];
+        int x2 = coordinate[2];
+        int y2 = coordinate[3];
+
+        // 악상기호 중심 좌표
+        int cx = coordinate[4];
+        int cy = coordinate[5];
+
+        // 색상 선택
+        cv::Scalar color = colors[colorIndex % colors.size()];
+
+        // 바운딩 박스 그리기
+        cv::rectangle(assembledImage, cv::Point(x1, y1), cv::Point(x2, y2), color, 2);
+
+        // 중심 좌표 그리기 (십자 선)
+        cv::line(assembledImage, cv::Point(cx - 3, cy), cv::Point(cx + 3, cy), color-cv::Scalar(70, 70, 70), 2);
+        cv::line(assembledImage, cv::Point(cx, cy - 3), cv::Point(cx, cy + 3), color-cv::Scalar(70, 70, 70), 2);
+        
+        // 색상 인덱스 증가
+        colorIndex++;
+    }
+
+    // 이미지 출력 (테스트용)
+    cv::imshow("MusicalSymbolAssemble preview", assembledImage);
+    cv::waitKey(0);
+    cv::destroyWindow("MusicalSymbolAssemble preview");
 }
 
 }

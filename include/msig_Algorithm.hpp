@@ -198,6 +198,7 @@ public:
 public:
     MusicalSymbol assemble();
     std::map<std::filesystem::path, std::array<int, 6>> assemble_labels();
+    void show();
 };
 
 
