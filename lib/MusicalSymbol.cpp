@@ -101,95 +101,6 @@ MusicalSymbol::MusicalSymbol(std::filesystem::path imagePath, bool makingConfigD
             if      (positions.size()>1 && positions.at(1)=="in")  this->position |= MS_IN;
             else if (positions.size()>1 && positions.at(1)=="out") this->position |= MS_OUT;
             else if (positions.size()>1) throw std::runtime_error(errorMessage);
-            
-            // 오선지 이미지 인경우 특수 처리
-            if (this->position & MS_STAFF)
-            {
-                // 오선지 이미지인 경우 다음의 추가적인 값들을 계산함.
-                // pitch    : 현재 기본이 되는 음정
-                // edge[4]  : 악상기호를 오선지 안에 각각 몇개를 배치할 수 있는지의 갯수.
-                // in[4]    : 현재 오선지 안에 배치되어 있는 악상기호 갯수.
-                // pad[4]   : 악상기호 사이 보조 여백.
-                
-                // pitch, ledger 정보 추출
-                std::vector<std::string> staffData = Utility::split(this->path.filename().stem().string(), "-");
-                
-                // 숫자 값으로 변환
-                int p=0;
-                int t=0;
-                int b=0;
-                try {
-                    p = __pitch_to_number(staffData.at(1));                         // 음정 위치
-                    t = __pitch_to_number("f5") + 2 * std::stoi(staffData.at(2));   // ledger top 위치
-                    b = __pitch_to_number("e4") - 2 * std::stoi(staffData.at(3));   // ledger bottom 위치
-                    
-                    this->pitch = p;
-                }
-                catch (const std::out_of_range& e)
-                {
-                    // staff 이름 형식이 잘못되면 에러
-                    std::string errorMessage = "MSIG::Algorithm::Image.Image() : \"" + imagePath.string() + "\"staff 이미지 이름 형식이 잘못되었습니다.";
-                    throw std::runtime_error(errorMessage);
-                }
-                
-                // 현재 오선지 이미지에서 벗어난 곳에 음정이 설정되어 있는지 확인
-                if (p < b-1 || p > t+1) {
-                    throw std::runtime_error("MSIG::Algorithm::Image.Image() : \"" + imagePath.string() + "\" staff 이미지 이름의 pitch와 ledger 정보가 잘못되었습니다.");
-                }
-                
-                // 현재 음표의 위치(pitch)를 기준으로 상,하,좌,우에 악상기호들이 몇 개가 들어갈 수 있는지 계산.
-                this->edge[0] = (t - p) / 2;    // 현재 pitch를 기준으로 위에는 악상기호가 몇 개 들어갈수 있는지 계산.
-                this->edge[1] = (p - b) / 2;    // 현재 pitch를 기준으로 아래에는 악상기호가 몇 개 들어갈수 있는지 계산.
-                this->edge[2] = 100;            // 좌,우 는 기본 100개의 악상기호가 들어갈 수 있음.
-                this->edge[3] = 100;
-                
-                // 실선에 걸치는 음표인 경우엔 들어갈 수 있는 공간 1개 감소
-                if (this->edge[0] > 0 && p % 2 == 0) {
-                    this->edge[0]--;
-                }
-                if (this->edge[1] > 0 && p % 2 == 0) {
-                    this->edge[1]--;
-                }
-                // 범위 클리핑
-                for (int i=0; i<2; i++)
-                    if (this->edge[i] < 0)
-                        this->edge[i] = 0;
-                
-                //
-                this->in[0] = 0;
-                this->in[1] = 0;
-                this->in[2] = 0;
-                this->in[3] = 0;
-                
-                // 악상기호 사이 여백 초기화
-                if (p % 2 == 0) {
-                    this->pad[0] = this->staffPadding + this->staffPadding * this->edge[0];
-                    this->pad[1] = this->staffPadding + this->staffPadding * this->edge[1];
-                }
-                else {
-                    this->pad[0] = this->staffPadding * this->edge[0] + this->staffPadding * 0.5;
-                    this->pad[1] = this->staffPadding * this->edge[1] + this->staffPadding * 0.5;
-                }
-                this->pad[2] = 0;
-                this->pad[3] = 0;
-                
-                // 악상기호 사이 여백 초기화 (오선지 밖에 음표가 있는 경우)
-                if (p >= t) {
-                    this->pad[0] = 0;
-                }
-                if (p <= b) {
-                    this->pad[1] = 0;
-                }
-                
-                // 배치 정보 추가
-                this->position |= MS_FIXED;
-            }
-            else
-            {
-                // 기본 값으로 초기화
-                for (int i=0; i<4; i++)
-                    this->pad[i] = this->in[i] = this->edge[i] = 0;
-            }
         }
         catch (const std::out_of_range& e)
         {
@@ -223,7 +134,8 @@ MusicalSymbol::operator bool() const
 }
 
 MusicalSymbol
-MusicalSymbol::operator& (const MusicalSymbol& other) const {
+MusicalSymbol::operator& (const MusicalSymbol& other) const
+{
     // 합성하려는 두 이미지의 같은 픽셀 위치에서 가장 작은(어두운) 값이 선택됨.
     // 256 & 256 -> 256
     // 256 & 194 -> 194
@@ -233,8 +145,8 @@ MusicalSymbol::operator& (const MusicalSymbol& other) const {
     // 1. 두 이미지 준비
     MusicalSymbol thisImage = this->copy();
     MusicalSymbol otherImage = other.copy();
-    thisImage.__as_default();
-    otherImage.__as_default();
+    thisImage.as_default();
+    otherImage.as_default();
     
     // 2. 두 이미지를 포함하는 영역 계산
     // ti=thisImage, oi=otherImage, ni=newImage
@@ -294,7 +206,8 @@ MusicalSymbol::operator& (const MusicalSymbol& other) const {
 }
 
 MusicalSymbol
-MusicalSymbol::operator| (const MusicalSymbol& other) const {
+MusicalSymbol::operator| (const MusicalSymbol& other) const
+{
     // 합성하려는 두 이미지의 같은 픽셀 위치에서 가장 큰(밝은) 값이 선택됨.
     // 256 | 256 -> 256
     // 256 | 194 -> 256
@@ -304,8 +217,8 @@ MusicalSymbol::operator| (const MusicalSymbol& other) const {
     // 1. 두 이미지 준비
     MusicalSymbol thisImage = this->copy();
     MusicalSymbol otherImage = other.copy();
-    thisImage.__as_default();
-    otherImage.__as_default();
+    thisImage.as_default();
+    otherImage.as_default();
     
     // 2. 두 이미지를 포함하는 영역 계산
     // ti=thisImage, oi=otherImage, ni=newImage
@@ -364,172 +277,12 @@ MusicalSymbol::operator| (const MusicalSymbol& other) const {
     return thisImage;
 }
 
-MusicalSymbol
-MusicalSymbol::operator+ (const MusicalSymbol& other) const {
-    // 현재 이미지에 다른 이미지를 적절한 위치에 배치 붙여넣기
-    
-    // 1. 두 이미지 준비
-    MusicalSymbol thisImage = this->copy();
-    MusicalSymbol otherImage = other.copy();
-    thisImage.__as_default();
-    otherImage.__as_default();
-    MusicalSymbol& mainImage = thisImage;
-    MusicalSymbol& subImage = otherImage;
-    
-    
-    // 2. 오선지가 포함되어있는 MusicalSymbol이 메인으로 사용됨
-    if      ((thisImage.position & MS_STAFF) && !(otherImage.position & MS_STAFF))
-    {
-        mainImage = thisImage;
-        subImage = otherImage;
-    }
-    else if (!(thisImage.position & MS_STAFF) && (otherImage.position & MS_STAFF))
-    {
-        mainImage = otherImage;
-        subImage = thisImage;
-    }
-    else
-    {
-        std::string errorMessage = "MSIG::Algorithm::MusicalSymbol.operator+() : + 연산을 진행하려는 MusicalSymbol 중에 하나는 staff 이미지를 포함해야 하고, 다른 하나는 staff 이미지를 포함하지 않아야 합니다.";
-        throw std::runtime_error(errorMessage);
-    }
-    
-    // 3. 악상기호 배치
-    if      (subImage.position & MS_TOP)
-    {
-        // 안쪽 배치
-        if ((subImage.position & MS_IN) && (mainImage.edge[0] > mainImage.in[0]))
-        {
-            // 오선지 안쪽에 배치
-            subImage.y += mainImage.staffPadding * mainImage.in[0]++;
-            
-            // 음표가 실선에 겹쳐져 있는 경우 추가적인 패딩 추가
-            if (pitch % 2 == 0) subImage.y += mainImage.staffPadding + mainImage.staffPadding / 2.0;
-            else                subImage.y += mainImage.staffPadding;
-            
-            // subImage의 여백을 제거한 크기의 검은 이미지 생성
-            MusicalSymbol tmpImage = subImage.copy();
-            tmpImage.image = Processing::Matrix::remove_padding(tmpImage.image, tmpImage.x, tmpImage.y);
-            tmpImage.image = cv::Mat(tmpImage.image.rows, tmpImage.image.cols, CV_8UC1, cv::Scalar(0));
-            
-            // 오선지 안에 배치한 악상기호의 크기가 바깥쪽 배치에 주는 영향 계산
-            if (mainImage.pad[0] < tmpImage.y)
-                mainImage.pad[0] = tmpImage.y;
-        }
-        // 바깥쪽 배치
-        else
-        {
-            // subImage의 여백을 제거한 크기의 검은 이미지 생성
-            MusicalSymbol tmpImage = subImage.copy();
-            tmpImage.image = Processing::Matrix::remove_padding(tmpImage.image, tmpImage.x, tmpImage.y);
-            tmpImage.image = cv::Mat(tmpImage.image.rows, tmpImage.image.cols, CV_8UC1, cv::Scalar(0));
-            
-            // 배치를 위해 오선지 밖 좌표로 이동
-            tmpImage.y += mainImage.pad[0];
-            
-            // mainImage와 tmpImage가 서로 겹치지 않을 때 까지 tmpImage 올리기
-            while (static_cast<bool>(mainImage | tmpImage)){
-                tmpImage.y += 1;
-                mainImage.pad[0] += 1;
-            }
-            
-            // mainImage와 tmpImage 사이 간격 주기
-            mainImage.pad[0] += mainImage.staffPadding * 0.7;
-            
-            // subImage 악상기호 좌표 이동
-            subImage.y += mainImage.pad[0];
-        }
-    }
-    else if (subImage.position & MS_BOTTOM)
-    {
-        // 안쪽 배치
-        if ((subImage.position & MS_IN) && (mainImage.edge[1] > mainImage.in[1]))
-        {
-            // 오선지 안쪽에 배치
-            subImage.y -= mainImage.staffPadding * mainImage.in[1]++;
-            
-            // 음표가 실선에 겹쳐져 있는 경우 추가적인 패딩 추가
-            if (pitch % 2 == 0) subImage.y -= mainImage.staffPadding + mainImage.staffPadding / 2.0;
-            else                subImage.y -= mainImage.staffPadding;
-            
-            // subImage의 여백을 제거한 크기의 검은 이미지 생성
-            MusicalSymbol tmpImage = subImage.copy();
-            tmpImage.image = Processing::Matrix::remove_padding(tmpImage.image, tmpImage.x, tmpImage.y);
-            tmpImage.image = cv::Mat(tmpImage.image.rows, tmpImage.image.cols, CV_8UC1, cv::Scalar(0));
-            
-            // 오선지 안에 배치한 악상기호의 크기가 바깥쪽 배치에 주는 영향 계산
-            if (mainImage.pad[1] < abs(tmpImage.y) + tmpImage.image.rows)
-                mainImage.pad[1] = abs(tmpImage.y) + tmpImage.image.rows;
-        }
-        // 바깥쪽 배치
-        else
-        {
-            // subImage의 여백을 제거한 크기의 검은 이미지 생성
-            MusicalSymbol tmpImage = subImage.copy();
-            tmpImage.image = Processing::Matrix::remove_padding(tmpImage.image, tmpImage.x, tmpImage.y);
-            tmpImage.image = cv::Mat(tmpImage.image.rows, tmpImage.image.cols, CV_8UC1, cv::Scalar(0));
-            
-            // 배치를 위해 오선지 밖 좌표로 이동
-            tmpImage.y -= mainImage.pad[1];
-            
-            // mainImage와 tmpImage가 서로 겹치지 않을 때 까지 tmpImage 올리기
-            while (static_cast<bool>(mainImage | tmpImage)){
-                tmpImage.y -= 1;
-                mainImage.pad[1] += 1;
-            }
-            
-            // mainImage와 tmpImage 사이 간격 주기
-            mainImage.pad[1] += mainImage.staffPadding * 0.7;
-            
-            // subImage 악상기호 좌표 이동
-            subImage.y -= mainImage.pad[1];
-        }
-    }
-    else if (subImage.position & MS_LEFT)
-    {
-        // subImage의 여백을 제거한 크기의 검은 이미지 생성
-        MusicalSymbol tmpImage = subImage.copy();
-        tmpImage.image = Processing::Matrix::remove_padding(tmpImage.image, tmpImage.x, tmpImage.y);
-        tmpImage.image = cv::Mat(tmpImage.image.rows, tmpImage.image.cols, CV_8UC1, cv::Scalar(0));
-        
-        // sumImage.x += 누적 패딩 값 + 오선지 패딩 * 2 / 3 + 이미지 중심 좌표에서 오른쪽 크기
-        subImage.x += mainImage.pad[2] + mainImage.staffPadding * 2.0 / 3.0 + (tmpImage.image.cols - tmpImage.x);
-        
-        // 누적 패딩 += subImage 가로 크기 + 오선지 패딩
-        mainImage.pad[2] += tmpImage.image.cols + mainImage.staffPadding * 2 / 3 ;
-    }
-    else if (subImage.position & MS_RIGHT)
-    {
-        // subImage의 여백을 제거한 크기의 검은 이미지 생성
-        MusicalSymbol tmpImage = subImage.copy();
-        tmpImage.image = Processing::Matrix::remove_padding(tmpImage.image, tmpImage.x, tmpImage.y);
-        tmpImage.image = cv::Mat(tmpImage.image.rows, tmpImage.image.cols, CV_8UC1, cv::Scalar(0));
-        
-        // sumImage.x += 누적 패딩 값 + 오선지 패딩 + 이미지 중심 좌표에서 왼쪽 크기
-        subImage.x -= mainImage.pad[3] + mainImage.staffPadding + (tmpImage.x);
-        
-        // 누적 패딩 += subImage 가로 크기 + 오선지 패딩
-        mainImage.pad[3] -= tmpImage.image.cols + mainImage.staffPadding;
-    }
-    else
-    {
-        // subImage의 여백을 제거한 크기의 검은 이미지 생성
-        MusicalSymbol tmpImage = subImage.copy();
-        tmpImage.image = Processing::Matrix::remove_padding(tmpImage.image, tmpImage.x, tmpImage.y);
-        tmpImage.image = cv::Mat(tmpImage.image.rows, tmpImage.image.cols, CV_8UC1, cv::Scalar(0));
-        
-        mainImage.pad[0] = (tmpImage.y) > (mainImage.pad[0]) ? (tmpImage.y) : (mainImage.pad[0]);
-        mainImage.pad[1] = (tmpImage.image.rows - tmpImage.y) > (mainImage.pad[1]) ? (tmpImage.image.rows - tmpImage.y) : (mainImage.pad[1]);
-        mainImage.pad[2] = (tmpImage.x) > (mainImage.pad[2]) ? (tmpImage.x) : (mainImage.pad[2]);
-        mainImage.pad[3] = (tmpImage.image.cols - tmpImage.x) > (mainImage.pad[3]) ? (tmpImage.image.cols - tmpImage.x) : (mainImage.pad[3]);
-    }
-    
-    // 4. 두 악상기호를 합치고 반환.
-    return mainImage & subImage;
-}
-
 cv::Mat
-MusicalSymbol::__rendering(int x, int y, double degree, double scale, bool extensionSize, bool auxiliaryStaff, bool auxiliaryCenter) {
+MusicalSymbol::__rendering(int x, int y, double degree, double scale,
+                           bool extensionSize,
+                           bool auxiliaryStaff,
+                           bool auxiliaryCenter)
+{
     namespace fs = std::filesystem;
     
     //
@@ -568,7 +321,8 @@ MusicalSymbol::__rendering(int x, int y, double degree, double scale, bool exten
 }
 
 void
-MusicalSymbol::__save_config() {
+MusicalSymbol::__save_config()
+{
     namespace fs = std::filesystem;
     
     // *. 만약 MusicalSymbol가 원본이면 저장 불가능
@@ -638,44 +392,8 @@ MusicalSymbol::__save_config() {
 }
 
 void
-MusicalSymbol::__as_default() {
-    namespace fs = std::filesystem;
-    
-    //
-    original = false;
-    
-    // 이미지 수정
-    image = image.clone();
-    image = Processing::Matrix::mat_rotate(image, degree, x, y);
-    image = Processing::Matrix::mat_scale(image, scale, x, y);
-}
-
-int
-MusicalSymbol::__pitch_to_number(const std::string& pitch) {
-    // 음정(p)과 옥타브(o)값 추출
-    char p = pitch[0];
-    int  o = pitch[1] - 48;
-    
-    // 옥타브 계산
-    int number = o * 7;
-    
-    // 음정 계산
-    switch (p)
-    {
-        case 'c': number += 0; break;
-        case 'd': number += 1; break;
-        case 'e': number += 2; break;
-        case 'f': number += 3; break;
-        case 'g': number += 4; break;
-        case 'a': number += 5; break;
-        case 'b': number += 6; break;
-    }
-    
-    return number;
-}
-
-void
-MusicalSymbol::edit_config() {
+MusicalSymbol::edit_config()
+{
     namespace fs = std::filesystem;
     
     // 1. 기존 값 복사
@@ -757,7 +475,22 @@ MusicalSymbol::edit_config() {
 }
 
 void
-MusicalSymbol::show() {
+MusicalSymbol::as_default()
+{
+    namespace fs = std::filesystem;
+    
+    //
+    original = false;
+    
+    // 이미지 수정
+    image = image.clone();
+    image = Processing::Matrix::mat_rotate(image, degree, x, y);
+    image = Processing::Matrix::mat_scale(image, scale, x, y);
+}
+
+void
+MusicalSymbol::show()
+{
     //
     cv::Mat previewImage = __rendering(x, y, degree, scale, true, false, false);
     
@@ -768,12 +501,14 @@ MusicalSymbol::show() {
 }
 
 cv::Mat
-MusicalSymbol::rendering(bool extensionSize, bool auxiliaryStaff, bool auxiliaryCenter) {
+MusicalSymbol::rendering(bool extensionSize, bool auxiliaryStaff, bool auxiliaryCenter)
+{
     return __rendering(x, y, degree, scale, extensionSize, auxiliaryStaff, auxiliaryCenter);
 }
 
 MusicalSymbol
-MusicalSymbol::copy() const {
+MusicalSymbol::copy() const
+{
     MusicalSymbol ms = *this;
     ms.image = ms.image.clone();
     ms.original = false;

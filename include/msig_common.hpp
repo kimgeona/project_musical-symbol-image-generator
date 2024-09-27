@@ -21,6 +21,7 @@
 // 컨테이너
 #include <queue>
 #include <vector>
+#include <array>
 #include <set>
 #include <map>
 

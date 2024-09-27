@@ -157,11 +157,12 @@ Canvas::__thread_function(std::filesystem::path& imagePath,
         }
         
         // 악상기호 조합
-        MSIG::Algorithm::MusicalSymbol ms = musicalSymbols.at(vp[0]).copy();
-        for (size_t i=1; i<vp.size(); i++) {
+        MSIG::Algorithm::MusicalSymbolAssemble msa;
+        for (auto& p : vp) {
             // TODO: +연산자를 이용해서 악상기호를 합성하였는데 이미지 범위를 아예 벗어난다면 해당 악상기호 조합은 그냥 건너뛰는 코드 작성하기.
-            ms = ms + musicalSymbols.at(vp[i]);
+            msa.push_back(musicalSymbols.at(p));
         }
+        MSIG::Algorithm::MusicalSymbol ms = msa.assemble();
         
         // 악상기호 브러싱
         cv::Mat resultImage;

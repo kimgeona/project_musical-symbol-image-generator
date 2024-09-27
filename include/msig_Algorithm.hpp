@@ -150,29 +150,54 @@ public:
     int diagonal;
     int staffPadding;
 public:
-    // 배치 관련 변수
-    int  pitch;                                     // 현재 음정
-    int  edge[4];                                   // 오선지 경계
-    int  in  [4];                                   // 오선지 안
-    int  pad [4];                                   // 부가적인 패딩값
-public:
     MusicalSymbol(std::filesystem::path imagePath, bool makingConfigData, int width=192, int height=512, int staffPadding=26);
 public:
     explicit        operator bool() const;
     MusicalSymbol   operator& (const MusicalSymbol& other) const;
     MusicalSymbol   operator| (const MusicalSymbol& other) const;
-    MusicalSymbol   operator+ (const MusicalSymbol& other) const;
 private:
-    cv::Mat         __rendering(int x, int y, double degree, double scale, bool extensionSize, bool auxiliaryStaff, bool auxiliaryCenter);
+    cv::Mat         __rendering(int x, int y, double degree, double scale,
+                                bool extensionSize,
+                                bool auxiliaryStaff,
+                                bool auxiliaryCenter);
     void            __save_config();
-    void            __as_default();
-    int             __pitch_to_number(const std::string& pitch);
 public:
     void            edit_config();
+    void            as_default();
+public:
     void            show();
     cv::Mat         rendering(bool extensionSize, bool auxiliaryStaff, bool auxiliaryCenter);
 public:
     MusicalSymbol   copy() const;
+};
+
+class MusicalSymbolAssemble
+{
+public:
+    // 조합할 악상기호들
+    std::deque<MusicalSymbol> mss;
+public:
+    // 바운딩 박스 좌표, 악상기호 중심 좌표
+    std::map<std::filesystem::path, std::array<int, 6>> coordinates;
+public:
+    MusicalSymbolAssemble();
+    MusicalSymbolAssemble(const std::initializer_list<MusicalSymbol>& MusicalSymbols);
+private:
+    int  __pitch_to_number(const std::string& pitch);
+    bool __set_staff(const std::string& staffInfoString,
+                     const int& staffPadding,
+                     int& pitch,
+                     std::array<int, 2>& space,
+                     std::array<int, 2>& edge,
+                     std::array<int, 4>& padding);
+    void __coordinate_adjustment(const int& deltaX, const int& deltaY);
+    bool __is_staff_here();
+public:
+    void push_back(const MusicalSymbol& ms);
+    void pop_back();
+public:
+    MusicalSymbol assemble();
+    std::map<std::filesystem::path, std::array<int, 6>> assemble_labels();
 };
 
 
