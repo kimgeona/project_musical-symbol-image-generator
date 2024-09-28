@@ -185,7 +185,7 @@ Canvas::__thread_function(std::filesystem::path& imagePath,
             
             // 악상기호 이미지 저장
             cv::imwrite((imagePath/fs::path(std::to_string(count)+".png")).string(), resultImage);
-            cv::imwrite((imagePath/fs::path(std::to_string(count)+"_YOLO.png")).string(), resultImage);
+            cv::imwrite((imagePath/fs::path(std::to_string(count)+"_yolo.png")).string(), resultImageYOLO);
             
             // 악상기호 CSV 데이터 저장
             csv << __labeling(std::to_string(count)+".png", labels) << "\n";
