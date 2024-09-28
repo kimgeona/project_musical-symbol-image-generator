@@ -225,7 +225,7 @@ Matrix::remove_padding(const cv::Mat& img, int& center_x, int& center_y) {
 
     // Threshold를 적용하여 220부터 흰색까지의 색상을 모두 검은색으로 변환
     Mat binary;
-    threshold(inverted, binary, 220, 255, THRESH_BINARY);
+    threshold(inverted, binary, 128, 255, THRESH_BINARY);
     
     //
     int top = 0, bottom = binary.rows - 1;

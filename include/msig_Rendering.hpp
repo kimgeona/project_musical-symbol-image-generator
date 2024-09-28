@@ -60,9 +60,9 @@ private:
     std::filesystem::path path;
     std::filesystem::path newDatasetPath;
 private:
-    double  trainRate;
-    double  validationRate;
-    double  testRate;
+    size_t  trainImageCount;
+    size_t  validationImageCount;
+    size_t  testImageCount;
     bool    brushing;
     int     imageWidth;
     int     imageHeight;
@@ -75,10 +75,19 @@ private:
     std::mutex mutex_dvp;
     std::mutex mutex_csv;
 public:
-    Canvas(std::filesystem::path defaultDataset, double trainRate, double validationRate, double testRate, bool brushing, int imageWidth=192, int imageHeight=512);
+    Canvas(std::filesystem::path defaultDataset,
+           size_t trainImageCount,
+           size_t validationImageCount,
+           size_t testImageCount,
+           bool brushing,
+           int imageWidth=192,
+           int imageHeight=512);
 private:
     void        __remove_dataset();
-    void        __making_dataset(std::string datasetName, double declineRate, int numThreads);
+    void        __making_dataset(std::string datasetName,
+                                 MSIG::Algorithm::DependentSelectionTree& dst,
+                                 size_t imageCount,
+                                 int numThreads);
     void        __thread_function(std::filesystem::path& imagePath,
                                   std::fstream& csv,
                                   size_t& count,

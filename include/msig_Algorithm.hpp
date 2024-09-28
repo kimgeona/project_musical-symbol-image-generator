@@ -69,25 +69,22 @@ namespace Algorithm {
 class DependentSelectionTree
 {
 private:
-    Structure::Folder              originaFolder;
-    std::deque<Structure::Folder>  reconstructedFolders;
-private:
-    std::mt19937                           generator;
-    std::uniform_real_distribution<double> distribution;
+    Structure::Folder originaFolder;         // 기존 폴더
+    Structure::Folder reconstructedFolders;  // 재구성된 폴더
 private:
     std::vector<std::thread> threads;
-    std::mutex mutex_vF;
+    std::mutex mutex_t;
     std::mutex mutex_vvp;
 public:
-    DependentSelectionTree(const std::filesystem::path& defaultDatasetDirectory, double declineRate=1.0);
+    DependentSelectionTree(const std::filesystem::path& defaultDatasetDirectory);
 public:
     explicit operator size_t() const;
 private:
     double  __generate_probability();
-    void    __thread_function(std::deque<std::vector<std::filesystem::path>>& vvp, bool randomPick);
+    void    __thread_function(std::deque<std::vector<std::filesystem::path>>& vvp, size_t& numImages);
 public:
     void    reconstruction();
-    void    pick(std::deque<std::vector<std::filesystem::path>>& vvp, bool randomPick, int numThreads=-1);
+    void    pick(std::deque<std::vector<std::filesystem::path>>& vvp, size_t numImages, int numThreads=-1);
     void    get_all_images_name(std::vector<std::string>& imagesNames);
 };
 

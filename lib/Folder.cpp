@@ -4,7 +4,12 @@
 namespace MSIG {
 namespace Structure {
 
-Folder::Folder(const std::filesystem::path& folderPath, double declineRate)
+Folder::Folder()
+{
+    // 내용 없음.
+}
+
+Folder::Folder(const std::filesystem::path& folderPath)
 {
     namespace fs = std::filesystem;
     
@@ -65,7 +70,7 @@ Folder::Folder(const std::filesystem::path& folderPath, double declineRate)
     }
     // 7-2. 그룹이 지정된 이미지들만 뽑기 확률 계산
     for (auto& [groupName, count] : groupCount) {
-        count = 1.0 / count * declineRate;
+        count = 1.0 / count;
     }
     // 7-3. 그룹이 지정된 이미지들만 뽑기 확률 새로 지정
     for (auto& image : images) {
@@ -114,22 +119,6 @@ Folder::Folder(const Folder& original, bool copyFolders, bool copyImages)
         this->images = original.images;
 }
 
-Folder::operator std::vector<Folder>() const
-{
-    if (folders.empty()) {
-        return std::vector<Folder>({Folder(*this, false, true)});
-    }
-    if (folders.size() > 1) {
-        std::string errorMessage = "MSIG::Algorithm::Folder.std::vector<Folder>() : 일렬로 연결된 폴더만 vector<Folder> 타입 변환이 가능합니다.";
-        throw std::runtime_error(errorMessage);
-    }
-    else {
-        std::vector<Folder> vF = static_cast<std::vector<Folder>>(folders[0]);
-        vF.insert(vF.begin(), Folder(*this, false, true));
-        return vF;
-    }
-}
-
 Folder::operator size_t() const
 {
     // 현재 폴더의 이미지 갯수 조사
@@ -150,7 +139,8 @@ Folder::operator size_t() const
 }
 
 bool
-Folder::operator<(const Folder& other) const {
+Folder::operator<(const Folder& other) const
+{
     return this->path < other.path;
 }
 
@@ -217,8 +207,10 @@ std::vector<Folder>
 Folder::__split() {
     namespace fs = std::filesystem;
     
-    // *.
-    this->splited = true;
+    // 재구성된 폴더인지 확인
+    if (splited || stretched) {
+        throw std::runtime_error("MSIG::Structure::Folder.__split() : 이미 폴더가 재구성 되어 있습니다.");
+    }
     
     // 1. 하위 폴더 먼저 __split()
     std::vector<Folder> childFolders;
@@ -244,6 +236,9 @@ Folder::__split() {
     {
         // 현재 폴더 복사
         Folder newFolder(*this, false, false);
+        
+        // splited 상태 표시
+        newFolder.splited = true;
         
         // 새로 만든 폴더에 하위 폴더들 추가
         newFolder.folders = childFolders;
@@ -389,17 +384,21 @@ Folder::__split() {
 }
 
 void
-Folder::__stretch() {
+Folder::__stretch()
+{
     namespace fs = std::filesystem;
     
-    // *. __split() 작업이 이루어지지 않은 폴더는 __stretch() 작업이 이루어지면 안됨.
-    if (this->splited == false)
-    {
-        std::string errorMessage = "MSIG::Algorithm::Folder.__stretch() : 먼저 __split()가 먼저 선행되어야 합니다.";
-        throw std::runtime_error(errorMessage);
+    // __split() 작업이 이루어 졌는지 확인
+    if (!splited) {
+        throw std::runtime_error("MSIG::Algorithm::Folder.__stretch() : __split()이 먼저 실행되어야 합니다.");
     }
     
-    // *.
+    // __stretched() 작업이 이루어졌는지 확인
+    if (stretched) {
+        throw std::runtime_error("MSIG::Structure::Folder.__stretch() : 이미 폴더가 재구성 되어 있습니다.");
+    }
+    
+    // 현재 작업 폴더 stretched로 변경
     this->stretched = true;
     
     // 1. 하위 폴더가 존재하지 않는 경우
@@ -410,6 +409,7 @@ Folder::__stretch() {
     // 2. 하위 폴더들 먼저 stretch
     for (auto& folder : this->folders)
         folder.__stretch();
+    
     
     // 3. 중복 선택 폴더인 경우 stretch 수행
     if (!(this->images[0].multipleSelectionFolders.empty()))
@@ -451,7 +451,8 @@ Folder::__stretch() {
         // 3-4. stretched 된 폴더들 생성 확률 낮추기
         for (auto& folder : stretchedFolders) {
             for (auto& image : folder.images) {
-                image.selectionProbability *= 1.0 / stretchedFolders.size();// * this->folders.size();    // (1 / streched 된 폴더들 갯수) * streched 되기 전 원래 폴더 갯수
+                // (1 / streched 된 폴더들 갯수) * streched 되기 전 원래 폴더 갯수
+                image.selectionProbability *= 1.0 / stretchedFolders.size() * this->folders.size();
             }
         }
         
@@ -461,7 +462,8 @@ Folder::__stretch() {
 }
 
 void
-Folder::__pruning(bool recursive, bool keepImageData) {
+Folder::__pruning(bool recursive, bool keepImageData)
+{
     namespace fs = std::filesystem;
     
     // 현재 폴더에 있는 모든 이미지들의 제외 항목들 제거하기
@@ -500,7 +502,8 @@ Folder::__pruning(bool recursive, bool keepImageData) {
 }
 
 void
-Folder::__deleting_rules(bool recursive, bool excludeList, bool multipleSelectionList) {
+Folder::__deleting_rules(bool recursive, bool excludeList, bool multipleSelectionList)
+{
     namespace fs = std::filesystem;
     
     // 하위 폴더의 있는 모든 이미지들의 제외, 다중 선택 정보 지우기
@@ -522,7 +525,8 @@ Folder::__deleting_rules(bool recursive, bool excludeList, bool multipleSelectio
 }
 
 void
-Folder::__calculate_all_combination(std::vector<std::vector<unsigned char>>& combinations, unsigned char numberOfThings) {
+Folder::__calculate_all_combination(std::vector<std::vector<unsigned char>>& combinations, unsigned char numberOfThings)
+{
     // 뽑혀야 하는 대상들의 인덱스 번호
     std::vector<unsigned char> vec;
     for (unsigned char i=0; i<numberOfThings; i++)
@@ -552,15 +556,42 @@ Folder::__calculate_all_combination(std::vector<std::vector<unsigned char>>& com
     }
 }
 
+int
+Folder::__random_select(const int& start, const int& end) const
+{
+    // FIXME: 이렇게 랜덤한 수를 뽑기 위해 그때마다 객체를 생성하는것은 비효율적이지 않을까..?
+    // 난수 생성 엔진: std::mt19937를 std::random_device()로 시드 초기화
+    std::mt19937 generator((std::random_device())());
+    
+    // start와 end 사이의 난수를 균등하게 생성할 분포 설정
+    std::uniform_int_distribution<int> distribution(start, end);
+    
+    // 난수를 뽑아서 반환
+    return distribution(generator);
+}
+
+double
+Folder::__generate_probability() const
+{
+    // FIXME: 이렇게 랜덤한 수를 뽑기 위해 그때마다 객체를 생성하는것은 비효율적이지 않을까..?
+    // 난수 생성 엔진: std::mt19937를 std::random_device()로 시드 초기화
+    std::mt19937 generator((std::random_device())());
+    
+    // start와 end 사이의 난수를 균등하게 생성할 분포 설정
+    std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    
+    // 난수를 뽑아서 반환
+    return distribution(generator);
+}
+
 void
-Folder::__save_rule(bool recursive) {
+Folder::__save_rule(bool recursive)
+{
     namespace fs = std::filesystem;
     
-    // *. 추상화된 폴더는 규칙 저장 하면 안됨.
-    if (this->splited == true | this->stretched == true)
-    {
-        std::string errorMessage = "MSIG::Algorithm::Folder.__save_rule() : 논리적 재구성이 이루어진 폴더는 규칙을 저장할 수 없습니다.";
-        throw std::runtime_error(errorMessage);
+    // 재구성된 폴더는 저장 불가능
+    if (splited || stretched) {
+        throw std::runtime_error("MSIG::Algorithm::Folder.__save_rule() : 재구성이 이루어진 폴더는 규칙을 저장할 수 없습니다.");
     }
     
     // 1. 현재 폴더의 __rule__.txt 삭제.
@@ -626,69 +657,86 @@ Folder::__save_rule(bool recursive) {
     }
 }
 
-void
-Folder::reconstruction(std::deque<Folder>& reconstructionFolders) {
+Folder
+Folder::reconstruction()
+{
     namespace fs = std::filesystem;
     
-    // 1. 논리적 분할 -> 논리적 펼치기 -> 반환
-    for (auto& splitedFolder : this->__split()) {
+    // 재구성 가능한지 확인
+    if (splited || stretched) {
+        throw std::runtime_error("MSIG::Structure::Folder.reconstruction() : 이미 폴더가 재구성 되어 있습니다.");
+    }
+    
+    // 반환할 폴더 생성
+    Folder reconstructedFolder(*this, false, false);
+    
+    // 폴더 설정
+    reconstructedFolder.splited = true;
+    reconstructedFolder.stretched = true;
+    reconstructedFolder.path = fs::path("root");
+    
+    // 기존 폴더 논리적 분할
+    for (auto& splitedFolder : __split()) {
+        reconstructedFolder.folders.push_back(splitedFolder);
+    }
+    
+    // 분할된 폴더 논리적 펼치기
+    for (auto& splitedFolder : reconstructedFolder.folders){
         splitedFolder.__stretch();
         splitedFolder.__deleting_rules(true, true, true);
-        reconstructionFolders.push_back(splitedFolder);
     }
-}
-
-Folder
-Folder::peek() {
-    namespace fs = std::filesystem;
     
-    if (!this->folders.empty()) {
-        Folder thisFolder(*this, false, true);
-        thisFolder.folders.push_back(this->folders[0].peek());
-        return thisFolder;
-    }
-    else {
-        return Folder(*this, false, true);
-    }
-}
-
-bool
-Folder::pop() {
-    namespace fs = std::filesystem;
-    
-    // 현재 폴더가 마지막 폴더가 아닌 경우
-    if (!this->folders.empty()) {
-        // 첫번째 하위 폴더 pop() 결과 저장
-        bool left = this->folders[0].pop();
-        if (left)
-        {
-            return true;
-        }
-        // 첫번째 하위 폴더가 마지막인경우
-        else
-        {
-            // 첫번째 하위 폴더 지우기
-            this->folders.erase(this->folders.begin());
-            // 현재 폴더가 마지막인 경우
-            if (this->folders.size()==0)
-            {
-                return false;
-            }
-            // 현재 폴더가 마지막이 아닌 경우
-            else
-            {
-                return true;
-            }
-        }
-    }
-    // 현재 폴더가 마지막인 경우
-    else {
-        return false;
-    }
+    // 반환
+    return reconstructedFolder;
 }
 
 void
-Folder::tree(const std::string& prefix, size_t order) {
+Folder::pick(std::vector<std::filesystem::path>& vp) const
+{
+    namespace fs = std::filesystem;
+    
+    // 뽑기 가능한 폴더인지 확인
+    if (!splited && !stretched) {
+        throw std::runtime_error("MSIG::Structure::Folder.pick() : 재구성되지 않은 폴더에서는 뽑기를 진행할 수 없습니다.");
+    }
+    
+    // 폴더비어있는지 확인
+    if (this->folders.empty())
+        return;
+    
+    // 다음에 선택 가능한 이미지 갯수 세기
+    std::vector<std::array<size_t, 2>> selector;
+    for (size_t i=0; i<folders.size(); i++)
+    for (size_t j=0; j<folders[i].images.size(); j++)
+    {
+        selector.push_back({i, j});
+    }
+    
+    // 이미지 선택
+    std::array<size_t, 2> index;
+    while (true)
+    {
+        // 이미지 index 뽑기
+        index = selector[__random_select(0, (int)(selector.size()-1))];
+        
+        // 이미지 확률 추출
+        double prob = folders[index[0]].images[index[1]].selectionProbability;
+        
+        // 이미지 확률 확인
+        if (prob > __generate_probability())
+            break;
+    }
+    
+    // 뽑힌 이미지 경로 저장
+    vp.push_back(folders[index[0]].images[index[1]].path);
+    
+    // 하위 폴더에서도 뽑기 진행
+    folders[index[0]].pick(vp);
+}
+
+void
+Folder::tree(const std::string& prefix, size_t order)
+{
     namespace fs = std::filesystem;
     
     /*
@@ -773,8 +821,14 @@ Folder::tree(const std::string& prefix, size_t order) {
 }
 
 void
-Folder::get_all_images_name(std::set<std::string>& allImagesNames) {
+Folder::get_all_images_name(std::set<std::string>& allImagesNames)
+{
     namespace fs = std::filesystem;
+    
+    // 만약 재구성된 폴더면 에러
+    if (splited || stretched) {
+        throw std::runtime_error("MSIG::Structure::Folder.get_all_images_name() : 재구성된 폴더에서는 모든 이미지 이름을 추출할 수 없습니다.");
+    }
     
     // 현재 폴더의 모든 이미지 이름 삽입
     for (auto& image : images) {

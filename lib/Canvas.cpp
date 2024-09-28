@@ -5,9 +5,12 @@ namespace MSIG {
 namespace Rendering {
 
 Canvas::Canvas(std::filesystem::path defaultDataset,
-               double trainRate, double validationRate, double testRate,
+               size_t trainImageCount,
+               size_t validationImageCount,
+               size_t testImageCount,
                bool brushing,
-               int imageWidth, int imageHeight)
+               int imageWidth,
+               int imageHeight)
 {
     namespace fs = std::filesystem;
     
@@ -22,9 +25,9 @@ Canvas::Canvas(std::filesystem::path defaultDataset,
     dst.get_all_images_name(imageNames);
     
     // 4. 나머지 변수 값 저장
-    this->trainRate = trainRate;
-    this->validationRate = validationRate;
-    this->testRate = testRate;
+    this->trainImageCount = trainImageCount;
+    this->validationImageCount = validationImageCount;
+    this->testImageCount = testImageCount;
     this->brushing = brushing;
     if (imageWidth>0 && imageHeight>0) {
         this->imageWidth = imageWidth;
@@ -55,7 +58,10 @@ Canvas::__remove_dataset()
 }
 
 void
-Canvas::__making_dataset(std::string datasetName, double declineRate, int numThreads)
+Canvas::__making_dataset(std::string datasetName,
+                         MSIG::Algorithm::DependentSelectionTree& dst,
+                         size_t imageCount,
+                         int numThreads)
 {
     namespace fs = std::filesystem;
     
@@ -86,12 +92,6 @@ Canvas::__making_dataset(std::string datasetName, double declineRate, int numThr
     }
     csv << "\n";
     
-    // 데이터셋 조합 계산
-    std::cout << "  - " << datasetName << " 데이터셋 조합을 계산합니다.";
-    MSIG::Algorithm::DependentSelectionTree dst(this->path, declineRate);
-    dst.reconstruction();
-    std::cout << " [최대 " << static_cast<size_t>(dst) << " 개 조합]" << std::endl;
-    
     // 현재 컴퓨터의 CPU 갯수 구하기
     unsigned int numberOfCPU = 0;
     if (numThreads < 0) numberOfCPU = std::thread::hardware_concurrency();
@@ -102,30 +102,26 @@ Canvas::__making_dataset(std::string datasetName, double declineRate, int numThr
     
     // 데이터셋 생성
     std::cout << "  - " << datasetName << " 데이터셋을 생성합니다." << std::endl;
+    
+    std::deque<std::vector<std::filesystem::path>> selectionList;
     size_t count = 0;
-    while (true) {
-        std::deque<std::vector<std::filesystem::path>> selectionList;
-        
-        // 트리(Folder)에서 악상기호 조합(vvp) 뽑기
-        dst.pick(selectionList, true);
-        if (selectionList.empty()) {
-            break;
-        }
-        
-        // 악상기호 이미지 생성 스레딩 시작
-        threads.clear();
-        for (size_t i=0; i<numberOfCPU; i++) {
-            threads.emplace_back(&Canvas::__thread_function, this,
-                                 std::ref(datasetPath),
-                                 std::ref(csv),
-                                 std::ref(count),
-                                 std::ref(selectionList));
-        }
-        
-        // 악상기호 이미지 생성 스레딩 작업 기다리기
-        for (size_t i=0; i<numberOfCPU; i++) {
-            threads[i].join();
-        }
+    
+    // 이미지 조합 뽑기
+    dst.pick(selectionList, imageCount);
+    
+    // 악상기호 이미지 생성 스레딩 시작
+    threads.clear();
+    for (size_t i=0; i<numberOfCPU; i++) {
+        threads.emplace_back(&Canvas::__thread_function, this,
+                             std::ref(datasetPath),
+                             std::ref(csv),
+                             std::ref(count),
+                             std::ref(selectionList));
+    }
+    
+    // 악상기호 이미지 생성 스레딩 작업 기다리기
+    for (size_t i=0; i<numberOfCPU; i++) {
+        threads[i].join();
     }
     
     // CSV 파일 닫기
@@ -167,14 +163,17 @@ Canvas::__thread_function(std::filesystem::path& imagePath,
         
         // 악상기호 브러싱
         cv::Mat resultImage;
+        cv::Mat resultImageYOLO;
         if (brushing) {
             // TODO: MSIG::Processing::Brush 완성하기
             // TODO: ms.rendering(true, false, false)로 변경 후 Brush 클래스의 함수들 통과시키기
             // TODO: Brush 클래스의 함수들을 통과시킨 수 최종적으로 이미지 크기 자르기
             resultImage = msa.rendering(false, false, false);
+            resultImageYOLO = msa.rendering(false, true, true);
         }
         else {
             resultImage = msa.rendering(false, false, false);
+            resultImageYOLO = msa.rendering(false, true, true);
         }
         
         // 레이블 생성
@@ -182,8 +181,11 @@ Canvas::__thread_function(std::filesystem::path& imagePath,
         
         // 저장
         {
+            std::lock_guard<std::mutex> lock(mutex_csv);
+            
             // 악상기호 이미지 저장
             cv::imwrite((imagePath/fs::path(std::to_string(count)+".png")).string(), resultImage);
+            cv::imwrite((imagePath/fs::path(std::to_string(count)+"_YOLO.png")).string(), resultImage);
             
             // 악상기호 CSV 데이터 저장
             csv << __labeling(std::to_string(count)+".png", labels) << "\n";
@@ -232,10 +234,16 @@ Canvas::draw(int numThreads)
     // 기존 데이터셋 지우기
     __remove_dataset();
     
+    // 악상기호 조합 생성
+    std::cout << "  - 악상기호 조합을 계산합니다.";
+    MSIG::Algorithm::DependentSelectionTree dst(this->path);
+    dst.reconstruction();
+    std::cout << " [총 " << static_cast<size_t>(dst) << "개 조합]" << std::endl;
+    
     // 데이터셋 생성
-    __making_dataset("train", trainRate, numThreads);
-    __making_dataset("validation", validationRate, numThreads);
-    __making_dataset("test", testRate, numThreads);
+    __making_dataset("train", dst, trainImageCount, numThreads);
+    __making_dataset("validation", dst, validationImageCount, numThreads);
+    __making_dataset("test", dst, testImageCount, numThreads);
 }
 
 }

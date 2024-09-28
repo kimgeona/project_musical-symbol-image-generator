@@ -54,7 +54,8 @@ public:
     std::vector<Folder>   folders;
     std::vector<Image>    images;
 public:
-    Folder(const std::filesystem::path& folderPath, double declineRate=1.0);
+    Folder();
+    Folder(const std::filesystem::path& folderPath);
     Folder(const Folder& original, bool copyFolders, bool copyImages);
 public:
     bool        operator< (const Folder& other) const;
@@ -64,17 +65,20 @@ public:
 private:
     std::vector<Folder> __split();
     void                __stretch();
-    void                __pruning(bool recursive, bool keepImageData);
-    void                __deleting_rules(bool recursive, bool excludeList, bool multipleSelectionList);
-    void                __calculate_all_combination(std::vector<std::vector<unsigned char>>& combinations, unsigned char numberOfThings);
-    void                __save_rule(bool recursive=true);
+private:
+    void    __pruning(bool recursive, bool keepImageData);
+    void    __deleting_rules(bool recursive, bool excludeList, bool multipleSelectionList);
+    void    __calculate_all_combination(std::vector<std::vector<unsigned char>>& combinations, unsigned char numberOfThings);
+private:
+    int     __random_select(const int& start, const int& end) const;
+    double  __generate_probability() const;
+private:
+    void    __save_rule(bool recursive=true);
 public:
-    void                reconstruction(std::deque<Folder>& reconstructionFolders);
-    Folder              peek();
-    bool                pop();
-public:
-    void                tree(const std::string& prefix="", size_t order=0);
-    void                get_all_images_name(std::set<std::string>& allImagesNames);
+    Folder  reconstruction();
+    void    pick(std::vector<std::filesystem::path>& vp) const;
+    void    tree(const std::string& prefix="", size_t order=0);
+    void    get_all_images_name(std::set<std::string>& allImagesNames);
 };
 
 
