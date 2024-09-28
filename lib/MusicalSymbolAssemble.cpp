@@ -139,28 +139,8 @@ MusicalSymbolAssemble::__is_staff_here()
         return true;
 }
 
-void
-MusicalSymbolAssemble::push_back(const MusicalSymbol& ms)
-{
-    // MS_STAFF 중복 확인
-    if ((ms.position & MS_STAFF) && __is_staff_here())
-    {
-        std::runtime_error("MSIG::Algorithm::MusicalSymbolAssemble.push_back() : staff 이미지는 최대 1개까지 삽입 가능합니다.");
-    }
-    
-    // 맨 뒤에 삽입
-    mss.push_back(ms);
-}
-
-void
-MusicalSymbolAssemble::pop_back()
-{
-    // 맨 뒤에 제거
-    mss.pop_back();
-}
-
 MusicalSymbol
-MusicalSymbolAssemble::assemble()
+MusicalSymbolAssemble::__assemble()
 {
     // 조합할 악상기호가 있는지 확인
     if (mss.empty())
@@ -506,33 +486,59 @@ MusicalSymbolAssemble::assemble()
         
         // 합성 완료된 이미지 반환
         return resultImage;
-        
-        return mss[0];
     }
 }
 
-std::map<std::filesystem::path, std::array<int, 6>>
-MusicalSymbolAssemble::assemble_labels()
+void
+MusicalSymbolAssemble::push_back(const MusicalSymbol& ms)
 {
-    return coordinates;
+    // MS_STAFF 중복 확인
+    if ((ms.position & MS_STAFF) && __is_staff_here())
+    {
+        std::runtime_error("MSIG::Algorithm::MusicalSymbolAssemble.push_back() : staff 이미지는 최대 1개까지 삽입 가능합니다.");
+    }
+    
+    // 맨 뒤에 삽입
+    mss.push_back(ms);
 }
 
 void
-MusicalSymbolAssemble::show()
+MusicalSymbolAssemble::pop_back()
 {
-    // assemble 진행
-    MusicalSymbol ms = assemble();
+    // 맨 뒤에 제거
+    mss.pop_back();
+}
+
+cv::Mat
+MusicalSymbolAssemble::rendering(bool extensionSize, bool boundingBox, bool centerPoint)
+{
+    // assemble된 악상기호 구하기
+    MusicalSymbol ms = __assemble();
     
-    // 좌표 차이 계산
-    int deltaX = ms.diagonal - ms.x;
-    int deltaY = ms.diagonal - ms.y;
+    // 생성될 이미지 크기에 따라 coordinates 좌표 수정
+    if (extensionSize) {
+        __coordinate_adjustment((ms.diagonal / 2.0) - ms.x, (ms.diagonal / 2.0) - ms.y);
+    }
+    else {
+        __coordinate_adjustment((ms.width / 2.0) - ms.x, (ms.height / 2.0) - ms.y);
+    }
     
-    // coordinates 좌표 차이 적용
-    //__coordinate_adjustment(deltaX, deltaY);
+    // 이미지 구하기
+    cv::Mat assembledImage;
+    if (extensionSize) {
+        assembledImage = ms.rendering(true, false, false);
+    }
+    else {
+        assembledImage = ms.rendering(false, false, false);
+    }
+    
+    //
+    if (boundingBox==false &&
+        centerPoint==false) {
+        return assembledImage;
+    }
     
     // 그레이스케일 이미지를 컬러 이미지로 변환 (3채널)
-    //cv::Mat assembledImage = ms.rendering(true, false, false);
-    cv::Mat assembledImage = ms.image;
     cv::cvtColor(assembledImage, assembledImage, cv::COLOR_GRAY2BGR);
 
     // 색상을 생성할 때 사용할 컬러 팔레트 (BGR 형식)
@@ -547,6 +553,7 @@ MusicalSymbolAssemble::show()
 
     int colorIndex = 0;
 
+    if (boundingBox || centerPoint)
     for (const auto& [imagePath, coordinate] : coordinates) {
         // 바운딩 박스 좌표
         int x1 = coordinate[0];
@@ -562,18 +569,37 @@ MusicalSymbolAssemble::show()
         cv::Scalar color = colors[colorIndex % colors.size()];
 
         // 바운딩 박스 그리기
-        cv::rectangle(assembledImage, cv::Point(x1, y1), cv::Point(x2, y2), color, 2);
+        if (boundingBox) {
+            cv::rectangle(assembledImage, cv::Point(x1, y1), cv::Point(x2, y2), color, 2);
+        }
 
         // 중심 좌표 그리기 (십자 선)
-        cv::line(assembledImage, cv::Point(cx - 3, cy), cv::Point(cx + 3, cy), color-cv::Scalar(70, 70, 70), 2);
-        cv::line(assembledImage, cv::Point(cx, cy - 3), cv::Point(cx, cy + 3), color-cv::Scalar(70, 70, 70), 2);
+        if (centerPoint) {
+            cv::line(assembledImage, cv::Point(cx - 3, cy), cv::Point(cx + 3, cy), color-cv::Scalar(70, 70, 70), 2);
+            cv::line(assembledImage, cv::Point(cx, cy - 3), cv::Point(cx, cy + 3), color-cv::Scalar(70, 70, 70), 2);
+        }
         
         // 색상 인덱스 증가
         colorIndex++;
     }
+    
+    return assembledImage;
+}
+
+std::map<std::filesystem::path, std::array<int, 6>>
+MusicalSymbolAssemble::labels()
+{
+    return coordinates;
+}
+
+void
+MusicalSymbolAssemble::show()
+{
+    // 미리보기 이미지 생성
+    cv::Mat previewImage = rendering(true, true, true);
 
     // 이미지 출력 (테스트용)
-    cv::imshow("MusicalSymbolAssemble preview", assembledImage);
+    cv::imshow("MusicalSymbolAssemble preview", previewImage);
     cv::waitKey(0);
     cv::destroyWindow("MusicalSymbolAssemble preview");
 }

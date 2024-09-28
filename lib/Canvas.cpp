@@ -44,7 +44,8 @@ Canvas::Canvas(std::filesystem::path defaultDataset,
 }
 
 void
-Canvas::__remove_dataset() {
+Canvas::__remove_dataset()
+{
     namespace fs = std::filesystem;
     
     if (fs::exists(this->newDatasetPath)) {
@@ -54,7 +55,8 @@ Canvas::__remove_dataset() {
 }
 
 void
-Canvas::__making_dataset(std::string datasetName, double declineRate, int numThreads) {
+Canvas::__making_dataset(std::string datasetName, double declineRate, int numThreads)
+{
     namespace fs = std::filesystem;
     
     // 데이터셋 경로
@@ -134,7 +136,8 @@ void
 Canvas::__thread_function(std::filesystem::path& imagePath,
                           std::fstream& csv,
                           size_t& count,
-                          std::deque<std::vector<std::filesystem::path>>& selectionList) {
+                          std::deque<std::vector<std::filesystem::path>>& selectionList)
+{
     namespace fs = std::filesystem;
     
     // FIXME: 나중에 dynamic programming을 적용시켜서 더 빠르게 처리해 보자.
@@ -159,10 +162,8 @@ Canvas::__thread_function(std::filesystem::path& imagePath,
         // 악상기호 조합
         MSIG::Algorithm::MusicalSymbolAssemble msa;
         for (auto& p : vp) {
-            // TODO: +연산자를 이용해서 악상기호를 합성하였는데 이미지 범위를 아예 벗어난다면 해당 악상기호 조합은 그냥 건너뛰는 코드 작성하기.
             msa.push_back(musicalSymbols.at(p));
         }
-        MSIG::Algorithm::MusicalSymbol ms = msa.assemble();
         
         // 악상기호 브러싱
         cv::Mat resultImage;
@@ -170,19 +171,22 @@ Canvas::__thread_function(std::filesystem::path& imagePath,
             // TODO: MSIG::Processing::Brush 완성하기
             // TODO: ms.rendering(true, false, false)로 변경 후 Brush 클래스의 함수들 통과시키기
             // TODO: Brush 클래스의 함수들을 통과시킨 수 최종적으로 이미지 크기 자르기
-            resultImage = ms.rendering(false, false, false);
+            resultImage = msa.rendering(false, false, false);
         }
         else {
-            resultImage = ms.rendering(false, false, false);
+            resultImage = msa.rendering(false, false, false);
         }
+        
+        // 레이블 생성
+        std::map<std::filesystem::path, std::array<int, 6>> labels = msa.labels();
         
         // 저장
         {
             // 악상기호 이미지 저장
             cv::imwrite((imagePath/fs::path(std::to_string(count)+".png")).string(), resultImage);
             
-            // 악상기호 CSV 데이터 저자
-            csv << __labeling(std::to_string(count)+".png", ms) << "\n";
+            // 악상기호 CSV 데이터 저장
+            csv << __labeling(std::to_string(count)+".png", labels) << "\n";
             
             // 카운트 증가
             count++;
@@ -191,15 +195,38 @@ Canvas::__thread_function(std::filesystem::path& imagePath,
 }
 
 std::string
-Canvas::__labeling(std::string name, Algorithm::MusicalSymbol& ms) {
-    // TODO: MusicalSymbol 클래스 수정.
-    // TODO: ms를 구성하는 모든 악상기호의 x1, y1, x2, y2, cx, cy, probability를 레이블로 만들어서 저장하는 코드 작성하기
-    
+Canvas::__labeling(std::string name,
+                   std::map<std::filesystem::path, std::array<int, 6>>& labels)
+{
+    // imageNames를 순회하며 labels에 존재하면 추가
+    for (const auto& imageName : imageNames)
+    {
+        // labels에서 imageName을 가진 key값 찾기
+        auto it = std::find_if(labels.begin(), labels.end(), [&imageName](const auto& pair){
+            return pair.first.stem().string()==imageName;
+        });
+        
+        // 못찾은 경우
+        if (it==labels.end())
+        {
+            name += ",0,0,0,0,0,0,0";
+        }
+        
+        // 찾은 경우
+        else
+        {
+            // x1, y1, x2, y2, cx, cy, probability
+            for (size_t i=0; i<6; i++)
+                name += "," + std::to_string(it->second[i]);
+            name += ",1";
+        }
+    }
     return name;
 }
 
 void
-Canvas::draw(int numThreads) {
+Canvas::draw(int numThreads)
+{
     namespace fs = std::filesystem;
     
     // 기존 데이터셋 지우기

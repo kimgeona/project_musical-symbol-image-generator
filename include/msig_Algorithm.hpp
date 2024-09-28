@@ -192,12 +192,13 @@ private:
                      std::array<int, 4>& padding);
     void __coordinate_adjustment(const int& deltaX, const int& deltaY);
     bool __is_staff_here();
+    MusicalSymbol __assemble();
 public:
     void push_back(const MusicalSymbol& ms);
     void pop_back();
 public:
-    MusicalSymbol assemble();
-    std::map<std::filesystem::path, std::array<int, 6>> assemble_labels();
+    cv::Mat rendering(bool extensionSize, bool boundingBox, bool centerPoint);
+    std::map<std::filesystem::path, std::array<int, 6>> labels();
     void show();
 };
 

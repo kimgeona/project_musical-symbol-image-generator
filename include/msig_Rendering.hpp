@@ -83,7 +83,7 @@ private:
                                   std::fstream& csv,
                                   size_t& count,
                                   std::deque<std::vector<std::filesystem::path>>& selectionList);
-    std::string __labeling(std::string name, Algorithm::MusicalSymbol& ms);
+    std::string __labeling(std::string name, std::map<std::filesystem::path, std::array<int, 6>>& labels);
 public:
     void        draw(int numThreads=-1);
 };
