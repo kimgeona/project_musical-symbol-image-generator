@@ -80,7 +80,7 @@ public:
            size_t validationImageCount,
            size_t testImageCount,
            bool brushing,
-           int imageWidth=192,
+           int imageWidth=512,
            int imageHeight=512);
 private:
     void        __remove_dataset();
