@@ -16,7 +16,9 @@ grep(std::filesystem::path filePath, std::string grepString) {
     // 2. grepString가 포함된 첫 문자열 찾아서 반환
     std::string line;
     while (getline(fin, line)) {
-        if (line.find(grepString)!=-1) {
+        if (line=="")
+            continue;
+        if (split(line, "=")[0]==grepString) {
             fin.close();
             return line;
         }

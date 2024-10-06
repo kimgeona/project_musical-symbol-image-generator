@@ -175,7 +175,7 @@ void todo_1()   {
     std::filesystem::path datasetPath(datasetName);
     
     // 캔버스 생성
-    MSIG::Rendering::Canvas canvas(datasetName, 20000, 2000, 2000, true);
+    MSIG::Rendering::Canvas canvas(datasetName, 30000, 3000, 3000, true);
     
     // 악상기호 이미지 생성
     std::cout << "  * 악상기호 데이터셋을 생성합니다." << std::endl;
