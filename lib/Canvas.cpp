@@ -18,7 +18,7 @@ Canvas::Canvas(std::filesystem::path defaultDataset,
     this->path = defaultDataset;
     
     // 2. 생성할 데이터셋 경로 생성
-    this->newDatasetPath = fs::path("MSIG_" + MSIG_VERSION + "_" + defaultDataset.filename().string());
+    this->newDatasetPath = fs::path("MSIG_" + defaultDataset.filename().string());
     
     // 3. 기본 데이터셋 폴더의 모든 이미지 이름 구하기
     Algorithm::DependentSelectionTree dst(defaultDataset);
