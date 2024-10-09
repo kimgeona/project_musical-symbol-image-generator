@@ -5,12 +5,8 @@ namespace MSIG {
 namespace Rendering {
 
 Canvas::Canvas(std::filesystem::path defaultDataset,
-               size_t trainImageCount,
-               size_t validationImageCount,
-               size_t testImageCount,
                bool brushing,
-               int imageWidth,
-               int imageHeight)
+               int imageWidth, int imageHeight) : dst(defaultDataset)
 {
     namespace fs = std::filesystem;
     
@@ -20,14 +16,14 @@ Canvas::Canvas(std::filesystem::path defaultDataset,
     // 2. 생성할 데이터셋 경로 생성
     this->newDatasetPath = fs::path("MSIG_" + defaultDataset.filename().string());
     
+    // 3. DST 생성
+    
+    
     // 3. 기본 데이터셋 폴더의 모든 이미지 이름 구하기
     Algorithm::DependentSelectionTree dst(defaultDataset);
     dst.get_all_images_name(imageNames);
     
     // 4. 나머지 변수 값 저장
-    this->trainImageCount = trainImageCount;
-    this->validationImageCount = validationImageCount;
-    this->testImageCount = testImageCount;
     this->brushing = brushing;
     if (imageWidth>0 && imageHeight>0) {
         this->imageWidth = imageWidth;
@@ -227,18 +223,24 @@ Canvas::__labeling(std::string name,
 }
 
 void
-Canvas::draw(int numThreads)
+Canvas::calculate()
+{
+    // 악상기호 조합 생성
+    std::cout << "  * 악상기호 조합을 계산합니다.";
+    dst.reconstruction();
+    std::cout << " [총 " << static_cast<size_t>(dst) << "개 조합]" << std::endl;
+}
+
+void
+Canvas::draw(size_t trainImageCount,
+             size_t validationImageCount,
+             size_t testImageCount,
+             int numThreads)
 {
     namespace fs = std::filesystem;
     
     // 기존 데이터셋 지우기
     __remove_dataset();
-    
-    // 악상기호 조합 생성
-    std::cout << "  - 악상기호 조합을 계산합니다.";
-    MSIG::Algorithm::DependentSelectionTree dst(this->path);
-    dst.reconstruction();
-    std::cout << " [총 " << static_cast<size_t>(dst) << "개 조합]" << std::endl;
     
     // 데이터셋 생성
     __making_dataset("train", dst, trainImageCount, numThreads);

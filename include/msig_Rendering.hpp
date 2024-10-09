@@ -60,13 +60,11 @@ private:
     std::filesystem::path path;
     std::filesystem::path newDatasetPath;
 private:
-    size_t  trainImageCount;
-    size_t  validationImageCount;
-    size_t  testImageCount;
     bool    brushing;
     int     imageWidth;
     int     imageHeight;
 private:
+    MSIG::Algorithm::DependentSelectionTree dst;
     std::vector<std::string> imageNames;
 private:
     std::map<std::filesystem::path, Algorithm::MusicalSymbol> musicalSymbols;
@@ -76,12 +74,8 @@ private:
     std::mutex mutex_csv;
 public:
     Canvas(std::filesystem::path defaultDataset,
-           size_t trainImageCount,
-           size_t validationImageCount,
-           size_t testImageCount,
            bool brushing,
-           int imageWidth=512,
-           int imageHeight=512);
+           int imageWidth=512, int imageHeight=512);
 private:
     void        __remove_dataset();
     void        __making_dataset(std::string datasetName,
@@ -94,7 +88,11 @@ private:
                                   std::deque<std::vector<std::filesystem::path>>& selectionList);
     std::string __labeling(std::string name, std::map<std::filesystem::path, std::array<int, 6>>& labels);
 public:
-    void        draw(int numThreads=-1);
+    void calculate();
+    void draw(size_t trainImageCount,
+              size_t validationImageCount,
+              size_t testImageCount,
+              int numThreads=-1);
 };
 
 

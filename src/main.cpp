@@ -213,14 +213,78 @@ void todo_1()   {
     std::filesystem::path datasetPath(datasetName);
     
     // 캔버스 생성
-    MSIG::Rendering::Canvas canvas(datasetName, 30000, 3000, 3000, true);
+    MSIG::Rendering::Canvas canvas(datasetName, true);
+    
+    // 악상기호 이미지 조합 계산
+    canvas.calculate();
+    
+    // 사용자로부터 몇장을 생성할지 입력받기
+    std::cout << std::endl << "  * 각 데이터셋마다 생성할 이미지 갯수를 지정하여주세요." << std::endl;
+    size_t inputTrain = 0;
+    size_t inputValidation = 0;
+    size_t inputTest = 0;
+    while (true)
+    {
+        // 출력
+        std::cout << "  - train      : ";
+        
+        // 키 입력
+        std::cin >> inputTrain;
+        if (std::cin.fail()) {
+            std::cin.clear();                                                   // 오류 플래그를 제거
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // 입력 버퍼 비우기
+            continue;
+        }
+        
+        // 1개 이상이어야 통과
+        if (inputTrain > 0) {
+            break;
+        }
+    }
+    while (true)
+    {
+        // 출력
+        std::cout << "  - validation : ";
+        
+        // 키 입력
+        std::cin >> inputValidation;
+        if (std::cin.fail()) {
+            std::cin.clear();                                                   // 오류 플래그를 제거
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // 입력 버퍼 비우기
+            continue;
+        }
+        
+        // 1개 이상이어야 통과
+        if (inputValidation > 0) {
+            break;
+        }
+    }
+    while (true)
+    {
+        // 출력
+        std::cout << "  - test       : ";
+        
+        // 키 입력
+        std::cin >> inputTest;
+        if (std::cin.fail()) {
+            std::cin.clear();                                                   // 오류 플래그를 제거
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // 입력 버퍼 비우기
+            continue;
+        }
+        
+        // 1개 이상이어야 통과
+        if (inputTest > 0) {
+            break;
+        }
+    }
+    
     
     // 악상기호 이미지 생성
-    std::cout << "  * 악상기호 데이터셋을 생성합니다." << std::endl;
-    canvas.draw();
+    std::cout << std::endl << "  * 악상기호 데이터셋을 생성합니다." << std::endl;
+    canvas.draw(inputTrain, inputValidation, inputTest);
     
     // 완료
-    std::cout << "  * 생성을 완료하였습니다." << std::endl;
+    std::cout << "  - 생성 완료." << std::endl;
     
     // 프로그램 종료
     todo_end();
