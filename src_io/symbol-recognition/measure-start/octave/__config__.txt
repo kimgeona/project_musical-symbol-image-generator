@@ -1,4 +1,0 @@
-
-# config
-octave-down-middle.png=141~0~0.000000~3.000000~bottom,out
-octave-up-middle.png=157~17~0.000000~2.600000~top,out

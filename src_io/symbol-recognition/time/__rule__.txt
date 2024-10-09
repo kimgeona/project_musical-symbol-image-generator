@@ -1,6 +1,0 @@
-
-# group
-
-# rule
-time-common.png=~
-time-cut.png=~

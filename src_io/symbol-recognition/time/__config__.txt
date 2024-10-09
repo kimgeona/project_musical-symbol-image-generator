@@ -1,4 +1,0 @@
-
-# config
-time-common.png=15~14~0.000000~2.200000~fixed
-time-cut.png=13~22~0.000000~2.400000~fixed

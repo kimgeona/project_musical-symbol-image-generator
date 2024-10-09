@@ -1,7 +1,0 @@
-
-# group
-
-# rule
-measure-bar-double-bold.png=~
-measure-bar.png=~
-measure-repeat-end.png=~

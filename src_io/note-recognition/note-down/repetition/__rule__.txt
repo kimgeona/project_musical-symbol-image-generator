@@ -1,5 +1,0 @@
-
-# group
-
-# rule
-repetition-volta-middle.png=articulation,dynamic,ornament~

@@ -1,7 +1,0 @@
-
-# group
-
-# rule
-repetition-simile-multi.png=~
-repetition-simile.png=~
-repetition-slash.png=~
