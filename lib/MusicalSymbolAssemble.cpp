@@ -299,7 +299,7 @@ MusicalSymbolAssemble::__assemble()
                 tmpImage.x -= padding[3] + staffImage.staffPadding * 0.7 + (tmpImage.x);
                 
                 // 누적 패딩 += subImage 가로 크기 + 오선지 패딩
-                padding[3] -= tmpImage.image.cols + staffImage.staffPadding;
+                padding[3] += tmpImage.image.cols + staffImage.staffPadding;
             }
             
             // 이미지 합성시 늘어날 크기를 기준으로의 중심좌표
@@ -326,6 +326,26 @@ MusicalSymbolAssemble::__assemble()
             // staffImage와 subImage 합성
             staffImage = staffImage & subImage;
         }
+        
+        // staffImage 여백 제거
+        cv::Mat tmpImage = staffImage.image.clone();
+        int     tmpX = staffImage.x;
+        int     tmpY = staffImage.y;
+        tmpImage = Processing::Matrix::remove_padding(tmpImage, tmpX, tmpY);
+        
+        // staffImage 여백 제거 했을때 실제 좌표 계산
+        int shift_l = staffImage.x - (tmpX);
+        int shift_r = staffImage.x + (tmpImage.cols - tmpX);
+        int shift_t = staffImage.y - (tmpY);
+        int shift_b = staffImage.y + (tmpImage.rows - tmpY);
+        
+        // 이동시킬 크기 계산
+        int shift_x = (staffImage.x - ((shift_l + shift_r) / 2)) * 0.7;
+        int shift_y = (staffImage.y - ((shift_t + shift_b) / 2)) * 0.7;
+        
+        // staffImage shifting
+        staffImage.x -= shift_x;
+        staffImage.y -= shift_y;
         
         // 합성 완료된 이미지 주소 없애기
         staffImage.path = std::filesystem::path();
@@ -480,6 +500,26 @@ MusicalSymbolAssemble::__assemble()
             // resultImage와 subImage 합성
             resultImage = resultImage & subImage;
         }
+        
+        // resultImage 여백 제거
+        cv::Mat tmpImage = resultImage.image.clone();
+        int     tmpX = resultImage.x;
+        int     tmpY = resultImage.y;
+        tmpImage = Processing::Matrix::remove_padding(tmpImage, tmpX, tmpY);
+        
+        // resultImage 여백 제거 했을때 실제 좌표 계산
+        int shift_l = resultImage.x - (tmpX);
+        int shift_r = resultImage.x + (tmpImage.cols - tmpX);
+        int shift_t = resultImage.y - (tmpY);
+        int shift_b = resultImage.y + (tmpImage.rows - tmpY);
+        
+        // 이동시킬 크기 계산
+        int shift_x = (resultImage.x - ((shift_l + shift_r) / 2)) * 0.7;
+        int shift_y = (resultImage.y - ((shift_t + shift_b) / 2)) * 0.7;
+        
+        // resultImage shifting
+        resultImage.x -= shift_x;
+        resultImage.y -= shift_y;
         
         // 합성 완료된 이미지 주소 없애기
         resultImage.path = std::filesystem::path();
