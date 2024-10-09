@@ -288,14 +288,10 @@ MusicalSymbol::__rendering(int x, int y, double degree, double scale,
     //
     cv::Mat newImage((extensionSize ? diagonal : height), (extensionSize ? diagonal : width), CV_8UC1, cv::Scalar(255));
     cv::Mat musicalSymbolImage = this->image.clone();
-    double ms_d = this->degree;
-    double ms_s = this->scale;
-    int ms_x = this->x;
-    int ms_y = this->y;
     
     // 이미지 편집
-    musicalSymbolImage = Processing::Matrix::mat_rotate(musicalSymbolImage, ms_d, ms_x, ms_y);  // 이미지 회저
-    musicalSymbolImage = Processing::Matrix::mat_scale(musicalSymbolImage, ms_s, ms_x, ms_y);   // 이미지 확대 축소
+    musicalSymbolImage = Processing::Matrix::mat_rotate(musicalSymbolImage, degree, x, y);  // 이미지 회저
+    musicalSymbolImage = Processing::Matrix::mat_scale(musicalSymbolImage, scale, x, y);    // 이미지 확대 축소
     
     // 보조선 그리기 : 배경 이미지에 오선지 그리기
     if (auxiliaryStaff)
@@ -306,8 +302,8 @@ MusicalSymbol::__rendering(int x, int y, double degree, double scale,
     }
     
     // 배경 이미지와 악상기호 이미지 합성 좌표 계산
-    int combineX = (newImage.cols/2.0) - this->x;
-    int combineY = (newImage.rows/2.0) - this->y;
+    int combineX = (newImage.cols/2.0) - x;
+    int combineY = (newImage.rows/2.0) - y;
     
     // 배경 이미지와 악상기호 이미지 합성
     newImage = Processing::Matrix::mat_attach(newImage, musicalSymbolImage, combineX, combineY);
