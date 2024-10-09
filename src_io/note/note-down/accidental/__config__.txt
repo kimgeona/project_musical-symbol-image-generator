@@ -1,0 +1,7 @@
+
+# config
+accidental-flat-double.png=14~27~0.000000~1.800000~left,in
+accidental-flat.png=10~29~0.000000~1.800000~left,in
+accidental-natural.png=8~22~0.000000~1.800000~left,in
+accidental-sharp-double.png=8~9~0.000000~2.800000~left,in
+accidental-sharp.png=9~23~0.000000~2.200000~left,in

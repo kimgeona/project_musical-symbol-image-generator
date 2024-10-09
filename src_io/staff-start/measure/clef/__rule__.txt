@@ -1,0 +1,16 @@
+
+# group
+cc=~
+cf=~
+cg=~
+
+# rule
+clef-c-alto.png=cc
+clef-c-tenor.png=cc
+clef-f.png=cf
+clef-g-double.png=cg
+clef-g-minus-15.png=cg
+clef-g-minus-8.png=cg
+clef-g-plus-15.png=cg
+clef-g-plus-8.png=cg
+clef-g.png=cg

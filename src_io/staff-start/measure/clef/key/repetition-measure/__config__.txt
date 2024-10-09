@@ -1,0 +1,5 @@
+
+# config
+repetition-simile-multi.png=26~25~0.000000~2.200000~right,in
+repetition-simile.png=17~17~0.000000~2.100000~right,in
+repetition-slash.png=55~55~0.000000~1.000000~right,in

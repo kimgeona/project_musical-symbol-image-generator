@@ -1,0 +1,4 @@
+
+# config
+octave-end-down.png=154~13~0.000000~2.100000~top,out
+octave-end-up.png=142~4~0.000000~2.200000~bottom,out

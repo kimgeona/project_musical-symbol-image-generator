@@ -1,0 +1,27 @@
+
+# group
+r-01=time~
+r-02=time~
+r-04=time~
+r-08=time~
+r-16=time~
+r-32=time~
+r-64=time~
+r-cs=time~
+
+# rule
+rest-1-dot.png=r-01
+rest-1.png=r-01
+rest-16-dot.png=r-16
+rest-16.png=r-16
+rest-2-dot.png=r-02
+rest-2.png=r-02
+rest-32-dot.png=r-32
+rest-32.png=r-32
+rest-4-dot.png=r-04
+rest-4.png=r-04
+rest-64-dot.png=r-64
+rest-64.png=r-64
+rest-8-dot.png=r-08
+rest-8.png=r-08
+rest-caesura.png=r-cs

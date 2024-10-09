@@ -1,0 +1,9 @@
+
+# group
+
+# rule
+accidental-flat-double.png=ornament_ornament-acciaccatura.png,ornament_ornament-appoggiatura.png~
+accidental-flat.png=ornament_ornament-acciaccatura.png,ornament_ornament-appoggiatura.png~
+accidental-natural.png=ornament_ornament-acciaccatura.png,ornament_ornament-appoggiatura.png~
+accidental-sharp-double.png=ornament_ornament-acciaccatura.png,ornament_ornament-appoggiatura.png~
+accidental-sharp.png=ornament_ornament-acciaccatura.png,ornament_ornament-appoggiatura.png~

@@ -1,0 +1,11 @@
+
+# group
+rv=rest_rest-caesura.png~
+
+# rule
+repetition-coda.png=rest_rest-caesura.png~
+repetition-da-capo.png=rest_rest-caesura.png~
+repetition-dal-segno.png=rest_rest-caesura.png~
+repetition-segno.png=rest_rest-caesura.png~
+repetition-volta-start-1.png=rv
+repetition-volta-start-2.png=rv

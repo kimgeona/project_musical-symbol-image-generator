@@ -1,0 +1,7 @@
+
+# group
+
+# rule
+repetition-simile-multi.png=note,rest,time~
+repetition-simile.png=note,rest,time~
+repetition-slash.png=note,rest,time~

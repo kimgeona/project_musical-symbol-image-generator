@@ -1,0 +1,35 @@
+
+# group
+kf=~note,octave,repetition,repetition-measure,rest,time
+kn=~note,octave,repetition,repetition-measure,rest,time
+ks=~note,octave,repetition,repetition-measure,rest,time
+
+# rule
+key-flat-1.png=kf
+key-flat-2.png=kf
+key-flat-3.png=kf
+key-flat-4.png=kf
+key-flat-5.png=kf
+key-flat-6.png=kf
+key-flat-7.png=kf
+key-natural-flat-1.png=kn
+key-natural-flat-2.png=kn
+key-natural-flat-3.png=kn
+key-natural-flat-4.png=kn
+key-natural-flat-5.png=kn
+key-natural-flat-6.png=kn
+key-natural-flat-7.png=kn
+key-natural-sharp-1.png=kn
+key-natural-sharp-2.png=kn
+key-natural-sharp-3.png=kn
+key-natural-sharp-4.png=kn
+key-natural-sharp-5.png=kn
+key-natural-sharp-6.png=kn
+key-natural-sharp-7.png=kn
+key-sharp-1.png=ks
+key-sharp-2.png=ks
+key-sharp-3.png=ks
+key-sharp-4.png=ks
+key-sharp-5.png=ks
+key-sharp-6.png=ks
+key-sharp-7.png=ks

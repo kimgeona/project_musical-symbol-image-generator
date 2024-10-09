@@ -1,0 +1,7 @@
+
+# group
+
+# rule
+measure-bar-double-bold.png=~note,octave,repetition,repetition-measure,rest
+measure-bar.png=~note,octave,repetition,repetition-measure,rest
+measure-repeat-end.png=~note,octave,repetition,repetition-measure,rest

@@ -1,0 +1,9 @@
+
+# group
+o=repetition,rest_rest-caesura.png~
+
+# rule
+octave-start-08-down.png=o
+octave-start-08-up.png=o
+octave-start-15-down.png=o
+octave-start-15-up.png=o

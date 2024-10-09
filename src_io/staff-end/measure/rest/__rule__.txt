@@ -1,0 +1,27 @@
+
+# group
+r-01=repetition-measure~
+r-02=repetition-measure~
+r-04=repetition-measure~
+r-08=repetition-measure~
+r-16=repetition-measure~
+r-32=repetition-measure~
+r-64=repetition-measure~
+r-cs=repetition-measure~
+
+# rule
+rest-1-dot.png=r-01
+rest-1.png=r-01
+rest-16-dot.png=r-16
+rest-16.png=r-16
+rest-2-dot.png=r-02
+rest-2.png=r-02
+rest-32-dot.png=r-32
+rest-32.png=r-32
+rest-4-dot.png=r-04
+rest-4.png=r-04
+rest-64-dot.png=r-64
+rest-64.png=r-64
+rest-8-dot.png=r-08
+rest-8.png=r-08
+rest-caesura.png=r-cs

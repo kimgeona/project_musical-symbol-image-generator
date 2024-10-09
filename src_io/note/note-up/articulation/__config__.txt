@@ -1,0 +1,9 @@
+
+# config
+articulation-accent.png=15~9~0.000000~2.000000~bottom,out
+articulation-fermata-down.png=20~12~0.000000~1.800000~bottom,out
+articulation-marcato-down.png=10~15~0.000000~2.000000~bottom,out
+articulation-portato.png=30~19~0.000000~0.800000~bottom,out
+articulation-staccatissimo.png=12~10~0.000000~2.200000~bottom,out
+articulation-staccato.png=9~9~0.000000~1.900000~bottom,in
+articulation-tenuto.png=13~8~0.000000~3.200000~bottom,in
