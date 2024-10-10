@@ -1,6 +1,6 @@
 
 # group
-rv=rest_rest-caesura.png~
+rv=note,rest,rest_rest-caesura.png~
 
 # rule
 repetition-coda.png=rest_rest-caesura.png~

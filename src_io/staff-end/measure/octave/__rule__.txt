@@ -1,6 +1,6 @@
 
 # group
-o=repetition,rest_rest-caesura.png~
+o=repetition,rest_rest-caesura.png,note~
 
 # rule
 octave-end-down.png=o
