@@ -2,4 +2,4 @@
 # group
 
 # rule
-repetition-volta-middle.png=articulation,dynamic,ornament~
+repetition-volta-middle.png=accidental,articulation,dynamic,glissando,ornament,tie~

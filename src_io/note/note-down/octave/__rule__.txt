@@ -1,14 +1,13 @@
 
 # group
-octave-down=articulation,dynamic,ornament,tie~
-octave-up=articulation,dynamic,ornament,tie~
+o=accidental,articulation,dynamic,glissando,ornament,repetition,tie~
 
 # rule
-octave-down-end.png=octave-down
-octave-down-middle.png=octave-down
-octave-down-start-15.png=octave-down
-octave-down-start-8.png=octave-down
-octave-up-end.png=octave-up
-octave-up-middle.png=octave-up
-octave-up-start-15.png=octave-up
-octave-up-start-8.png=octave-up
+octave-end-down.png=o
+octave-end-up.png=o
+octave-middle-down.png=o
+octave-middle-up.png=o
+octave-start-08-down.png=o
+octave-start-08-up.png=o
+octave-start-15-down.png=o
+octave-start-15-up.png=o

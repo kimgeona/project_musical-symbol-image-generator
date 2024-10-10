@@ -1,10 +1,10 @@
 
 # config
-octave-down-end.png=263~4~0.000000~2.800000~bottom,out
-octave-down-middle.png=151~7~0.000000~2.800000~bottom,out
-octave-down-start-15.png=28~12~0.000000~2.100000~bottom,out
-octave-down-start-8.png=16~8~0.000000~2.400000~bottom,out
-octave-up-end.png=262~12~0.000000~2.300000~top,out
-octave-up-middle.png=153~8~0.000000~2.600000~top,out
-octave-up-start-15.png=26~12~0.000000~2.300000~top,out
-octave-up-start-8.png=18~7~0.000000~2.000000~top,out
+octave-end-down.png=154~13~0.000000~2.100000~top,out
+octave-end-up.png=142~4~0.000000~2.200000~bottom,out
+octave-middle-down.png=78~7~0.000000~1.900000~bottom,out
+octave-middle-up.png=78~7~0.000000~1.900000~top,out
+octave-start-08-down.png=13~7~0.000000~1.900000~bottom,out
+octave-start-08-up.png=13~7~0.000000~1.900000~top,out
+octave-start-15-down.png=25~13~0.000000~1.600000~bottom,out
+octave-start-15-up.png=25~13~0.000000~1.600000~top,out
