@@ -189,12 +189,12 @@ private:
                      std::array<int, 4>& padding);
     void __coordinate_adjustment(const int& deltaX, const int& deltaY);
     bool __is_staff_here();
-    MusicalSymbol __assemble();
+    MusicalSymbol __assemble(bool shifting);
 public:
     void push_back(const MusicalSymbol& ms);
     void pop_back();
 public:
-    cv::Mat rendering(bool extensionSize, bool boundingBox, bool centerPoint);
+    cv::Mat rendering(bool extensionSize, bool boundingBox, bool centerPoint, bool shifting);
     std::map<std::filesystem::path, std::array<int, 6>> labels();
     void show();
 };

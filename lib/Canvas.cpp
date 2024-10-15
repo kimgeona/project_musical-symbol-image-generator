@@ -164,12 +164,12 @@ Canvas::__thread_function(std::filesystem::path& imagePath,
             // TODO: MSIG::Processing::Brush 완성하기
             // TODO: ms.rendering(true, false, false)로 변경 후 Brush 클래스의 함수들 통과시키기
             // TODO: Brush 클래스의 함수들을 통과시킨 수 최종적으로 이미지 크기 자르기
-            resultImage = msa.rendering(false, false, false);
-            resultImageYOLO = msa.rendering(false, true, true);
+            resultImage = msa.rendering(false, false, false, true);
+            resultImageYOLO = msa.rendering(false, true, true, true);
         }
         else {
-            resultImage = msa.rendering(false, false, false);
-            resultImageYOLO = msa.rendering(false, true, true);
+            resultImage = msa.rendering(false, false, false, true);
+            resultImageYOLO = msa.rendering(false, true, true, true);
         }
         
         // 레이블 생성

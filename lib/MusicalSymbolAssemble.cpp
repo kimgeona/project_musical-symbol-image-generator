@@ -140,7 +140,7 @@ MusicalSymbolAssemble::__is_staff_here()
 }
 
 MusicalSymbol
-MusicalSymbolAssemble::__assemble()
+MusicalSymbolAssemble::__assemble(bool shifting)
 {
     // 조합할 악상기호가 있는지 확인
     if (mss.empty())
@@ -327,25 +327,28 @@ MusicalSymbolAssemble::__assemble()
             staffImage = staffImage & subImage;
         }
         
-        // staffImage 여백 제거
-        cv::Mat tmpImage = staffImage.image.clone();
-        int     tmpX = staffImage.x;
-        int     tmpY = staffImage.y;
-        tmpImage = Processing::Matrix::remove_padding(tmpImage, tmpX, tmpY);
-        
-        // staffImage 여백 제거 했을때 실제 좌표 계산
-        int shift_l = staffImage.x - (tmpX);
-        int shift_r = staffImage.x + (tmpImage.cols - tmpX);
-        int shift_t = staffImage.y - (tmpY);
-        int shift_b = staffImage.y + (tmpImage.rows - tmpY);
-        
-        // 이동시킬 크기 계산
-        int shift_x = (staffImage.x - ((shift_l + shift_r) / 2)) * 0.7;
-        int shift_y = (staffImage.y - ((shift_t + shift_b) / 2)) * 0.7;
-        
-        // staffImage shifting
-        staffImage.x -= shift_x;
-        staffImage.y -= shift_y;
+        if (shifting)
+        {
+            // staffImage 여백 제거
+            cv::Mat tmpImage = staffImage.image.clone();
+            int     tmpX = staffImage.x;
+            int     tmpY = staffImage.y;
+            tmpImage = Processing::Matrix::remove_padding(tmpImage, tmpX, tmpY);
+            
+            // staffImage 여백 제거 했을때 실제 좌표 계산
+            int shift_l = staffImage.x - (tmpX);
+            int shift_r = staffImage.x + (tmpImage.cols - tmpX);
+            int shift_t = staffImage.y - (tmpY);
+            int shift_b = staffImage.y + (tmpImage.rows - tmpY);
+            
+            // 이동시킬 크기 계산
+            int shift_x = (staffImage.x - ((shift_l + shift_r) / 2)) * 0.7;
+            int shift_y = (staffImage.y - ((shift_t + shift_b) / 2)) * 0.7;
+            
+            // staffImage shifting
+            staffImage.x -= shift_x;
+            staffImage.y -= shift_y;
+        }
         
         // 합성 완료된 이미지 주소 없애기
         staffImage.path = std::filesystem::path();
@@ -501,25 +504,28 @@ MusicalSymbolAssemble::__assemble()
             resultImage = resultImage & subImage;
         }
         
-        // resultImage 여백 제거
-        cv::Mat tmpImage = resultImage.image.clone();
-        int     tmpX = resultImage.x;
-        int     tmpY = resultImage.y;
-        tmpImage = Processing::Matrix::remove_padding(tmpImage, tmpX, tmpY);
-        
-        // resultImage 여백 제거 했을때 실제 좌표 계산
-        int shift_l = resultImage.x - (tmpX);
-        int shift_r = resultImage.x + (tmpImage.cols - tmpX);
-        int shift_t = resultImage.y - (tmpY);
-        int shift_b = resultImage.y + (tmpImage.rows - tmpY);
-        
-        // 이동시킬 크기 계산
-        int shift_x = (resultImage.x - ((shift_l + shift_r) / 2)) * 0.7;
-        int shift_y = (resultImage.y - ((shift_t + shift_b) / 2)) * 0.7;
-        
-        // resultImage shifting
-        resultImage.x -= shift_x;
-        resultImage.y -= shift_y;
+        if (shifting)
+        {
+            // resultImage 여백 제거
+            cv::Mat tmpImage = resultImage.image.clone();
+            int     tmpX = resultImage.x;
+            int     tmpY = resultImage.y;
+            tmpImage = Processing::Matrix::remove_padding(tmpImage, tmpX, tmpY);
+            
+            // resultImage 여백 제거 했을때 실제 좌표 계산
+            int shift_l = resultImage.x - (tmpX);
+            int shift_r = resultImage.x + (tmpImage.cols - tmpX);
+            int shift_t = resultImage.y - (tmpY);
+            int shift_b = resultImage.y + (tmpImage.rows - tmpY);
+            
+            // 이동시킬 크기 계산
+            int shift_x = (resultImage.x - ((shift_l + shift_r) / 2)) * 0.7;
+            int shift_y = (resultImage.y - ((shift_t + shift_b) / 2)) * 0.7;
+            
+            // resultImage shifting
+            resultImage.x -= shift_x;
+            resultImage.y -= shift_y;
+        }
         
         // 합성 완료된 이미지 주소 없애기
         resultImage.path = std::filesystem::path();
@@ -550,10 +556,10 @@ MusicalSymbolAssemble::pop_back()
 }
 
 cv::Mat
-MusicalSymbolAssemble::rendering(bool extensionSize, bool boundingBox, bool centerPoint)
+MusicalSymbolAssemble::rendering(bool extensionSize, bool boundingBox, bool centerPoint, bool shifting)
 {
     // assemble된 악상기호 구하기
-    MusicalSymbol ms = __assemble();
+    MusicalSymbol ms = __assemble(shifting);
     
     // 생성될 이미지 크기에 따라 coordinates 좌표 수정
     if (extensionSize) {
@@ -636,7 +642,7 @@ void
 MusicalSymbolAssemble::show()
 {
     // 미리보기 이미지 생성
-    cv::Mat previewImage = rendering(true, true, true);
+    cv::Mat previewImage = rendering(true, true, true, true);
 
     // 이미지 출력 (테스트용)
     cv::imshow("MusicalSymbolAssemble preview", previewImage);
