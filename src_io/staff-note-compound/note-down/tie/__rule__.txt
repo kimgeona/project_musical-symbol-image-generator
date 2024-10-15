@@ -1,0 +1,16 @@
+
+# group
+tie-end=articulation_articulation-staccato.png,articulation_articulation-tenuto.png~
+tie-start=articulation_articulation-staccato.png,articulation_articulation-tenuto.png~
+
+# rule
+tie-end-1.png=tie-end
+tie-end-2.png=tie-end
+tie-end-3.png=tie-end
+tie-end-4.png=tie-end
+tie-end-5.png=tie-end
+tie-start-1.png=tie-start
+tie-start-2.png=tie-start
+tie-start-3.png=tie-start
+tie-start-4.png=tie-start
+tie-start-5.png=tie-start

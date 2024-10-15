@@ -1,0 +1,22 @@
+
+# group
+dynamic-long-crescendo=articulation~
+dynamic-long-decrescendo=articulation~
+
+# rule
+dynamic-crescendo-end.png=dynamic-long-crescendo
+dynamic-crescendo-middle.png=dynamic-long-crescendo
+dynamic-crescendo-start.png=dynamic-long-crescendo
+dynamic-decrescendo-end.png=dynamic-long-decrescendo
+dynamic-decrescendo-middle.png=dynamic-long-decrescendo
+dynamic-decrescendo-start.png=dynamic-long-decrescendo
+dynamic-forte.png=articulation~
+dynamic-fortepiano.png=articulation~
+dynamic-fortissimo.png=articulation~
+dynamic-fortississimo.png=articulation~
+dynamic-mezzo-forte.png=articulation~
+dynamic-mezzo-piano.png=articulation~
+dynamic-pianissimo.png=articulation~
+dynamic-pianississimo.png=articulation~
+dynamic-piano.png=articulation~
+dynamic-sforzando.png=articulation~

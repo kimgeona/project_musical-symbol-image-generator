@@ -1,0 +1,10 @@
+
+# config
+octave-end-down.png=154~13~0.000000~2.100000~top,out
+octave-end-up.png=142~4~0.000000~2.200000~bottom,out
+octave-middle-down.png=78~7~0.000000~1.900000~bottom,out
+octave-middle-up.png=78~7~0.000000~1.900000~top,out
+octave-start-08-down.png=13~7~0.000000~1.900000~bottom,out
+octave-start-08-up.png=13~7~0.000000~1.900000~top,out
+octave-start-15-down.png=25~13~0.000000~1.600000~bottom,out
+octave-start-15-up.png=25~13~0.000000~1.600000~top,out
