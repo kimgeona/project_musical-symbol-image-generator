@@ -41,6 +41,12 @@ split(std::string str, std::string splitStr, std::string splitStr2);
 std::string
 trim(const std::string& str);
 
+void
+make_multiple_notes(std::string note_left_path,
+                    std::string note_right_path,
+                    std::string dataset_name,
+                    std::string image_name);
+
 
 }
 }

@@ -8,10 +8,12 @@
  면 필요한 모든 클래스와 함수들에 대해 접근할 수 있습니다.
  -------------------------------------------------------------------------------
  포함된 헤더:
- - msig_Algorithm.hpp  : 자료구조와 알고리즘을 제공합니다.
+ - msig_Structure.hpp  : 자료구조를 제공합니다.
+ - msig_Algorithm.hpp  : 알고리즘을 제공합니다.
  - msig_Processing.hpp : 이미지 처리 기능을 제공합니다.
  - msig_Utility.hpp    : 코드 작성을 단순화 하는 기능들을 제공합니다.
  - msig_Rendering.hpp  : 악상기호 이미지를 만들어줍니다.
+ - msig_API.hpp        : MSIG의 API가 작성되어 있습니다.
  -------------------------------------------------------------------------------
  */
 
@@ -23,5 +25,6 @@
 #include <msig_Processing.hpp>
 #include <msig_Utility.hpp>
 #include <msig_Rendering.hpp>
+#include <msig_API.hpp>
 
 #endif

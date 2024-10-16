@@ -289,6 +289,63 @@ void todo_1()   {
     // 프로그램 종료
     todo_end();
 }
+void todo_2()   {
+    namespace fs = std::filesystem;
+    
+    // 데이터셋 경로 생성
+    std::filesystem::path datasetPath(datasetName);
+    
+    // 음표 머리 이미지 존재 확인
+    std::cout << "  * 음표 머리 이미지들을 확인합니다." << std::endl;
+    if (!fs::exists(datasetPath/fs::path("note-head-left-2.png")) ||
+        !fs::exists(datasetPath/fs::path("note-head-right-2.png")) ||
+        !fs::exists(datasetPath/fs::path("note-head-left-4.png")) ||
+        !fs::exists(datasetPath/fs::path("note-head-right-4.png")))
+    {
+        std::cout << "  ! 해당 데이터셋에는 다음과 같은 음표 머리 이미지가 존재해야 합니다." << std::endl;
+        std::cout << "  - note-head-left-2.png" << std::endl;
+        std::cout << "  - note-head-right-2.png" << std::endl;
+        std::cout << "  - note-head-left-4.png" << std::endl;
+        std::cout << "  - note-head-right-4.png" << std::endl << std::endl;
+        
+        std::cout << "  ! 프로그램을 종료합니다." << std::endl << std::endl;
+        return;
+    }
+    
+    // 겹음 이미지들 생성
+    std::cout << "  * 겹음 이미지들을 생성합니다." << std::endl;
+    std::string input = "";
+    while(true)
+    {
+        std::cout << "    생성할 데이터셋 이름을 입력하세요 : ";
+        std::cin >> input;
+        if (std::cin.fail()) {
+            std::cin.clear();                                                   // 오류 플래그를 제거
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // 입력 버퍼 비우기
+            continue;
+        }
+        if (input != "") {
+            std::cout << std::endl << std::endl;
+            break;
+        }
+    }
+    std::cout << "  - 2분음표 머리의 겹음 이미지들을 생성합니다." << std::endl;
+    MSIG::API::make_multiple_notes((datasetPath/fs::path("note-head-left-2.png")).string(),
+                                       (datasetPath/fs::path("note-head-right-2.png")).string(),
+                                       input,
+                                       "head-2");
+    std::cout << "  - 4분음표 머리의 겹음 이미지들을 생성합니다." << std::endl;
+    MSIG::API::make_multiple_notes((datasetPath/fs::path("note-head-left-4.png")).string(),
+                                       (datasetPath/fs::path("note-head-right-4.png")).string(),
+                                       input,
+                                       "head-4");
+    
+    // 완료 문구 출력
+    std::cout << "  - 생성 완료." << std::endl;
+    
+    // 프로그램 종료
+    todo_end();
+}
 void page()     {
     namespace fs = std::filesystem;
     
@@ -320,11 +377,13 @@ void page()     {
     // 작업 선택
     switch (menu({
         "데이터셋 관리",
-        "악상기호 데이터셋 생성"
+        "악상기호 데이터셋 생성",
+        "겹음 이미지들 생성"
     }, "작업을 선택하세요"))
     {
         case 0: todo_0(); break;
         case 1: todo_1(); break;
+        case 2: todo_2(); break;
     }
 }
 
