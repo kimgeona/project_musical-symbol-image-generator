@@ -35,6 +35,9 @@
 // 랜덤
 #include <random>
 
+// 비트 연산
+#include <bitset>
+
 // 스레딩
 #include <thread>
 #include <mutex>
