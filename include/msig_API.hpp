@@ -16,6 +16,7 @@
 #ifndef msig_API_hpp
 #define msig_API_hpp
 
+#include <msig_common.hpp>
 #include <msig_Algorithm.hpp>
 
 namespace MSIG {
