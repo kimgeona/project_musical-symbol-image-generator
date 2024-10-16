@@ -331,14 +331,14 @@ void todo_2()   {
     }
     std::cout << "  - 2분음표 머리의 겹음 이미지들을 생성합니다." << std::endl;
     MSIG::API::make_multiple_notes((datasetPath/fs::path("note-head-left-2.png")).string(),
-                                       (datasetPath/fs::path("note-head-right-2.png")).string(),
-                                       input,
-                                       "head-2");
+                                   (datasetPath/fs::path("note-head-right-2.png")).string(),
+                                   input + "-2",
+                                   input + "-2");
     std::cout << "  - 4분음표 머리의 겹음 이미지들을 생성합니다." << std::endl;
     MSIG::API::make_multiple_notes((datasetPath/fs::path("note-head-left-4.png")).string(),
-                                       (datasetPath/fs::path("note-head-right-4.png")).string(),
-                                       input,
-                                       "head-4");
+                                   (datasetPath/fs::path("note-head-right-4.png")).string(),
+                                   input + "-4",
+                                   input + "-4");
     
     // 완료 문구 출력
     std::cout << "  - 생성 완료." << std::endl;

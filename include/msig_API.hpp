@@ -27,7 +27,7 @@ void
 make_multiple_notes(std::string note_left_path,     // 왼쪽 머리 이미지 경로
                     std::string note_right_path,    // 오른쪽 머리 이미지 경로
                     std::string dataset_name,       // 생성할 데이터셋 이름
-                    std::string image_name)         // 추가적으로 기재할 이미지 이름
+                    std::string image_name)         // 생성할 이미지 이름
 {
     // 악상기호 이미지 준비
     MSIG::Algorithm::MusicalSymbol note_left(note_left_path, true, 128, 400);
@@ -323,28 +323,28 @@ make_multiple_notes(std::string note_left_path,     // 왼쪽 머리 이미지 �
         switch (note_beat)
         {
             case 1:
-                cv::imwrite(dataset_name + "-up/note-up-" + image_name + "-beam-08-" + std::bitset<11>(i).to_string() + ".png", image_up);
-                config_up << "note-up-" + image_name + "-beam-08-" + std::bitset<11>(i).to_string() + ".png" + "=64~128~0.0~1.0\n";
-                cv::imwrite(dataset_name + "-down/note-down-" + image_name + "-beam-08-" + std::bitset<11>(i).to_string() + ".png", image_down);
-                config_down << "note-down-" + image_name + "-beam-08-" + std::bitset<11>(i).to_string() + ".png" + "=64~128~0.0~1.0\n";
+                cv::imwrite(dataset_name + "-up/" + image_name  + "-up-beam-08-" + std::bitset<11>(i).to_string() + ".png", image_up);
+                config_up << image_name + "-up-beam-08-" + std::bitset<11>(i).to_string() + ".png" + "=64~128~0.0~1.0~fixed\n";
+                cv::imwrite(dataset_name + "-down/" + image_name + "-down-beam-08-" + std::bitset<11>(i).to_string() + ".png", image_down);
+                config_down << image_name + "-down-beam-08-" + std::bitset<11>(i).to_string() + ".png" + "=64~128~0.0~1.0~fixed\n";
                 break;
             case 2:
-                cv::imwrite(dataset_name + "-up/note-up-" + image_name + "-beam-16-" + std::bitset<11>(i).to_string() + ".png", image_up);
-                config_up << "note-up-" + image_name + "-beam-16-" + std::bitset<11>(i).to_string() + ".png" + "=64~128~0.0~1.0\n";
-                cv::imwrite(dataset_name + "-down/note-down-" + image_name + "-beam-16-" + std::bitset<11>(i).to_string() + ".png", image_down);
-                config_down << "note-down-" + image_name + "-beam-16-" + std::bitset<11>(i).to_string() + ".png" + "=64~128~0.0~1.0\n";
+                cv::imwrite(dataset_name + "-up/" + image_name  + "-up-beam-16-" + std::bitset<11>(i).to_string() + ".png", image_up);
+                config_up << image_name + "-up-beam-16-" + std::bitset<11>(i).to_string() + ".png" + "=64~128~0.0~1.0~fixed\n";
+                cv::imwrite(dataset_name + "-down/" + image_name + "-down-beam-16-" + std::bitset<11>(i).to_string() + ".png", image_down);
+                config_down << image_name + "-down-beam-16-" + std::bitset<11>(i).to_string() + ".png" + "=64~128~0.0~1.0~fixed\n";
                 break;
             case 3:
-                cv::imwrite(dataset_name + "-up/note-up-" + image_name + "-beam-32-" + std::bitset<11>(i).to_string() + ".png", image_up);
-                config_up << "note-up-" + image_name + "-beam-32-" + std::bitset<11>(i).to_string() + ".png" + "=64~128~0.0~1.0\n";
-                cv::imwrite(dataset_name + "-down/note-down-" + image_name + "-beam-32-" + std::bitset<11>(i).to_string() + ".png", image_down);
-                config_down << "note-down-" + image_name + "-beam-32-" + std::bitset<11>(i).to_string() + ".png" + "=64~128~0.0~1.0\n";
+                cv::imwrite(dataset_name + "-up/" + image_name  + "-up-beam-32-" + std::bitset<11>(i).to_string() + ".png", image_up);
+                config_up << image_name + "-up-beam-32-" + std::bitset<11>(i).to_string() + ".png" + "=64~128~0.0~1.0~fixed\n";
+                cv::imwrite(dataset_name + "-down/" + image_name + "-down-beam-32-" + std::bitset<11>(i).to_string() + ".png", image_down);
+                config_down << image_name + "-down-beam-32-" + std::bitset<11>(i).to_string() + ".png" + "=64~128~0.0~1.0~fixed\n";
                 break;
             case 4:
-                cv::imwrite(dataset_name + "-up/note-up-" + image_name + "-beam-64-" + std::bitset<11>(i).to_string() + ".png", image_up);
-                config_up << "note-up-" + image_name + "-beam-64-" + std::bitset<11>(i).to_string() + ".png" + "=64~128~0.0~1.0\n";
-                cv::imwrite(dataset_name + "-down/note-down-" + image_name + "-beam-64-" + std::bitset<11>(i).to_string() + ".png", image_down);
-                config_down << "note-down-" + image_name + "-beam-64-" + std::bitset<11>(i).to_string() + ".png" + "=64~128~0.0~1.0\n";
+                cv::imwrite(dataset_name + "-up/" + image_name  + "-up-beam-64-" + std::bitset<11>(i).to_string() + ".png", image_up);
+                config_up << image_name + "-up-beam-64-" + std::bitset<11>(i).to_string() + ".png" + "=64~128~0.0~1.0~fixed\n";
+                cv::imwrite(dataset_name + "-down/" + image_name + "-down-beam-64-" + std::bitset<11>(i).to_string() + ".png", image_down);
+                config_down << image_name + "-down-beam-64-" + std::bitset<11>(i).to_string() + ".png" + "=64~128~0.0~1.0~fixed\n";
                 break;
         }
     }
