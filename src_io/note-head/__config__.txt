@@ -1,0 +1,8 @@
+
+# config
+note-head-left-1.png=20~9~0.000000~2.000000~fixed
+note-head-left-2.png=19~11~0.000000~2.000000~fixed
+note-head-left-4.png=18~9~0.000000~2.000000~fixed
+note-head-right-1.png=1~9~0.000000~2.000000~fixed
+note-head-right-2.png=5~11~0.000000~2.000000~fixed
+note-head-right-4.png=7~9~0.000000~2.000000~fixed
