@@ -148,7 +148,6 @@ void todo_0_3() {
     
     // __rule__.txt 생성
     std::cout << "  * 데이터셋의 각각의 폴더마다 __rule__.txt를 생성합니다." << std::endl;
-    std::ofstream((datasetPath/fs::path("__rule__.txt")).string()).close();
     for (auto& p : fs::recursive_directory_iterator(datasetPath)) {
         if (fs::exists(p.path())        &&
             fs::is_directory(p.path()))
