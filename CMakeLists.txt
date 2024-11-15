@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.28)
 project(
     Musical-Symbol-Image-Generator
-    VERSION 2.0.0
+    VERSION 2.0.1
     DESCRIPTION "Musical symbol image generator for machine learning."
     LANGUAGES CXX
 )
