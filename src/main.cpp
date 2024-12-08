@@ -345,6 +345,21 @@ void todo_2()   {
     // 프로그램 종료
     todo_end();
 }
+void todo_3()   {
+    namespace fs = std::filesystem;
+    
+    // 데이터셋 경로 생성
+    std::filesystem::path datasetPath(datasetName);
+    
+    // 폴더 생성
+    MSIG::Structure::Folder root(datasetPath);
+    
+    // 폴더 구조 출력
+    root.tree();
+    
+    // 프로그램 종료
+    todo_end();
+}
 void page()     {
     namespace fs = std::filesystem;
     
@@ -377,12 +392,14 @@ void page()     {
     switch (menu({
         "데이터셋 관리",
         "악상기호 데이터셋 생성",
-        "겹음 이미지들 생성"
+        "겹음 이미지들 생성",
+        "데이터셋 구조 확인"
     }, "작업을 선택하세요"))
     {
         case 0: todo_0(); break;
         case 1: todo_1(); break;
         case 2: todo_2(); break;
+        case 3: todo_3(); break;
     }
 }
 
